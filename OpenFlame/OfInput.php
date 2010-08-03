@@ -55,19 +55,15 @@ class OfInput
 	 *
 	 * @param mixed $var
 	 * @param mixed $defaultType
-	 * @return cleanedInput
+	 * @return mixed The cleaned data.
 	 */
 	private function cleanVar($var, $default)
 	{
 		if(is_array($var))
 		{
 			list($_keyDefault, $_valueDefault) = each($default);
-			
-			$_var = array();
-			foreach($var as $key => $value)
-				$_var[bindVar($key, $_keyDefault)] = cleanVar($value, $_valueDefault);
-			
-			$var = $_var;
+
+			array_walk($var, array(&$this, '_cleanVar'), $_valueDefault);
 		}
 		else
 		{
@@ -75,6 +71,27 @@ class OfInput
 		}
 		
 		return $var;
+	}
+	
+	/**
+	 * Helper method for OfInput::cleanVar(), aids in cleaning deep arrays quickly
+	 * 
+	 * @param mixed &$value
+	 * @param mixed &$key
+	 * @param mixed $default
+	 */
+	private function _cleanVar(&$value, &$key, $default)
+	{
+		if(is_array($value))
+		{
+			list($_keyDefault, $_valueDefault) = each($default);
+			array_walk($value, array(&$this, '_cleanVar'), $_valueDefault);
+			$this->bindVar($key, $_keyDefault);
+		}
+		else
+		{
+			list($value, $key) = array($this->bindVar($value, $_valueDefault), $this->bindVar($key, $_keyDefault));
+		}
 	}
 
 	/**
