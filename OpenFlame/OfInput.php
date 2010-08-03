@@ -67,7 +67,7 @@ class OfInput
 		}
 		else
 		{
-			$this->bindVar($var, $default);
+			$var = $this->bindVar($var, $default);
 		}
 		
 		return $var;
