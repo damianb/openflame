@@ -31,21 +31,32 @@ class OfTwig
 
 	/**
 	 * Assign a bunch of template vars at once.
-	 * @param array $var_data Array of variables to set.
+	 * @param array $var_data - Array of variables to set.
 	 * @return void
 	 */
 	public function assignVars(array $var_data)
 	{
-		array_walk($var_data, array($this, 'assignVar'));
+		array_walk($var_data, array($this, '_assignVar'));
 	}
 
 	/**
 	 * Assigns a specified template var
-	 * @param string $var_name The name of the var to set.
-	 * @param mixed $var_value The value to set the var with.
+	 * @param string $var_name - The name of the var to set.
+	 * @param mixed $var_value - The value to set the var with.
 	 * @return void
 	 */
 	public function assignVar($var_name, $var_value)
+	{
+		$this->data[(string) $var_name] = $var_value;
+	}
+
+	/**
+	 * Assigns a specified template var - backwards of self::assignVar() as this must be used with array_walk()
+	 * @param mixed $var_value - The value to set the var with.
+	 * @param string $var_name - The name of the var to set.
+	 * @return void
+	 */
+	public function _assignVar($var_value, $var_name)
 	{
 		$this->data[(string) $var_name] = $var_value;
 	}
