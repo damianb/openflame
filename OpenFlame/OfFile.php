@@ -2,7 +2,6 @@
 /**
  *
  * @package OpenFlame Web Framework
- * @version $Id$
  * @copyright (c) 2010 OpenFlameCMS.com
  * @license http://opensource.org/licenses/mit-license.php The MIT License
  *
@@ -18,6 +17,14 @@ if(!class_exsits('OfInput') && file_exists(ROOT_PATH . 'OfInput.php'))
 else if(!file_exists(ROOT_PATH . 'OfInput.php') && !class_exists('OfInput'))
 	exit;
 
+/**
+ * OpenFlame Web Framework - File Input
+ * 	     Extends the Input class to handle file uploads.
+ *
+ *
+ * @author      Sam Thompson ("Sam")
+ * @license     http://opensource.org/licenses/mit-license.php The MIT License
+ */
 class OfFile extends OfInput
 {
 }
