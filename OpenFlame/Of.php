@@ -2,7 +2,6 @@
 /**
  *
  * @package OpenFlame Web Framework
- * @version $Id$
  * @copyright (c) 2010 OpenFlameCMS.com
  * @license http://opensource.org/licenses/mit-license.php The MIT License
  *
@@ -12,6 +11,14 @@
 if(!defined('ROOT_PATH'))
 	define('ROOT_PATH', './');
 
+/**
+ * OpenFlame Web Framework - Main class
+ * 	     Contains the static objects that power the framework
+ *
+ *
+ * @author      Sam Thompson ("Sam")
+ * @license     http://opensource.org/licenses/mit-license.php The MIT License
+ */
 class Of
 {
 }

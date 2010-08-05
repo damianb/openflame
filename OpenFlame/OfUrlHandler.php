@@ -2,13 +2,20 @@
 /**
  *
  * @package OpenFlame Web Framework
- * @version $Id$
  * @copyright (c) 2010 OpenFlameCMS.com
  * @license http://opensource.org/licenses/mit-license.php The MIT License
  *
  * Minimum Requirement: PHP 5.0.0
  */
 
+/**
+ * OpenFlame Web Framework - Url Hanlder
+ * 	     Allows handing of pretty urls within PHP and increases portability betwween Web Servers.
+ *
+ *
+ * @author      Sam Thompson ("Sam")
+ * @license     http://opensource.org/licenses/mit-license.php The MIT License
+ */
 class OfUrlHandler
 {
 	/**
