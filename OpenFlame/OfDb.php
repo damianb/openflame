@@ -19,43 +19,92 @@ if(!defined('ROOT_PATH'))
  * @author      Sam Thompson ("Sam")
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
  */
-class OfDb extends PDO
+class OfDb
 {
+	/**
+	 * @var PDO connection object
+	 */
+	private $PDOconn;
+
+	/**
+	 * @var array of PDO Statement objects
+	 */
+	private $stmt = array();
+	
 	public function __construct()
 	{
 	}
 	
 	public function connect($dsn, $username, $password, $options = array())
 	{
-		try 
+		try
 		{
-			$dbObj = parent::__construct($dsn, $username, $password, $options);
+			$this->PDOconn = new PDO($dsn, $username, $password, $options);
 		}
 		catch(PDOException $e)
 		{
 			echo 'Connection Failed: ' . $e->getMessage();
 			exit;
 		}
-		
-		return $dbObject;
 	}
 
-	public function prepare($sql, $sql_ary = array())
+	/**
+	 * Query...
+	 *
+	 *
+	 * @return int PDO statement object 
+	 */
+	public function query($sql, $queryType = '', $sqlAry = array())
 	{
-		switch($type)
+		if(sizeof($sqlAry) && ($queryType == 'SELECT' || $queryType == 'INSERT' || $queryType == 'UPDATE' || $queryType == 'DELETE'))
 		{
-			case 'SELECT':
-			case 'DELETE':
-				
-			break;
+			$columNames = array_keys($sqlAry);
 			
-			case 'UPDATE':
+			switch($queryType)
+			{
+				// Select, Delete, Update all work the same at this level
+				case 'SELECT':
+				case 'DELETE':
+				case 'UPDATE':
+					$sql_where = array();
+					
+					foreach($columnNames as $column)
+						$sql_where[] = $column . ' = :' . $column;
+					
+					$_sql = implode(',', $sql_where);
+				break;
 				
-			break;
+				case 'INSERT':					
+					$_sql = '(' . implode(',', $columnNames) . ")\n VALUES(:" .  implode(',:', $columnNames) . ')';
+				break;
+			}
 			
-			case 'INSERT':
-				
-			break;
+			$sql = sprintf($sql, $_sql);
 		}
+		
+		end($this->stmt);
+		$stmtId = key($this->stmt);
+		
+		$this->stmt[$stmtId] = $this->PDOconn->prepare($sql);
+		
+		if(isset($_sql))
+		{
+			foreach($sqlAry as $column => $value)
+				$this->stmt[$stmtId]->bindParam(':' . $column, $value);
+		}
+		
+		$this->stmt[$stmtId]->execute();
+		return $stmtId;
 	}
+
+	public function rowsAffected($stmtId)
+	{
+		return $this->stmt[$stmtId]->rowCount();
+	}
+	
+	public function lastInsertId()
+	{
+		return $PDOconn->lastInsertId();
+	}
+	
 }
