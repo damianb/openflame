@@ -56,7 +56,7 @@ class OfDb
 	 */
 	public function query($sql, $queryType = '', $sqlAry = array())
 	{
-		if(sizeof($sqlAry) && ($queryType == 'SELECT' || $queryType == 'INSERT' || $queryType == 'UPDATE' || $queryType == 'DELETE'))
+		if(sizeof($sqlAry) && in_array($queryType, array('SELECT', 'INSERT', 'UPDATE', 'DELETE')))
 		{
 			$columNames = array_keys($sqlAry);
 			
