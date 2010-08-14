@@ -21,8 +21,7 @@ if(!defined('ROOT_PATH'))
  */
 class OfException extends Exception
 {
-	// wat
-	const ERR_WTF = 0;
+	const ERR_WTF = 0;  // wat
 }
 
 /**
