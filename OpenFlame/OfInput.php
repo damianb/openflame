@@ -142,7 +142,11 @@ class OfInput
 			break;
 
 			case 'url':
-				return; // @TODO url regex
+				// By "keevkilla" (http://snipplr.com/view/36992/improvement-of-url-interpretation-with-regex/)
+				// Assumed Public Domain
+				// @TODO Test cases to make sure it works.
+				// 		One issue was pointed out in the comments that should be looked into
+				return preg_match("#((https?://)?([-\w]+\.[-\w\.]+)+\w(:\d+)?(/([-\w/_\.]*(\?\S+)?)?)*)#", $this->cleanedInput) === 1 ? true : false;
 			break;
 
 			case 'ip4':
