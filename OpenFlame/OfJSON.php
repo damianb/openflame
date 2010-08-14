@@ -37,6 +37,7 @@ class OfJSON
 	 * @param string $json - The JSON string or the path of the JSON file to decode.
 	 * @param boolean $is_file - Are we loading from a JSON file?
 	 * @return array - The contents of the JSON string/file.
+	 * 
 	 * @throws OfJSONException
 	 */
 	public static function decode($json, $is_file = true)
