@@ -37,14 +37,14 @@ class OfJSON
 	 * @param string $json - The JSON string or the path of the JSON file to decode.
 	 * @param boolean $is_file - Are we loading from a JSON file?
 	 * @return array - The contents of the JSON string/file.
-	 * @throws JSONException
+	 * @throws OfJSONException
 	 */
 	public static function decode($json, $is_file = true)
 	{
 		if($is_file)
 		{
 			if(!file_exists($json))
-				throw new JSONException('JSON file does not exist', JSONException::ERR_JSON_NO_FILE);
+				throw new OfJSONException('JSON file does not exist', OfJSONException::ERR_JSON_NO_FILE);
 			$json = file_get_contents($json);
 		}
 
@@ -56,31 +56,31 @@ class OfJSON
 			{
 				case JSON_ERROR_NONE:
 					$error = 'No error';
-					$code = JSONException::ERR_JSON_NO_ERROR;
+					$code = OfJSONException::ERR_JSON_NO_ERROR;
 				break;
 
 				case JSON_ERROR_DEPTH:
 					$error = 'Maximum JSON recursion limit reached.';
-					$code = JSONException::ERR_JSON_DEPTH;
+					$code = OfJSONException::ERR_JSON_DEPTH;
 				break;
 
 				case JSON_ERROR_CTRL_CHAR:
 					$error = 'Control character error';
-					$code = JSONException::ERR_JSON_CTRL_CHAR;
+					$code = OfJSONException::ERR_JSON_CTRL_CHAR;
 				break;
 
 				case JSON_ERROR_SYNTAX:
 					$error = 'JSON syntax error';
-					$code = JSONException::ERR_JSON_SYNTAX;
+					$code = OfJSONException::ERR_JSON_SYNTAX;
 				break;
 
 				default:
 					$error = 'Unknown JSON error';
-					$code = JSONException::ERR_JSON_UNKNOWN;
+					$code = OfJSONException::ERR_JSON_UNKNOWN;
 				break;
 			}
 
-			throw new JSONException($error, $code);
+			throw new OfJSONException($error, $code);
 		}
 
 		return $data;
