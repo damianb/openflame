@@ -33,7 +33,7 @@ class OfException extends Exception
  * @author      Damian Bushong ("Obsidian")
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
  */
-class JSONException extends OfException
+class OfJSONException extends OfException
 {
 	const ERR_JSON_NO_FILE = 4000;
 	const ERR_JSON_UNKNOWN = 4100;
