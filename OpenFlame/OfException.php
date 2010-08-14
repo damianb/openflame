@@ -41,3 +41,23 @@ class OfJSONException extends OfException
 	const ERR_JSON_CTRL_CHAR = 4103;
 	const ERR_JSON_SYNTAX = 4104;
 }
+
+/**
+ * OpenFlame Web Framework - Cache Exception class,
+ * 		Used for exceptions generated in the Cache library.
+ *
+ *
+ * @author      Damian Bushong ("Obsidian")
+ * @license     http://opensource.org/licenses/mit-license.php The MIT License
+ */
+class OfCacheException extends OfException
+{
+	const ERR_CACHE_UNWRITABLE = 2000;
+	const ERR_CACHE_UNREADABLE = 2001;
+	const ERR_CACHE_FOPEN_FAILED = 2002;
+	const ERR_CACHE_FWRITE_FAILED = 2003;
+	const ERR_CACHE_FLOCK_FAILED = 2004;
+
+	const ERR_CACHE_ENGINE_NOT_CACHEBASE_CHILD = 2100;
+	const ERR_CACHE_ENGINE_NOT_CACHEINTERFACE_CHILD = 2101;
+}
