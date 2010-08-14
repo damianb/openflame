@@ -10,11 +10,11 @@ This library generously provided for free by the OpenFlame CMS Development Team.
 
 ## Contents
 
-All files within the OpenFlame/ directory are named by the class they contain. 
+All files within the OpenFlame/ directory are named by the class they contain.
 
 Included files:
 
-* loader.php - (*File that loads all classes automatically*)
+* Bootstrap.php - (*File that loads all classes automatically*)
 * OpenFlame/Of.php - (*Environment class which will store runtime configurations and object instances*)
 * OpenFlame/OfDb.php - (*Doctrine integration layer*)
 * OpenFlame/OfException.php - (*Exception classes used within the OpenFlame Framework*)
