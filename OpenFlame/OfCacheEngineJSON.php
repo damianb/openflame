@@ -57,7 +57,7 @@ class OfCacheEngineJSON extends OfCacheEngineBase implements OfCacheEngineInterf
 	 */
 	public function load($file)
 	{
-		return OfJSON::decode($json);
+		return OfJSON::decode($this->cache_path . '/' . basename($file));
 	}
 
 	/**
