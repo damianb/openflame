@@ -67,7 +67,7 @@ class OfCacheEngineJSON extends OfCacheEngineBase implements OfCacheEngineInterf
 	 */
 	public function exists($file)
 	{
-		return $this->fileExists($file . '.json');
+		return $this->fileExists("$file.json");
 	}
 
 	/**
