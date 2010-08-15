@@ -36,7 +36,7 @@ class OfCache
 	 * @param string $cache_path - The path to where cache files will be stored, if the engine is file-based.
 	 * @param string $engine - The name of the caching engine to use.
 	 * @return void
-	 * 
+	 *
 	 * @throws OfCacheException
 	 */
 	public function __construct($engine, $cache_path = false)
@@ -105,7 +105,97 @@ class OfCache
  */
 class OfCacheEngineBase
 {
-	// asdf
+	/**
+	 * @var string - The path to where cache files will be stored, if we are using a file-based cache engine.
+	 */
+	protected $cache_path = '';
+
+	/**
+	 * Constructor
+	 * @param string $cache_path - The path to where cache files will be stored, if the engine is file-based.
+	 * @return void
+	 */
+	public function __construct($cache_path)
+	{
+		$this->cache_path = (string) $cache_path;
+	}
+
+	/**
+	 * Writes data to a specified cache file
+	 * @param string $file - The file to write to.
+	 * @param string $data - The data to write to the cache file.
+	 * @return void
+	 * 
+	 * @throws OfCacheException
+	 */
+	protected function writeFile($file, $data)
+	{
+		$file = $this->cache_path . '/' . basename($file);
+		if(@file_exists($file) && !@is_writable($file))
+			throw new OfCacheException("Cache file '$file' is unwritable", OfCacheException::ERR_CACHE_UNWRITABLE);
+		if(!$f = @fopen($file, 'w'))
+			throw new OfCacheException("fopen() call failed for cache file '$file'", OfCacheException::ERR_CACHE_FOPEN_FAILED);
+		if(@flock($f, LOCK_EX))
+		{
+			$length = @fwrite($f, $data);
+			if($length !== strlen($data))
+				throw new OfCacheException("fwrite() call failed for cache file '$file'", OfCacheException::ERR_CACHE_FWRITE_FAILED);
+			@flock($f, LOCK_UN);
+		}
+		else
+		{
+			throw new OfCacheException("flock() call failed for cache file '$file'", OfCacheException::ERR_CACHE_FLOCK_FAILED);
+		}
+		@fclose($f);
+	}
+
+	/**
+	 * Reads a specified cache file's contents.
+	 * @param string $file - The file to read from.
+	 * @return string - The file's data
+	 *
+	 * @throws OfCacheException
+	 */
+	protected function readFile($file)
+	{
+		$file = $this->cache_path . '/' . basename($file);
+		if(!@is_readable($file))
+			throw new OfCacheException("Cache file '$file' is unreadable", OfCacheException::ERR_CACHE_UNREADABLE);
+		if(!$f = @fopen($file, 'r'))
+			throw new OfCacheException("fopen() call failed for cache file '$file'", OfCacheException::ERR_CACHE_FOPEN_FAILED);
+		if(@flock($f, LOCK_EX))
+		{
+			$data = @fread($f, @filesize($file));
+			@flock($f, LOCK_UN);
+		}
+		else
+		{
+			throw new OfCacheException("flock() call failed for cache file '$file'", OfCacheException::ERR_CACHE_FLOCK_FAILED);
+		}
+		@fclose($f);
+
+		return $data;
+	}
+
+	/**
+	 * Checks to see if a specified cache file exists.
+	 * @param string $file - The name of the cache file.
+	 * @return boolean - Does the file exist?
+	 */
+	protected function fileExists($file)
+	{
+		return file_exists($this->cache_path . '/' . basename($file));
+	}
+
+	/**
+	 * Deletes a specified file in the cache.
+	 * @param string $file - The file to delete.
+	 * @return boolean - Was the deletion successful?
+	 */
+	protected function deleteFile($file)
+	{
+		return @unlink($this->cache_path . '/' . basename($file));
+	}
 }
 
 /**
