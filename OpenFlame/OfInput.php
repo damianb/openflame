@@ -45,7 +45,7 @@ class OfInput
 			$globalName = '_' . $globalName;
 		
 		// We should have a good global now.
-		$globalName = in_array($globalName, array('_REQUEST', '_GET', '_POST', '_COOKIE', '_SERVER')) ? $globalName : '_REQUEST';
+		$globalName = in_array($globalName, array('_REQUEST', '_GET', '_POST', '_COOKIE', '_SERVER', '_FILES')) ? $globalName : '_REQUEST';
 		
 		// We need to make sure that cookie is not contaminating the value of request
 		if($globalName == '_REQUEST' && isset($_COOKIE[$varName]))
@@ -97,7 +97,7 @@ class OfInput
 		}
 		else
 		{
-			list($value, $key) = array($this->bindVar($value, $_valueDefault), $this->bindVar($key, $_keyDefault));
+			list($value, $key) = array($this->bindVar($value, $default), $this->bindVar($key, $default));
 		}
 	}
 
