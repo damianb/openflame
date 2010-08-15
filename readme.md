@@ -17,6 +17,7 @@ Included files:
 * Bootstrap.php - (*File that loads all classes automatically*)
 * OpenFlame/Of.php - (*Environment class which will store runtime configurations and object instances*)
 * OpenFlame/OfCache.php - (*Cache interface, provides an abstract layer that can be used with interchangable caching engines*)
+* OpenFlame/OfCacheEngineJSON.php - (*JSON-based cache engine, intended for use by OfCache.php*)
 * OpenFlame/OfDb.php - (*Doctrine integration layer*)
 * OpenFlame/OfException.php - (*Exception classes used within the OpenFlame Framework*)
 * OpenFlame/OfFile.php - (*File upload handler class specifically for file uploading*)
