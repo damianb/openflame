@@ -43,7 +43,7 @@ class OfCache
 	{
 		$cache_engine = "OfCacheEngine$engine";
 		$this->cache_path = (string) $cache_path;
-		// include './Cache/Engine' . $engine . '.php';
+		// include OF_ROOT . $cache_engine . '.php'; // @todo replace with whatever include code we'll be using later
 		$this->engine = new $cache_engine($this->cache_path);
 		if(!($this->engine instanceof OfCacheEngineBase))
 			throw new OfCacheException('Cache engine does not extend OfCacheEngineBase class', OfCacheException::ERR_CACHE_ENGINE_NOT_CACHEBASE_CHILD);
@@ -125,7 +125,7 @@ class OfCacheEngineBase
 	 * @param string $file - The file to write to.
 	 * @param string $data - The data to write to the cache file.
 	 * @return void
-	 * 
+	 *
 	 * @throws OfCacheException
 	 */
 	protected function writeFile($file, $data)
