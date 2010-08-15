@@ -97,7 +97,8 @@ class OfInput
 		}
 		else
 		{
-			list($value, $key) = array($this->bindVar($value, $default), $this->bindVar($key, $default));
+			list($_keyDefault, $_valueDefault) = each($default);
+			list($value, $key) = array($this->bindVar($value, $_valueDefault), $this->bindVar($key, $_keyDefault));
 		}
 	}
 
