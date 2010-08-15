@@ -61,3 +61,21 @@ class OfCacheException extends OfException
 	const ERR_CACHE_ENGINE_NOT_CACHEBASE_CHILD = 2100;
 	const ERR_CACHE_ENGINE_NOT_CACHEINTERFACE_CHILD = 2101;
 }
+
+/**
+ * OpenFlame Web Framework - File Exception class,
+ * 		Used for exceptions generated in the File library.
+ *
+ *
+ * @author      David King ("imkingdavid")
+ * @license     http://opensource.org/licenses/mit-license.php The MIT License
+ */
+class OfFileException extends OfException
+{
+	const ERR_FILE_TOO_BIG = 3000;
+	const ERR_FILE_ZERO_BYTES = 3001;
+	const ERR_FILE_EXT_NOT_ALLOWED = 3002;
+	const ERR_FILE_UPLOAD_ERROR = 3003;
+	const ERR_FILE_URL_INVALID = 3004;
+	const ERR_FILE_INFO_MISSING = 3005;
+}
