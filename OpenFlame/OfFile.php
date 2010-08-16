@@ -44,7 +44,7 @@ class OfFile extends OfInput
 				// if there was an error with the upload
 				if($this->cleanedInput['error'] != UPLOAD_ERR_OK)
 				{
-					throw new OfFileException($this->cleanedInput['error'], ERR_FILE_UPLOAD_ERROR);
+					throw new OfFileException($this->cleanedInput['error'], OfFileException::ERR_FILE_UPLOAD_ERROR);
 				}
 				
 				if($this->verify($destinationDir))
@@ -56,9 +56,9 @@ class OfFile extends OfInput
 			case 'url';
 				// first we validate the URL before even pulling its contents
 				parent::__construct($file, '', '_POST');
-				if(!parent::validate('url'))
+				if(!$this->validate('url'))
 				{
-					throw new OfFileException('Invalid URL provided', ERR_FILE_URL_INVALID);
+					throw new OfFileException('Invalid URL provided', OfFileException::ERR_FILE_URL_INVALID);
 				}
 				
 				// @TODO: pull the url's content and validate it
@@ -74,18 +74,18 @@ class OfFile extends OfInput
 	function verify($path = './', $max_filesize = 300000)
 	{
 		if(!sizeof($this->cleanedInput))
-			throw new OfFileException('File information array empty', ERR_FILE_INFO_MISSING);
+			throw new OfFileException('File information array empty', OfFileException::ERR_FILE_INFO_MISSING);
 		
 		// get array of disallowed extensions; for now, hardcoded
 		$disallowed_ext = array('exe', 'zip', 'rar', '7z', 'gzip');
 		if(in_array(end(explode(".", $this->cleanedInput['name'])), $disallowed_ext))
-			throw new OfFileException('File extension not allowed', ERR_FILE_EXT_NOT_ALLOWED);
+			throw new OfFileException('File extension not allowed', OfFileException::ERR_FILE_EXT_NOT_ALLOWED);
 			
 		// check the filesize
 		if($max_filesize < $this->cleanedInput['size'])
-			throw new OfFileException('File is too large', ERR_FILE_TOO_BIG);
+			throw new OfFileException('File is too large', OfFileException::ERR_FILE_TOO_BIG);
 		else if($this->cleanedInput['size'] == 0)
-			throw new OfFileException('File is zero bytes', ERR_FILE_ZERO_BYTES);
+			throw new OfFileException('File is zero bytes', OfFileException::ERR_FILE_ZERO_BYTES);
 		
 		return true;
 	}
