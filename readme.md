@@ -10,21 +10,21 @@ This library generously provided for free by the OpenFlame CMS Development Team.
 
 ## Contents
 
-All files within the OpenFlame/ directory are named by the class they contain.
+All files within the src/ directory are named by the class they contain.
 
 Included files:
 
 * Bootstrap.php - (*File that loads all classes automatically*)
-* OpenFlame/Of.php - (*Environment class which will store runtime configurations and object instances*)
-* OpenFlame/OfCache.php - (*Cache interface, provides an abstract layer that can be used with interchangable caching engines*)
-* OpenFlame/OfCacheEngineJSON.php - (*JSON-based cache engine, intended for use by OfCache.php*)
-* OpenFlame/OfDb.php - (*Doctrine integration layer*)
-* OpenFlame/OfException.php - (*Exception classes used within the OpenFlame Framework*)
-* OpenFlame/OfFile.php - (*File upload handler class specifically for file uploading*)
-* OpenFlame/OfHandler.php - (*Provides a tasteful exception handler for uncaught (and even caught) exceptions*)
-* OpenFlame/OfHash.php - (*Provides a secure hashing algorithm using a modified version of phpass*)
-* OpenFlame/OfInput.php - (*Input retrieval class, see docs within the file*)
-* OpenFlame/OfJSON.php - (*JSON interface class, which makes it easier to work with JSON files*)
-* OpenFlame/OfTwig.php - (*Twig integration class, enables easy template variable management*)
-* OpenFlame/OfUrlHander.php - (*Provides "pretty" urls functionality*)
-* OpenFlame/OfUser.php - (*Wrapper for native PHP sessions*)
+* src/Of.php - (*Environment class which will store runtime configurations and object instances*)
+* src/OfCache.php - (*Cache interface, provides an abstract layer that can be used with interchangable caching engines*)
+* src/OfCacheEngineJSON.php - (*JSON-based cache engine, intended for use by OfCache.php*)
+* src/OfDb.php - (*Doctrine integration layer*)
+* src/OfException.php - (*Exception classes used within the OpenFlame Framework*)
+* src/OfFile.php - (*File upload handler class specifically for file uploading*)
+* src/OfHandler.php - (*Provides a tasteful exception handler for uncaught (and even caught) exceptions*)
+* src/OfHash.php - (*Provides a secure hashing algorithm using a modified version of phpass*)
+* src/OfInput.php - (*Input retrieval class, see docs within the file*)
+* src/OfJSON.php - (*JSON interface class, which makes it easier to work with JSON files*)
+* src/OfTwig.php - (*Twig integration class, enables easy template variable management*)
+* src/OfUrlHander.php - (*Provides "pretty" urls functionality*)
+* src/OfUser.php - (*Wrapper for native PHP sessions*)
