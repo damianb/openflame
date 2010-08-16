@@ -28,10 +28,18 @@ else if(!file_exists(ROOT_PATH . 'OfInput.php') && !class_exists('OfInput'))
 class OfFile extends OfInput
 {
 	
-	// The properties of a file
-	public $fileName; // Full relative path and file name from the current location
-	public $fileMd5Hash; // md5 Hash of the file for verifying the integrity (possibly store in the DB for later?)
-	public $fileSize; // Size of the file
+	/**
+	 * @var string Relative path to the file (including the filename)
+	 */
+	public $fileName;
+	/**
+	 * @var string md5 Hash of the file for verifyinng the integrity (possibly store in the database for later?)
+	 */
+	public $fileMd5Hash;
+	/**
+	 * @var int Size of the file
+	 */
+	public $fileSize;
 
 	/**
 	* Constructor 
@@ -40,7 +48,7 @@ class OfFile extends OfInput
 	* @param string $file The name of the form field.
 	* @param string $destionationDir The directory for the file to be uploaded to
 	*/
-	function __construct($source = 'upload', $file, $destinationDir)
+	public function __construct($source = 'upload', $file, $destinationDir)
 	{
 		switch($source)
 		{
@@ -55,7 +63,7 @@ class OfFile extends OfInput
 					move_uploaded_file($this->cleanedInput['tmp_name'], $destinationDir . $this->cleanedInput['name']);
 				
 				$this->fileName = $destinationDir . $this->cleanedInput['name'];
-				$this->fileMd5Hash = md5_file($this->fileName);
+				$this->fileMd5Hash = hash_file('md5', $this->fileName);
 				$this->fileSize = $this->cleanedInput['size'];
 			break;
 			
@@ -74,11 +82,12 @@ class OfFile extends OfInput
 	* verify() 
 	*
 	* @param int $maxFilesize The maximum size allowed for an uploaded file.
+	* @return true if all goes well; otherwise, no return
 	*/
 	// @TODO: get a proper default max filesize; 300000 was just an example on php.net
-	function verify($maxFilesize = 300000)
+	public function verify($maxFilesize = 300000)
 	{
-		if(!sizeof($this->cleanedInput))
+		if(empty($this->cleanedInput)
 			throw new OfFileException('File information array empty', OfFileException::ERR_FILE_INFO_MISSING);
 		
 		// get array of disallowed extensions; for now, hardcoded
