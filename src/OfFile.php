@@ -27,6 +27,12 @@ else if(!file_exists(ROOT_PATH . 'OfInput.php') && !class_exists('OfInput'))
  */
 class OfFile extends OfInput
 {
+	
+	// The properties of a file
+	public $fileName; // Full relative path and file name from the current location
+	public $fileMd5Hash; // md5 Hash of the file for verifying the integrity (possibly store in the DB for later?)
+	public $fileSize; // Size of the file
+
 	/**
 	* Constructor 
 	*
@@ -43,23 +49,21 @@ class OfFile extends OfInput
 				parent::__construct($file, array('' => ''), '_FILES');
 				// if there was an error with the upload
 				if($this->cleanedInput['error'] != UPLOAD_ERR_OK)
-				{
 					throw new OfFileException($this->cleanedInput['error'], OfFileException::ERR_FILE_UPLOAD_ERROR);
-				}
 				
-				if($this->verify($destinationDir))
-				{
-					move_uploaded_file($this->cleanedInput['tmp_name'], $destinationDir . $this->rawInput['name']);
-				}
+				if($this->verify())
+					move_uploaded_file($this->cleanedInput['tmp_name'], $destinationDir . $this->cleanedInput['name']);
+				
+				$this->fileName = $destinationDir . $this->cleanedInput['name'];
+				$this->fileMd5Hash = md5_file($this->fileName);
+				$this->fileSize = $this->cleanedInput['size'];
 			break;
 			
 			case 'url';
 				// first we validate the URL before even pulling its contents
 				parent::__construct($file, '', '_POST');
 				if(!$this->validate('url'))
-				{
 					throw new OfFileException('Invalid URL provided', OfFileException::ERR_FILE_URL_INVALID);
-				}
 				
 				// @TODO: pull the url's content and validate it
 			break;
@@ -69,22 +73,23 @@ class OfFile extends OfInput
 	/**
 	* verify() 
 	*
+	* @param int $maxFilesize The maximum size allowed for an uploaded file.
 	*/
 	// @TODO: get a proper default max filesize; 300000 was just an example on php.net
-	function verify($path = './', $max_filesize = 300000)
+	function verify($maxFilesize = 300000)
 	{
 		if(!sizeof($this->cleanedInput))
 			throw new OfFileException('File information array empty', OfFileException::ERR_FILE_INFO_MISSING);
 		
 		// get array of disallowed extensions; for now, hardcoded
 		$disallowed_ext = array('exe', 'zip', 'rar', '7z', 'gzip');
-		if(in_array(end(explode(".", $this->cleanedInput['name'])), $disallowed_ext))
+		if(in_array(end(explode(".", $this->fileName)), $disallowed_ext))
 			throw new OfFileException('File extension not allowed', OfFileException::ERR_FILE_EXT_NOT_ALLOWED);
 			
 		// check the filesize
-		if($max_filesize < $this->cleanedInput['size'])
+		if($maxFilesize < $this->fileSize)
 			throw new OfFileException('File is too large', OfFileException::ERR_FILE_TOO_BIG);
-		else if($this->cleanedInput['size'] == 0)
+		else if($this->fileSize == 0)
 			throw new OfFileException('File is zero bytes', OfFileException::ERR_FILE_ZERO_BYTES);
 		
 		return true;
