@@ -42,11 +42,14 @@ class OfFile extends OfInput
 	public $fileSize;
 
 	/**
-	* Constructor 
+	* Constructor method called when the object is instantiated.
+	* Handles the file upload and verification so that no further methods must be called.
 	*
 	* @param string $source The source of the file. Should be either "upload" or "url"
 	* @param string $file The name of the form field.
 	* @param string $destionationDir The directory for the file to be uploaded to
+	*
+	* @throws OfFileException
 	*/
 	public function __construct($source = 'upload', $file, $destinationDir)
 	{
@@ -79,10 +82,12 @@ class OfFile extends OfInput
 	}
 
 	/**
-	* verify() 
+	* Verifies the uploaded file to make sure it is safe to use and all restrictions are met. 
 	*
 	* @param int $maxFilesize The maximum size allowed for an uploaded file.
-	* @return true if all goes well; otherwise, no return
+	* @return boolean - Returns true if successful
+	*
+	* @throws OfFileException
 	*/
 	// @TODO: get a proper default max filesize; 300000 was just an example on php.net
 	public function verify($maxFilesize = 300000)
