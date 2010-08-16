@@ -30,16 +30,16 @@ class OfFile extends OfInput
 	/**
 	* Constructor 
 	*
-	* @param string $source The source of the file. Should be either "form" or "url"
-	* @param string $file If $source if "url", the URL of the file. If $source if "form", the file form field name e.g. <input type="file" name="the_file" /> would make $file = 'the_file';
+	* @param string $source The source of the file. Should be either "upload" or "url"
+	* @param string $file The name of the form field.
 	* @param string $destionationDir The directory for the file to be uploaded to
 	*/
-	function __construct($source = 'form', $file, $destinationDir)
+	function __construct($source = 'upload', $file, $destinationDir)
 	{
 		switch($source)
 		{
 			default:
-			case 'form':
+			case 'upload':
 				parent::__construct($file, array('' => ''), '_FILES');
 				// if there was an error with the upload
 				if($this->cleanedInput['error'] != UPLOAD_ERR_OK)
