@@ -1,9 +1,10 @@
 <?php
 /**
  *
- * @package OpenFlame Web Framework
- * @copyright (c) 2010 OpenFlameCMS.com
- * @license http://opensource.org/licenses/mit-license.php The MIT License
+ * @package     OpenFlame Web Framework
+ * @copyright   (c) 2010 OpenFlameCMS.com
+ * @license     http://opensource.org/licenses/mit-license.php The MIT License
+ * @link        http://github.com/OpenFlame/OpenFlame-Framework
  *
  * Minimum Requirement: PHP 5.0.0
  */
@@ -18,25 +19,26 @@ if(!defined('ROOT_PATH'))
  *
  * @author      Sam Thompson ("Sam")
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
+ * @link        http://github.com/OpenFlame/OpenFlame-Framework
  */
 class OfInput
 {
 	/**
-	 * @var mixed raw input
+	 * @var mixed - The raw input
 	 */
 	protected $raw_input;
 
 	/**
-	 * @var mixed cleaned input
+	 * @var mixed - The cleaned input
 	 */
 	protected $cleaned_input;
 
 	/**
 	 * Constructor
-	 *
 	 * @param string $var_name Var name in the global you're after
 	 * @param mixed $default Default value and type to fall back on and check for good types
 	 * @param string @global_name The name of the super global to use. REQUEST, GET, POST, COOKIE, and SERVER are all avavible.
+	 * @return void
 	 */
 	public function __construct($var_name, $default, $global_name = '_REQUEST')
 	{
@@ -59,7 +61,6 @@ class OfInput
 
 	/**
 	 * Recursively digs through the default to ensure everything is in it's place.
-	 *
 	 * @param mixed $var
 	 * @param mixed $default
 	 * @return mixed The cleaned data.
@@ -83,10 +84,9 @@ class OfInput
 
 	/**
 	 * Binds the var to it's final type
-	 *
-	 * @param mixed $var The var being bound
-	 * @param mixed $default Default value
-	 * @return string Cleaned output
+	 * @param mixed $var - The var being bound
+	 * @param mixed $default - Default value
+	 * @return string - Cleaned output
 	 */
 	public function bindVar($var, $default)
 	{
@@ -106,9 +106,8 @@ class OfInput
 
 	/**
 	 * Validates the piece of data
-	 *
-	 * @param string $type Validate against, see the full type profile list
-	 * @return bool true if valid, false if not.
+	 * @param string $type - The type to validate against, see the full type profile list
+	 * @return boolean - True if valid, false if not.
 	 */
 	public function validate($type, $min = 0, $max = 0)
 	{
@@ -166,31 +165,28 @@ class OfInput
 
 	/**
 	 * Returns the raw var
-	 *
-	 * @return bool true if set, false if not.
+	 * @return boolean - True if set, false if not.
 	 */
 	public function getRaw()
 	{
-		return $this->raw_input;
+		return (!empty($this->raw_input)) ? $this->raw_input : false;
 	}
 
 	/**
 	 * Returns the cleaned var
-	 *
-	 * @return bool true if set, false if not.
+	 * @return boolean - True if set, false if not.
 	 */
 	public function getClean()
 	{
-		return $this->cleaned_input;
+		return (!empty($this->cleaned_input)) ? $this->cleaned_input : false;
 	}
 
 	/**
 	 * Checks to see if the var was even set when the page was submitted
-	 *
-	 * @return bool true if set, false if not.
+	 * @return boolean - True if set, false if not.
 	 */
 	public function wasSet()
 	{
-		return $this->raw_input == null ? true : false;
+		return (boolean) is_null($this->raw_input);
 	}
 }

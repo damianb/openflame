@@ -1,11 +1,12 @@
 <?php
 /**
  *
- * @package OpenFlame Web Framework
- * @copyright (c) 2010 OpenFlameCMS.com
- * @license http://opensource.org/licenses/mit-license.php The MIT License
+ * @package     OpenFlame Web Framework
+ * @copyright   (c) 2010 OpenFlameCMS.com
+ * @license     http://opensource.org/licenses/mit-license.php The MIT License
+ * @link        http://github.com/OpenFlame/OpenFlame-Framework
  *
- * Minimum Requirement: PHP 5.2.0
+ * Minimum Requirement: PHP 5.0.0
  */
 
 if(!defined('ROOT_PATH'))
@@ -18,6 +19,8 @@ if(!defined('ROOT_PATH'))
  *
  * @author      Damian Bushong ("Obsidian")
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
+ * @link        http://github.com/OpenFlame/OpenFlame-Framework
+ *
  * @note        This class should not be instantiated; it should only be statically accessed.
  */
 class OfJSON
@@ -37,7 +40,7 @@ class OfJSON
 	 * @param string $json - The JSON string or the path of the JSON file to decode.
 	 * @param boolean $is_file - Are we loading from a JSON file?
 	 * @return array - The contents of the JSON string/file.
-	 * 
+	 *
 	 * @throws OfJSONException
 	 */
 	public static function decode($json, $is_file = true)
