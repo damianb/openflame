@@ -31,27 +31,27 @@ class OfFile extends OfInput
 	/**
 	 * @var string Relative path to the file (including the filename)
 	 */
-	public $fileName;
+	public $file_name;
 	/**
 	 * @var string md5 Hash of the file for verifyinng the integrity (possibly store in the database for later?)
 	 */
-	public $fileMd5Hash;
+	public $file_md5_hash;
 	/**
 	 * @var int Size of the file
 	 */
-	public $fileSize;
+	public $file_size;
 
 	/**
-	* Constructor method called when the object is instantiated.
-	* Handles the file upload and verification so that no further methods must be called.
-	*
-	* @param string $source The source of the file. Should be either "upload" or "url"
-	* @param string $file The name of the form field.
-	* @param string $destionationDir The directory for the file to be uploaded to
-	*
-	* @throws OfFileException
-	*/
-	public function __construct($source = 'upload', $file, $destinationDir)
+	 * Constructor method called when the object is instantiated.
+	 * Handles the file upload and verification so that no further methods must be called.
+	 *
+	 * @param string $source The source of the file. Should be either "upload" or "url"
+	 * @param string $file The name of the form field.
+	 * @param string $destionation_dir The directory for the file to be uploaded to
+	 *
+	 * @throws OfFileException
+	 */
+	public function __construct($source = 'upload', $file, $destination_dir)
 	{
 		switch($source)
 		{
@@ -59,15 +59,15 @@ class OfFile extends OfInput
 			case 'upload':
 				parent::__construct($file, array('' => ''), '_FILES');
 				// if there was an error with the upload
-				if($this->cleanedInput['error'] != UPLOAD_ERR_OK)
-					throw new OfFileException($this->cleanedInput['error'], OfFileException::ERR_FILE_UPLOAD_ERROR);
+				if($this->cleaned_input['error'] != UPLOAD_ERR_OK)
+					throw new OfFileException($this->cleaned_input['error'], OfFileException::ERR_FILE_UPLOAD_ERROR);
 				
 				if($this->verify())
-					move_uploaded_file($this->cleanedInput['tmp_name'], $destinationDir . $this->cleanedInput['name']);
+					move_uploaded_file($this->cleaned_input['tmp_name'], $destination_dir . $this->cleaned_input['name']);
 				
-				$this->fileName = $destinationDir . $this->cleanedInput['name'];
-				$this->fileMd5Hash = hash_file('md5', $this->fileName);
-				$this->fileSize = $this->cleanedInput['size'];
+				$this->file_name = $destination_dir . $this->cleaned_input['name'];
+				$this->file_md5_hash = hash_file('md5', $this->file_name);
+				$this->file_size = $this->cleaned_input['size'];
 			break;
 			
 			case 'url';
@@ -82,28 +82,28 @@ class OfFile extends OfInput
 	}
 
 	/**
-	* Verifies the uploaded file to make sure it is safe to use and all restrictions are met. 
-	*
-	* @param int $maxFilesize The maximum size allowed for an uploaded file.
-	* @return boolean - Returns true if successful
-	*
-	* @throws OfFileException
-	*/
+	 * Verifies the uploaded file to make sure it is safe to use and all restrictions are met. 
+	 *
+	 * @param int $max_filesize The maximum size allowed for an uploaded file.
+	 * @return boolean - Returns true if successful
+	 *
+	 * @throws OfFileException
+	 */
 	// @TODO: get a proper default max filesize; 300000 was just an example on php.net
-	public function verify($maxFilesize = 300000)
+	public function verify($max_filesize = 300000)
 	{
-		if(empty($this->cleanedInput)
+		if(empty($this->cleaned_input))
 			throw new OfFileException('File information array empty', OfFileException::ERR_FILE_INFO_MISSING);
 		
 		// get array of disallowed extensions; for now, hardcoded
 		$disallowed_ext = array('exe', 'zip', 'rar', '7z', 'gzip');
-		if(in_array(end(explode(".", $this->fileName)), $disallowed_ext))
+		if(in_array(end(explode(".", $this->file_name)), $disallowed_ext))
 			throw new OfFileException('File extension not allowed', OfFileException::ERR_FILE_EXT_NOT_ALLOWED);
 			
 		// check the filesize
-		if($maxFilesize < $this->fileSize)
+		if($max_filesize < $this->file_size)
 			throw new OfFileException('File is too large', OfFileException::ERR_FILE_TOO_BIG);
-		else if($this->fileSize == 0)
+		else if($this->file_size == 0)
 			throw new OfFileException('File is zero bytes', OfFileException::ERR_FILE_ZERO_BYTES);
 		
 		return true;
