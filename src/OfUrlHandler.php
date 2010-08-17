@@ -28,28 +28,28 @@ class OfUrlHandler
 	 *
 	 * @var string
 	 */
-	public $webRootPath = '';
+	public $web_root_path = '';
 
 	/**
 	 * URL base, will be removed from the REQUEST_URI
 	 *
 	 * @var string
 	 */
-	private $urlBase = '';
+	private $url_base = '';
 
 	/**
 	 * Each of the URL parts in an array
 	 *
 	 * @var array
 	 */
-	private $urlParts = array();
+	private $url_parts = array();
 
 	/**
-	 * Copy of $this->urlParts to be used in ::get()
+	 * Copy of $this->url_parts to be used in ::get()
 	 *
 	 * @var array
 	 */
-	private $_urlParts = array();
+	private $_url_parts = array();
 
 	/**
 	 * Just to make sure no one sends stupidly long url requests for this to process
@@ -59,26 +59,26 @@ class OfUrlHandler
 	/**
 	 * Constructor
 	 *
-	 * @param string $urlBase
+	 * @param string $url_base
 	 * @return object
 	 */
-	public function __construct($urlBase)
+	public function __construct($url_base)
 	{
-		$this->urlBase = (string) $urlBase;
+		$this->url_base = (string) $url_base;
 
 		// Add the leading / to the url base
-		if($this->urlBase[0] !== '/')
-			$this->urlBase = '/' . $this->urlBase;
+		if($this->url_base[0] !== '/')
+			$this->url_base = '/' . $this->url_base;
 
 		// Add the trailing / to the url base
-		if(strrpos($this->urlBase, '/') !== (strlen($this->urlBase) - 1))
-			$this->urlBase .= '/';
+		if(strrpos($this->url_base, '/') !== (strlen($this->url_base) - 1))
+			$this->url_base .= '/';
 
 		$url = (string) $_SERVER['REQUEST_URI'];
 
 		// remove the url base from the beginning
-		if (strpos($url, $this->urlBase) === 0)
-			$url = substr($url, strlen($this->urlBase) - 1);
+		if (strpos($url, $this->url_base) === 0)
+			$url = substr($url, strlen($this->url_base) - 1);
 
 		// Get rid of _GET query string
 		if (strpos($url, '?') !== false)
@@ -99,37 +99,37 @@ class OfUrlHandler
 			if(empty($url[$i]))
 				continue;
 
-			$this->urlParts[] = trim(htmlspecialchars(str_replace(array("\r\n", "\r", "\0"), array("\n", "\n", ''), $url[$i]), ENT_COMPAT, 'UTF-8'));
+			$this->url_parts[] = trim(htmlspecialchars(str_replace(array("\r\n", "\r", "\0"), array("\n", "\n", ''), $url[$i]), ENT_COMPAT, 'UTF-8'));
 
 			// Var for all relative linking
-			$this->webRootPath .= '../';
+			$this->web_root_path .= '../';
 		}
 
-		$this->_urlParts = $this->urlParts;
+		$this->_url_parts = $this->url_parts;
 	}
 
 	/**
 	 * Build a URL
 	 *
-	 * @param array $urlAry Array of url chunks, "array('lol', 'asdf', '12345')" would create "/lol/asdf/12345"
-	 * @param array $requestAry Array of request data ('id' => '123', 'mode' => 'edit')
-	 * @param string $appendString A string that gets appended to the URL (for anchored links)
+	 * @param array $url_ary Array of url chunks, "array('lol', 'asdf', '12345')" would create "/lol/asdf/12345"
+	 * @param array $request_ary Array of request data ('id' => '123', 'mode' => 'edit')
+	 * @param string $append_string A string that gets appended to the URL (for anchored links)
 	 * @param bool $use_amp use &amp; (true) or & (false)
 	 * @return string url
 	 */
-	public function build($urlAry = array(), $requestAry = array(), $appendString = '', $use_amp = true)
+	public function build($url_ary = array(), $request_ary = array(), $append_string = '', $use_amp = true)
 	{
 		// Find the parts of the URL that are the same from the beginning.
 		$congruences = 0;
-		foreach($this->urlParts as $i => $element)
+		foreach($this->url_parts as $i => $element)
 		{
-			if($urlAry[$i] == $element)
+			if($url_ary[$i] == $element)
 				$congruences++;
 		}
 
 		// Get only the parts that are different
-		$_url = array_slice($this->urlParts, $congruences);
-		$urlAry = array_slice($urlAry, $congruences);
+		$_url = array_slice($this->url_parts, $congruences);
+		$url_ary = array_slice($url_ary, $congruences);
 
 		// Create $url and start building the path
 		$url = './';
@@ -137,24 +137,24 @@ class OfUrlHandler
 			$url .= '../';
 
 		// Add the new path
-		$url .= implode('/', $urlAry) . (!empty($urlAry) ? '/' : '');
+		$url .= implode('/', $url_ary) . (!empty($url_ary) ? '/' : '');
 
 		// Add the _GET params
-		if(sizeof($requestAry))
+		if(sizeof($request_ary))
 		{
 			$url .= '?';
-			$_requestAry = array();
+			$_request_ary = array();
 
-			foreach($requestAry as $name => $value)
-				$_requestAry[] = $name . '=' . $value;
+			foreach($request_ary as $name => $value)
+				$_request_ary[] = $name . '=' . $value;
 
 			$glue = ($use_amp) ? '&amp;' : '&';
-			$url .= implode($glue, $_requestAry);
+			$url .= implode($glue, $_request_ary);
 		}
 
 		// Anchor links
-		if(!empty($appendString))
-			$url .= $appendString;
+		if(!empty($append_string))
+			$url .= $append_string;
 
 		return $url;
 	}
@@ -167,9 +167,9 @@ class OfUrlHandler
 	 */
 	public function get($default = '')
 	{
-		if (sizeof($this->_urlParts))
+		if (sizeof($this->_url_parts))
 		{
-			$return = array_shift($this->_urlParts);
+			$return = array_shift($this->_url_parts);
 
 			$type = gettype($default);
 			settype($return, $type);
@@ -188,6 +188,6 @@ class OfUrlHandler
 	 */
 	public function checkExtra()
 	{
-		return sizeof($this->_urlParts) ? true : false;
+		return sizeof($this->_url_parts) ? true : false;
 	}
 }
