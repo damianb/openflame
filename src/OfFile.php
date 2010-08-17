@@ -101,9 +101,13 @@ class OfFile extends OfInput
 
 		// check the filesize
 		if($max_filesize < $this->file_size)
+		{
 			throw new OfFileException('File is too large', OfFileException::ERR_FILE_TOO_BIG);
+		}
 		else if($this->file_size == 0)
+		{
 			throw new OfFileException('File is zero bytes', OfFileException::ERR_FILE_ZERO_BYTES);
+		}
 
 		return true;
 	}
