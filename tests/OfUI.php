@@ -12,7 +12,7 @@
 if(!defined('IN_OF_TEST')) exit;
 
 /**
- * Codebite - CLI interface class,
+ * OpenFlame Web Framework - CLI interface class,
  * 		Provides the rough shell for interaction via CLI.
  *
  *
