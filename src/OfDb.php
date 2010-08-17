@@ -44,7 +44,7 @@ class OfDb
 	 * Open new connection to the database
 	 *
 	 * @param string $dsn The string PDO requires to open a new database connection
-	 * @param stirng $username user used to log into the database specificed
+	 * @param string $username user used to log into the database specified
 	 * @param string $password the password to the user account specified in the param before
 	 * @param array $options dbms specific options given to PDO
 	 * @return void
