@@ -18,6 +18,7 @@ if(!defined('IN_OF_TEST')) exit;
 // start loading stuff
 require OF_TEST_ROOT . 'OfUI.php';
 require OF_TEST_ROOT . 'OfCLIHandler.php';
+require OF_TEST_ROOT . 'OfTestBase.php';
 
 // We need the UI instantiated here before continuing.
 $ui = new OfUI();
