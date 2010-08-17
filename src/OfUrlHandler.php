@@ -1,12 +1,16 @@
 <?php
 /**
  *
- * @package OpenFlame Web Framework
- * @copyright (c) 2010 OpenFlameCMS.com
- * @license http://opensource.org/licenses/mit-license.php The MIT License
+ * @package     OpenFlame Web Framework
+ * @copyright   (c) 2010 OpenFlameCMS.com
+ * @license     http://opensource.org/licenses/mit-license.php The MIT License
+ * @link        http://github.com/OpenFlame/OpenFlame-Framework
  *
  * Minimum Requirement: PHP 5.0.0
  */
+
+if(!defined('ROOT_PATH'))
+	define('ROOT_PATH', './');
 
 /**
  * OpenFlame Web Framework - Url Hanlder
@@ -15,6 +19,7 @@
  *
  * @author      Sam Thompson ("Sam")
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
+ * @link        http://github.com/OpenFlame/OpenFlame-Framework
  */
 class OfUrlHandler
 {
@@ -60,17 +65,17 @@ class OfUrlHandler
 	public function __construct($urlBase)
 	{
 		$this->urlBase = (string) $urlBase;
-		
+
 		// Add the leading / to the url base
 		if($this->urlBase[0] !== '/')
 			$this->urlBase = '/' . $this->urlBase;
-		
+
 		// Add the trailing / to the url base
 		if(strrpos($this->urlBase, '/') !== (strlen($this->urlBase) - 1))
 			$this->urlBase .= '/';
-		
+
 		$url = (string) $_SERVER['REQUEST_URI'];
-		
+
 		// remove the url base from the beginning
 		if (strpos($url, $this->urlBase) === 0)
 			$url = substr($url, strlen($this->urlBase) - 1);
@@ -93,13 +98,13 @@ class OfUrlHandler
 		{
 			if(empty($url[$i]))
 				continue;
-			
+
 			$this->urlParts[] = trim(htmlspecialchars(str_replace(array("\r\n", "\r", "\0"), array("\n", "\n", ''), $url[$i]), ENT_COMPAT, 'UTF-8'));
-			
+
 			// Var for all relative linking
 			$this->webRootPath .= '../';
 		}
-		
+
 		$this->_urlParts = $this->urlParts;
 	}
 
@@ -121,7 +126,7 @@ class OfUrlHandler
 			if($urlAry[$i] == $element)
 				$congruences++;
 		}
-		
+
 		// Get only the parts that are different
 		$_url = array_slice($this->urlParts, $congruences);
 		$urlAry = array_slice($urlAry, $congruences);
@@ -130,11 +135,11 @@ class OfUrlHandler
 		$url = './';
 		for($i = 0; $i < sizeof($_url); $i++)
 			$url .= '../';
-		
+
 		// Add the new path
 		$url .= implode('/', $urlAry) . (!empty($urlAry) ? '/' : '');
 
-		// Add the _GET params		
+		// Add the _GET params
 		if(sizeof($requestAry))
 		{
 			$url .= '?';
@@ -177,7 +182,7 @@ class OfUrlHandler
 
 	/**
 	 * Checks for extranious URL elements not used with url_handler::get().
-	 * This allows you to 404 them in your script. 
+	 * This allows you to 404 them in your script.
 	 *
 	 * @return bool
 	 */
