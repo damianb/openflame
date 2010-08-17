@@ -14,7 +14,7 @@ if(!defined('ROOT_PATH'))
 
 /**
  * OpenFlame Web Framework - Session class
- * 	     Acts as a wrapper for the native PHP sessions with increased security and authentication capibiliteis.
+ * 	     Acts as a wrapper for the native PHP sessions with increased security and authentication capabilities.
  *
  *
  * @author      Sam Thompson ("Sam")
