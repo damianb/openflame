@@ -31,7 +31,7 @@ class OfInput
 	/**
 	 * @var mixed - The cleaned input
 	 */
-	public $cleaned_input;
+	protected $cleaned_input;
 
 	/**
 	 * Constructor
