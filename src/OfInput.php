@@ -31,7 +31,7 @@ class OfInput
 	/**
 	 * @var mixed - The cleaned input
 	 */
-	protected $cleaned_input;
+	public $cleaned_input;
 
 	/**
 	 * Constructor
@@ -121,11 +121,10 @@ class OfInput
 			break;
 
 			case 'url':
-				// By "keevkilla" (http://snipplr.com/view/36992/improvement-of-url-interpretation-with-regex/)
+				// By "admin" (http://www.blog.highub.com/regular-expression/php-regex-regular-expression/php-regex-validating-a-url/)
 				// Assumed Public Domain
 				// @TODO Test cases to make sure it works.
-				// 		One issue was pointed out in the comments that should be looked into
-				return preg_match("#((https?://)?([-\w]+\.[-\w\.]+)+\w(:\d+)?(/([-\w/_\.]*(\?\S+)?)?)*)#", $this->cleaned_input) === 1 ? true : false;
+				return preg_match("/^(([\w]+:)?\/\/)?(([\d\w]|%[a-fA-f\d]{2,2})+(:([\d\w]|%[a-fA-f\d]{2,2})+)?@)?([\d\w][-\d\w]{0,253}[\d\w]\.)+[\w]{2,4}(:[\d]+)?(\/([-+_~.\d\w]|%[a-fA-f\d]{2,2})*)*(\?(&amp;?([-+_~.\d\w]|%[a-fA-f\d]{2,2})=?)*)?(#([-+_~.\d\w]|%[a-fA-f\d]{2,2})*)?$/", $this->cleaned_input) === 1 ? true : false;
 			break;
 
 			case 'ip4':
