@@ -244,11 +244,10 @@ example 1 - *file header documentation*
 	<?php
 	/**
 	 *
-	 * @package OpenFlame Web Framework
-	 * @copyright (c) {copyright year(s)} {copyright holder}
-	 * @license {license info}
-	 * @link {project link}
-	 *
+	 * @package     {package name}
+	 * @copyright   (c) {copyright year(s)} {copyright holder}
+	 * @license     {license info}
+	 * @link        {project link}
 	 */
 
 example 2 - *class documentation*
