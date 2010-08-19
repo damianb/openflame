@@ -59,9 +59,25 @@ class Of
 		return self::$config[$config_name];
 	}
 
+	/**
+	 * Provides autoloader functionality for the OpenFlame Framework
+	 * @param string $class - The class to load up
+	 * @return boolean - True if load successful, false if we could not find the file to load
+	 *
+	 * @throws Exception
+	 *
+	 * @note   - We use exception here, instead of OfException, to make the class "Of" able to be initially used standalone
+	 */
 	public static function loader($class)
 	{
-		// code to autoload a file based on class name
+		if(file_exists(OF_ROOT . basename($class) . '.php'))
+		{
+			require OF_ROOT . basename($class) . '.php';
+			if(!class_exists($class, false))
+				throw new Exception('OpenFlame Framework Autoloader failed to load correct class file for class "' . $class . '"');
+			return true;
+		}
+		return false;
 	}
 
 	public static function storeObject($slot, $object)
