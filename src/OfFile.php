@@ -119,7 +119,7 @@ class OfFile extends OfInput
 		
 		// get array of disallowed extensions; for now, hardcoded
 		$disallowed_ext = array('exe', 'zip', 'rar', '7z', 'gzip');
-		if(in_array(end(explode(".", $this->file_name)), $disallowed_ext))
+		if(in_array(end(explode(".", $file_name)), $disallowed_ext))
 			throw new OfFileException('File extension not allowed', OfFileException::ERR_FILE_EXT_NOT_ALLOWED);
 
 		// check the filesize
