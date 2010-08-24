@@ -48,7 +48,7 @@ class OfFile extends OfInput
 	 * Constructor, handles the file upload and verification so that no further methods must be called.
 	 * @param string $source The source of the file. Should be either "upload" or "url"
 	 * @param string $file The name of the form field.
-	 * @param string $destionation_dir The directory for the file to be uploaded to
+	 * @param string $destination_dir The directory for the file to be uploaded to
 	 * @throws OfFileException
 	 */
 	public function __construct($source = 'upload', $file, $destination_dir)
@@ -75,36 +75,59 @@ class OfFile extends OfInput
 				parent::__construct($file, '', '_POST');
 				if(!$this->validate('url'))
 					throw new OfFileException('Invalid URL provided', OfFileException::ERR_FILE_URL_INVALID);
-
-				// @TODO: pull the url's content and validate it
+				
+				/**
+				 *@todo Make the new file name unique so that more than one file with the same name can
+				 *	be uploaded without the old one being overwritten.
+				 */
+				$new_filename = basename($this->cleaned_input);
+				$remote_file_contents = file_get_contents($this->cleaned_input);
+				if($this->verify($remote_file_contents, $new_filename, mb_strlen($remote_file_contents, 'latin1')))
+				{
+					$new_file = fopen($destination_dir . $new_filename, 'w+b');
+					fwrite($new_file, $remote_file_contents);
+					fclose($new_file);
+				}
+				unset($remote_file_contents);
 			break;
 		}
 	}
 
 	/**
 	 * Verifies the uploaded file to make sure it is safe to use and all restrictions are met.
-	 * @param int $max_filesize The maximum size allowed for an uploaded file.
+	 *
+	 * @param string $input The input to validate
+	 * @param string $file_name The name of the file (with the extension)
+	 * @param int $file_size The actual size of the file
+	 * @param int $max_filesize The maximum size allowed for an uploaded file
+	 * 
 	 * @return boolean - Returns true if successful
 	 *
 	 * @throws OfFileException
 	 */
 	// @TODO: get a proper default max filesize; 300000 was just an example on php.net
-	public function verify($max_filesize = 300000)
+	public function verify($input = '', $file_name = '', $file_size = 0, $max_filesize = 300000)
 	{
-		if(empty($this->cleaned_input))
+		// For all of the arguments except the max_filesize,
+		// if it is not provided here, check the class variable: $this->{var}
+		$input = (!empty($input)) ? $input : $this->cleaned_input;
+		$file_name = (!empty($file_name)) ? $file_name : $this->file_name;
+		$file_size = (!empty($file_size)) ? $file_size : $this->file_size;
+		
+		if(empty($input))
 			throw new OfFileException('File information array empty', OfFileException::ERR_FILE_INFO_MISSING);
-
+		
 		// get array of disallowed extensions; for now, hardcoded
 		$disallowed_ext = array('exe', 'zip', 'rar', '7z', 'gzip');
 		if(in_array(end(explode(".", $this->file_name)), $disallowed_ext))
 			throw new OfFileException('File extension not allowed', OfFileException::ERR_FILE_EXT_NOT_ALLOWED);
 
 		// check the filesize
-		if($max_filesize < $this->file_size)
+		if($max_filesize < $file_size)
 		{
 			throw new OfFileException('File is too large', OfFileException::ERR_FILE_TOO_BIG);
 		}
-		else if($this->file_size == 0)
+		else if($file_size == 0)
 		{
 			throw new OfFileException('File is zero bytes', OfFileException::ERR_FILE_ZERO_BYTES);
 		}
