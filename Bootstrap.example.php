@@ -10,10 +10,13 @@
  */
 
 define('OF_ROOT', dirname(__FILE__) . '/src/');
-require OF_ROOT . 'src/Of.php';
+require OF_ROOT . 'Of.php';
+require OF_ROOT . 'OfException.php';
 
 // Register the autoloader
 spl_autoload_register('Of::loader');
+// Register exception handler
+set_exception_handler('OfHandler::catcher');
 
 // blah blah blah
 // add to this later
