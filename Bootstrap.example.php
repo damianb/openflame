@@ -10,7 +10,7 @@
  */
 
 define('OF_ROOT', dirname(__FILE__) . '/src/');
-require OF_ROOT . 'src/Of.php';
+require OF_ROOT . 'Of.php';
 
 // Register the autoloader
 spl_autoload_register('Of::loader');
