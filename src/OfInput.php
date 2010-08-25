@@ -34,6 +34,11 @@ class OfInput
 	protected $cleaned_input;
 
 	/**
+	 * @var boolean - Was the even set when the page was submitted
+	 */
+	protected $was_set;
+
+	/**
 	 * Constructor
 	 * @param string $var_name Var name in the global you're after
 	 * @param mixed $default Default value and type to fall back on and check for good types
@@ -53,6 +58,9 @@ class OfInput
 		if($global_name == '_REQUEST' && isset($_COOKIE[$var_name]))
 			$_REQUEST[$var_name] = isset($_POST[$var_name]) ? $_POST[$var_name] : $_GET[$var_name];
 
+		// Check to see if the variable was set when the page was submitted
+		$this->was_set = (boolean) is_null($this->raw_input);
+		
 		// Assign the raw var
 		// If the global is not set at all, or is empty, use the default. Otherwise, use what was inputted
 		$this->raw_input = (!empty($GLOBALS[$global_name][$var_name])) ? $GLOBALS[$global_name][$var_name] : $default;
@@ -187,6 +195,6 @@ class OfInput
 	 */
 	public function wasSet()
 	{
-		return (boolean) is_null($this->raw_input);
+		return (boolean) $this->was_set;
 	}
 }
