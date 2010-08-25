@@ -54,9 +54,10 @@ class OfInput
 			$_REQUEST[$var_name] = isset($_POST[$var_name]) ? $_POST[$var_name] : $_GET[$var_name];
 
 		// Assign the raw var
-		$this->raw_input = $GLOBALS[$global_name][$var_name];
+		// If the global is not set at all, or is empty, use the default. Otherwise, use what was inputted
+		$this->raw_input = (isset($GLOBALS[$global_name][$var_name]) && !empty($GLOBALS[$global_name][$var_name])) ? $GLOBALS[$global_name][$var_name] : $default;
 
-		$this->cleaned_input = $this->cleanVar($GLOBALS[$global_name][$var_name], $default);
+		$this->cleaned_input = $this->cleanVar($this->raw_input, $default);
 	}
 
 	/**
