@@ -35,8 +35,11 @@ class OfTestHash extends OfTestBase
 	 * Prepare the test suite.
 	 * @return void
 	 */
-	public function prepareTests() { }
-	
+	public function prepareTests()
+	{
+		require OF_ROOT . 'OfHash.php';
+	}
+
 	/**
 	 * Get our password hashing object
 	 * @return OfHash - our password hashing object
