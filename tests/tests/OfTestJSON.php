@@ -29,7 +29,7 @@ class OfTestJSON extends OfTestBase
 	protected $test_ary = array(
 		'GoodJSON',
 		'BadJSONSyntax',
-		'BadJSONNoFile', // do this
+		'BadJSONNoFile',
 	);
 
 	/**
@@ -40,22 +40,47 @@ class OfTestJSON extends OfTestBase
 
 	protected function testGoodJSON()
 	{
-		$password = $hash->hash('some_password');
-		return $this->expect('valid password', $hash->check($password, 'some_password'), true);
-	}
-
-	protected function testBadJSONSyntax()
-	{
-		$bad_json = substr(OfJSON::encode(array('key' => 'value', 'subarray' => array('key' => 'value', 'another_value'))), 5);
+		$array = array('key' => 'value', 'subarray' => array('key' => 'value', 'another_value'));
+		$json = OfJSON::encode($array);
 		try
 		{
-			$json = OfJSON::decode($bad_json, false);
-			$json_success = true;
+			$json_success = ($array === OfJSON::decode($json, false));
 		}
 		catch(OfJSONException $e)
 		{
 			$json_success = false;
 		}
-		return $this->expect('invalid json', $json_success, false);
+		return $this->expect('valid json', $json_success, true);
+	}
+
+	protected function testBadJSONSyntax()
+	{
+		$bad_json = substr(OfJSON::encode(array('key' => 'value', 'subarray' => array('key' => 'value', 'another_value'))), 5);
+		$json_success = false;
+		try
+		{
+			$json = OfJSON::decode($bad_json, false);
+		}
+		catch(OfJSONException $e)
+		{
+			$json_success = true;
+		}
+		return $this->expect('invalid json', $json_success, true);
+	}
+
+
+	protected function testBadJSONNoFile()
+	{
+		$json_success = false;
+		try
+		{
+			$json = OfJSON::decode('./nonexistantfile');
+		}
+		catch(OfJSONException $e)
+		{
+			if($e->getCode() === OfJSONException::ERR_JSON_NO_FILE)
+				$json_success = true;
+		}
+		return $this->expect('nonexistant json file', $json_success, true);
 	}
 }
