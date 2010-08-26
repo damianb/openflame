@@ -13,7 +13,7 @@ if(!defined('IN_OF_TEST')) exit;
 
 /**
  * OpenFlame Web Framework - CLI interface class,
- * 		Provides the rough shell for interaction via CLI.
+ * 	    Provides the rough shell for interaction via CLI.
  *
  *
  * @category    OpenFlame Framework
@@ -32,12 +32,13 @@ class OfTestBase implements OfTestInterface
 	 * Automatically runs all tests that are specified in $this->test_ary
 	 * @return boolean - Were all tests successful, or did some fail?
 	 */
-	public function runTests()
+	final public function runTests()
 	{
 		$ui->output('STATUS: Running test suite ' . get_class($this), 'INFO');
 		$i = 0;
 		foreach($this->test_ary as $test)
 		{
+			$test = "test$test";
 			if(!$this->$test())
 				$i++;
 		}
@@ -62,7 +63,7 @@ class OfTestBase implements OfTestInterface
 	 * @param mixed $expect - What do we expect the test to produce?
 	 * @return boolean - Was the test successful?
 	 */
-	protected function expect($test_name, $test_result, $expect)
+	final protected function expect($test_name, $test_result, $expect)
 	{
 		global $ui;
 
