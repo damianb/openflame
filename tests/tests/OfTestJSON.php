@@ -36,7 +36,10 @@ class OfTestJSON extends OfTestBase
 	 * Prepare the test suite.
 	 * @return void
 	 */
-	public function prepareTests() { }
+	public function prepareTests()
+	{
+		require OF_ROOT . 'OfJSON.php';
+	}
 
 	protected function testGoodJSON()
 	{
