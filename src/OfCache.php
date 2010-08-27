@@ -45,9 +45,11 @@ class OfCache
 	{
 		$cache_engine = "OfCacheEngine$engine";
 		$this->cache_path = (string) $cache_path;
+		if(!@file_exists($this->cache_path) || !@is_dir($this->cache_path) || !@is_writeable($this->cache_path))
+			throw new OfCacheException('Specified cache path is not accessible', OfCacheException::ERR_CACHE_PATH_NO_ACCESS);
 		$this->engine = new $cache_engine($this->cache_path);
 		if(!($this->engine instanceof OfCacheEngineBase))
-			throw new OfCacheException('Cache engine does not extend OfCacheEngineBase class', OfCacheException::ERR_CACHE_ENGINE_NOT_CACHEBASE_CHILD);
+			throw new OfCacheException('Cache engine does not extend OfCacheEngineBase', OfCacheException::ERR_CACHE_ENGINE_NOT_CACHEBASE_CHILD);
 		if(!($this->engine instanceof OfCacheEngineInterface))
 			throw new OfCacheException('Cache engine does not implement interface OfCacheEngineInterface', OfCacheException::ERR_CACHE_ENGINE_NOT_CACHEINTERFACE_CHILD);
 	}

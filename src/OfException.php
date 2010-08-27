@@ -64,6 +64,8 @@ class OfCacheException extends OfException
 
 	const ERR_CACHE_ENGINE_NOT_CACHEBASE_CHILD = 2100;
 	const ERR_CACHE_ENGINE_NOT_CACHEINTERFACE_CHILD = 2101;
+
+	const ERR_CACHE_PATH_NO_ACCESS = 2200;
 }
 
 /**
