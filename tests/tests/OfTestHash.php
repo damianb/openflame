@@ -40,25 +40,16 @@ class OfTestHash extends OfTestBase
 		require OF_ROOT . 'OfHash.php';
 	}
 
-	/**
-	 * Get our password hashing object
-	 * @return OfHash - our password hashing object
-	 */
-	protected function getHash()
-	{
-		return new OfHash(8, true);
-	}
-
 	protected function testGoodHash()
 	{
-		$hash = $this->getHash();
+		$hash = new OfHash(8, true);
 		$password = $hash->hash('some_password');
 		return $this->expect('valid password', $hash->check($password, 'some_password'), true);
 	}
 
 	protected function testBadHash()
 	{
-		$hash = $this->getHash();
+		$hash = new OfHash(8, true);
 		$password = $hash->hash('some_password');
 		return $this->expect('invalid password', $hash->check($password, 'some_wrong_password'), false);
 	}
