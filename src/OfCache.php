@@ -45,7 +45,6 @@ class OfCache
 	{
 		$cache_engine = "OfCacheEngine$engine";
 		$this->cache_path = (string) $cache_path;
-		// include OF_ROOT . $cache_engine . '.php'; // @todo replace with whatever include code we'll be using later
 		$this->engine = new $cache_engine($this->cache_path);
 		if(!($this->engine instanceof OfCacheEngineBase))
 			throw new OfCacheException('Cache engine does not extend OfCacheEngineBase class', OfCacheException::ERR_CACHE_ENGINE_NOT_CACHEBASE_CHILD);
