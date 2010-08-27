@@ -66,7 +66,7 @@ class Of
 	 *
 	 * @throws Exception
 	 *
-	 * @note   - We use exception here, instead of OfException, to make the class "Of" able to be initially used standalone
+	 * @note - We use exception here, instead of OfException, to make the class "Of" standalone
 	 */
 	public static function loader($class)
 	{
@@ -80,14 +80,27 @@ class Of
 		return false;
 	}
 
+	/**
+	 * Store an object for easy global access.
+	 * @param string $slot - The slot to store in.
+	 * @param object $object - The object to store.
+	 * @return void
+	 */
 	public static function storeObject($slot, $object)
 	{
-		// store one of the OpenFlame Framework objects...
+		self::$config[(string) $slot] = $object;
 	}
 
+	/**
+	 * Grab a stored object.
+	 * @param string $slot - The slot to grab from.
+	 * @return mixed - NULL if no object in specified slot, or the desired object if the slot exists.
+	 */
 	public static function getObject($slot)
 	{
-		// get one of the OpenFlame Framework objects...
+		if(!isset(self::$config[$slot]))
+			return NULL;
+		return self::$config[$slot];
 	}
 
 	/**
