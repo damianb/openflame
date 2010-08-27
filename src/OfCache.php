@@ -59,20 +59,33 @@ class OfCache
 	 */
 	public function loadData($file)
 	{
+		// if data is not cached already, return null
 		if(!$this->dataCached($file))
 			return NULL;
-		return $this->engine->load($file);
+		$cache = $this->engine->load($file);
+		// check ttl.  If the data has expired, trash it and return null.
+		if(isset($cache['cache_expire']) && time() > $cache['cache_expire'])
+		{
+			$this->destroyData($file);
+			return NULL;
+		}
+		return $cache['data'];
 	}
 
 	/**
 	 * Public interface, stores data in cache.
 	 * @param string $file - The file to store the data in.
 	 * @param mixed $data - The data to store.
+	 * @param integer $ttl - The lifespan of the cached data, in seconds.  Leave empty or set as 0 to disable cache timeout.
 	 * @return void
 	 */
-	public function storeData($file, $data)
+	public function storeData($file, $data, $ttl = 0)
 	{
-		$this->engine->store($file, $this->engine->build($data));
+		// build the cache, with data and ttl expiry included
+		$this->engine->store($file, $this->engine->build(array(
+			'data' => $data,
+			'cache_expire' => ($ttl) ? time() + (int) $ttl : 0,
+		)));
 	}
 
 	/**
