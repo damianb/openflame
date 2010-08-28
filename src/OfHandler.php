@@ -301,6 +301,10 @@ EOD;
 				{
 					$arg = 'Array';
 				}
+				elseif(is_object($arg))
+				{
+					$arg = 'Object ' . get_class($arg);
+				}
 
 				$args = '<span style="color: #0000BB;">' . $arg . '</span>';
 				if($arg_count > 1)
@@ -317,6 +321,10 @@ EOD;
 						elseif(is_array($arg))
 						{
 							$arg = 'Array';
+						}
+						elseif(is_object($arg))
+						{
+							$arg = 'Object ' . get_class($arg);
 						}
 						$args .= '<span style="color: #007700; font-weight: bold;">,</span> <span style="color: #0000BB;">' . $arg . '</span>';
 					}
