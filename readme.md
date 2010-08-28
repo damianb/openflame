@@ -21,6 +21,7 @@ Included files:
 * src/OfDb.php - (*Doctrine integration layer*)
 * src/OfException.php - (*Exception classes used within the OpenFlame Framework*)
 * src/OfFile.php - (*File upload handler class specifically for file uploading*)
+* src/OfForm.php - (*Form security handler, provides methods to protect against CSRF*)
 * src/OfHandler.php - (*Provides a tasteful exception handler for uncaught (and even caught) exceptions*)
 * src/OfHash.php - (*Provides a secure hashing algorithm using a modified version of phpass*)
 * src/OfInput.php - (*Input retrieval class, see docs within the file*)
