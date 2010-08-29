@@ -26,12 +26,12 @@ class OfInput
 	/**
 	 * @var mixed - The raw input
 	 */
-	protected $raw_input;
+	protected $raw_input = NULL;
 
 	/**
 	 * @var mixed - The cleaned input
 	 */
-	protected $cleaned_input;
+	protected $cleaned_input = NULL;
 
 	/**
 	 * @var boolean - Was the even set when the page was submitted
@@ -177,7 +177,7 @@ class OfInput
 	 */
 	public function getRaw()
 	{
-		return (!empty($this->raw_input)) ? $this->raw_input : false;
+		return $this->raw_input;
 	}
 
 	/**
@@ -186,7 +186,7 @@ class OfInput
 	 */
 	public function getClean()
 	{
-		return (!empty($this->cleaned_input)) ? $this->cleaned_input : false;
+		return $this->cleaned_input;
 	}
 
 	/**
