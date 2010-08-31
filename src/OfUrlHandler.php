@@ -123,7 +123,7 @@ class OfUrlHandler
 		$congruences = 0;
 		foreach($this->url_parts as $i => $element)
 		{
-			if($url_ary[$i] == $element)
+			if(isset($url_ary[$i]) && $url_ary[$i] == $element)
 				$congruences++;
 		}
 
