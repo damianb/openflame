@@ -53,7 +53,7 @@ class OfTestJSON extends OfTestBase
 		{
 			$json_success = false;
 		}
-		return $this->expect('valid json', $json_success, true);
+		return $this->expect(__METHOD__, $json_success, true);
 	}
 
 	protected function testBadJSONSyntax()
@@ -68,7 +68,7 @@ class OfTestJSON extends OfTestBase
 		{
 			$json_success = true;
 		}
-		return $this->expect('invalid json', $json_success, true);
+		return $this->expect(__METHOD__, $json_success, true);
 	}
 
 	protected function testBadJSONNoFile()
@@ -83,6 +83,6 @@ class OfTestJSON extends OfTestBase
 			if($e->getCode() === OfJSONException::ERR_JSON_NO_FILE)
 				$json_success = true;
 		}
-		return $this->expect('nonexistant json file', $json_success, true);
+		return $this->expect(__METHOD__, $json_success, true);
 	}
 }
