@@ -57,7 +57,7 @@ class OfTestBase implements OfTestInterface
 		if($i > 0)
 		{
 			$ui->output('', 'WARNING');
-			$ui->output(sprintf('WARNING: %1$s tests failed in test module %2$s', $i, get_class($this)), 'WARNING');
+			$ui->output(sprintf('WARNING: %1$s test(s) failed in test module %2$s', $i, get_class($this)), 'WARNING');
 			$ui->output('', 'WARNING');
 			return false;
 		}
