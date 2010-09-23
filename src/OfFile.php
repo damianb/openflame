@@ -7,6 +7,8 @@
  * @link        http://github.com/OpenFlame/OpenFlame-Framework
  *
  * Minimum Requirement: PHP 5.0.0
+ *
+ * @uses OfInput
  */
 
 if(!defined('ROOT_PATH'))
@@ -75,7 +77,7 @@ class OfFile extends OfInput
 				parent::__construct($file, '', '_POST');
 				if(!$this->validate('url'))
 					throw new OfFileException('Invalid URL provided', OfFileException::ERR_FILE_URL_INVALID);
-				
+
 				/**
 				 *@todo Make the new file name unique so that more than one file with the same name can
 				 *	be uploaded without the old one being overwritten.
@@ -100,7 +102,7 @@ class OfFile extends OfInput
 	 * @param string $file_name The name of the file (with the extension)
 	 * @param int $file_size The actual size of the file
 	 * @param int $max_filesize The maximum size allowed for an uploaded file
-	 * 
+	 *
 	 * @return boolean - Returns true if successful
 	 *
 	 * @throws OfFileException
@@ -113,10 +115,10 @@ class OfFile extends OfInput
 		$input = (!empty($input)) ? $input : $this->cleaned_input;
 		$file_name = (!empty($file_name)) ? $file_name : $this->file_name;
 		$file_size = (!empty($file_size)) ? $file_size : $this->file_size;
-		
+
 		if(empty($input))
 			throw new OfFileException('File information array empty', OfFileException::ERR_FILE_INFO_MISSING);
-		
+
 		// get array of disallowed extensions; for now, hardcoded
 		$disallowed_ext = array('exe', 'zip', 'rar', '7z', 'gzip');
 		if(in_array(end(explode(".", $file_name)), $disallowed_ext))
