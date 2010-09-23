@@ -69,7 +69,7 @@ class OfTestBase implements OfTestInterface
 	 * @param mixed $expect - What do we expect the test to produce?
 	 * @return boolean - Was the test successful?
 	 */
-	final protected function expect($test_name, $test_result, $expect)
+	final public function expect($test_name, $test_result, $expect)
 	{
 		/* @var OfCLI */
 		$ui = Of::obj('ui');
