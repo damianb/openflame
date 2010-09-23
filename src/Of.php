@@ -88,7 +88,7 @@ class Of
 	 */
 	public static function storeObject($slot, $object)
 	{
-		self::$config[(string) $slot] = $object;
+		self::$objects[(string) $slot] = $object;
 	}
 
 	/**
@@ -98,9 +98,9 @@ class Of
 	 */
 	public static function getObject($slot)
 	{
-		if(!isset(self::$config[$slot]))
+		if(!isset(self::$objects[(string) $slot]))
 			return NULL;
-		return self::$config[$slot];
+		return self::$objects[(string) $slot];
 	}
 
 	/**
@@ -109,6 +109,6 @@ class Of
 	 */
 	public static function obj($slot)
 	{
-		self::getObject($slot);
+		return self::getObject($slot);
 	}
 }

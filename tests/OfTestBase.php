@@ -31,6 +31,11 @@ class OfTestBase implements OfTestInterface
 	 */
 	protected $test_ary = array();
 
+	public function prepareTests()
+	{
+		// pass
+	}
+
 	/**
 	 * Automatically runs all tests that are specified in $this->test_ary
 	 * @return boolean - Were all tests successful, or did some fail?

@@ -17,6 +17,7 @@ if(!defined('IN_OF_TEST')) exit;
 
 // start loading stuff
 require OF_ROOT . 'Of.php';
+require OF_ROOT . 'OfException.php';
 require OF_ROOT . 'OfCLI.php';
 require OF_ROOT . 'OfCLIHandler.php';
 require OF_TEST_ROOT . 'OfTestBase.php';
