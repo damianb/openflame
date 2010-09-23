@@ -25,6 +25,10 @@ require OF_TEST_ROOT . 'OfTestBase.php';
 $ui = new OfCLI();
 Of::storeObject('ui', $ui);
 
+// Disable color support if we need to.
+if(defined('OFCLI_DISABLE_COLORS'))
+	$ui->enable_colors = false;
+
 // Set error and exception handlers.
 set_error_handler('OfCLIHandler::catchError');
 set_exception_handler('OfCLIHandler::catchException');
