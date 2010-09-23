@@ -29,6 +29,10 @@ class OfTestInput extends OfTestBase
 	protected $test_ary = array(
 		'GoodURL',
 		'BadURL',
+		'GoodEmail',
+		'BadEmail',
+		'GoodAlphaNumeric',
+		'BadAlphaNumeric',
 	);
 
 	/**
@@ -39,19 +43,19 @@ class OfTestInput extends OfTestBase
 	{
 		require OF_ROOT . 'OfInput.php';
 
-            /**
-             * @note - These all use _POST, simply to check the regex.
-             *         Separate tests will need to be run to check how it handles not having the proper input type
-             *         (such as looking for _POST but having _GET or otherwise)
-             */
-                $_POST['url'] = 'http://www.openflamecms.com/';
-                $_POST['url_bad'] = 'www. somewhere far-away.domain';
+			/**
+			 * @note - These all use _POST, simply to check the regex.
+			 *         Separate tests will need to be run to check how it handles not having the proper input type
+			 *         (such as looking for _POST but having _GET or otherwise)
+			 */
+			$_POST['url'] = 'http://www.openflamecms.com/';
+			$_POST['url_bad'] = 'www. somewhere far-away.domain';
 
-                $_POST['email'] = 'imkingdavid@phpbb.com';
-                $_POST['email_bad'] = 'not_an@email, duh!.thing';
+			$_POST['email'] = 'imkingdavid@phpbb.com';
+			$_POST['email_bad'] = 'not_an@email, duh!.thing';
 
-                $_POST['alphanumeric'] = 'a1b2c3d4e5f6g7h8i9j10k11l12m13n14o15p16q17r18s19t20u21v22w23x24y25z26';
-                $_POST['alphanumeric_bad'] = 's0m3_4lph4num3r!c_w!7h_5ymb015';
+			$_POST['alphanumeric'] = 'a1b2c3d4e5f6g7h8i9j10k11l12m13n14o15p16q17r18s19t20u21v22w23x24y25z26';
+			$_POST['alphanumeric_bad'] = 's0m3_4lph4num3r!c_w!7h_5ymb015';
 	}
 
 	/**
@@ -75,27 +79,27 @@ class OfTestInput extends OfTestBase
 		return $this->expect('invalid url', $input->validate('url'), false);
 	}
 
-        protected function testGoodEmail()
-        {
-                $input = $this->getInput('email', '', '_POST');
-                return $this->expect('valid email', $input->validate('email'), true);
-        }
+	protected function testGoodEmail()
+	{
+		$input = $this->getInput('email', '', '_POST');
+		return $this->expect('valid email', $input->validate('email'), true);
+	}
 
-        protected function testBadEmail()
-        {
-                $input = $this->getInput('email_bad', '', '_POST');
-                return $this->expect('invalid email', $input->validate('email'), false);
-        }
+	protected function testBadEmail()
+	{
+		$input = $this->getInput('email_bad', '', '_POST');
+		return $this->expect('invalid email', $input->validate('email'), false);
+	}
 
-        protected function testGoodAlphaNumeric()
-        {
-                $input = $this->getInput('alphanumeric', '', '_POST');
-                return $this->expect('valid alphanumeric string', $input->validate('alphanumeric'), true);
-        }
+	protected function testGoodAlphaNumeric()
+	{
+		$input = $this->getInput('alphanumeric', '', '_POST');
+		return $this->expect('valid alphanumeric string', $input->validate('alphanumeric'), true);
+	}
 
-        protected function testBadAlphaNumeric()
-        {
-                $input = $this->getInput('alphanumeric_bad', '', '_POST');
-                return $this->expect('invalid alphanumeric string', $input->validate('alphanumeric'), false);
-        }
+	protected function testBadAlphaNumeric()
+	{
+		$input = $this->getInput('alphanumeric_bad', '', '_POST');
+		return $this->expect('invalid alphanumeric string', $input->validate('alphanumeric'), false);
+	}
 }
