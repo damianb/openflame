@@ -85,8 +85,8 @@ class OfTestBase implements OfTestInterface
 		{
 			$ui->output('', 'ERROR');
 			$ui->output(sprintf('ERROR: Test "%1$s" failed!', $test_name), 'ERROR');
-			$ui->output(sprintf('ERROR: Expected:  %1$s(%2$s)', gettype($expect), $expect), 'ERROR');
-			$ui->output(sprintf('ERROR: Got:       %1$s(%2$s)', gettype($test_result), $test_result), 'ERROR');
+			$ui->output(sprintf('ERROR: Expected:  %1$s(%2$s)', gettype($expect), $this->typeVariable($expect)), 'ERROR');
+			$ui->output(sprintf('ERROR: Got:       %1$s(%2$s)', gettype($test_result), $this->typeVariable($test_result)), 'ERROR');
 			$ui->output('', 'ERROR');
 			return false;
 		}
@@ -95,6 +95,22 @@ class OfTestBase implements OfTestInterface
 			$ui->output('NOTICE: Test passed!', 'INFO');
 			return true;
 		}
+	}
+
+	/**
+	 * Formats a variable to make it easy to understand what we're expecting/recieving.
+	 * @param mixed $variable - The variable to format
+	 * @return mixed - The formatted output.
+	 */
+	final public function typeVariable($variable)
+	{
+		if(is_object($variable))
+			return sprintf('Object "%1$s"', get_class($variable));
+		if(is_array($variable))
+			return sprintf('Array[%1$s]', count($variable));
+		if(is_bool($variable))
+			return ($variable === true) ? 'true' : 'false';
+		return print_r($variable, true);
 	}
 }
 
