@@ -38,33 +38,37 @@ class OfTestBase implements OfTestInterface
 
 	/**
 	 * Automatically runs all tests that are specified in $this->test_ary
-	 * @return boolean - Were all tests successful, or did some fail?
+	 * @return mixed - If no tests failed, return false; otherwise, return the number of tests failed
 	 */
 	final public function runTests()
 	{
 		/* @var OfCLI */
 		$ui = Of::obj('ui');
 
-		$ui->output('', 'INFO');
-		$ui->output(sprintf('STATUS: Running test suite %1$s', get_class($this)), 'INFO');
+		$pre_time = microtime(true);
+
+		$ui->output(sprintf(' Running test suite "%1$s"', get_class($this)), 'INFO');
 		$i = 0;
 		foreach($this->test_ary as $test)
 		{
 			$test = "test$test";
+			$ui->output(sprintf('    Running test "%1$s::%2$s"', get_class($this), $test), 'INFO');
 			if(!$this->$test())
 				$i++;
 		}
 		if($i > 0)
 		{
 			$ui->output('', 'WARNING');
-			$ui->output(sprintf('WARNING: %1$s test(s) failed in test module %2$s', $i, get_class($this)), 'WARNING');
+			$ui->output(sprintf(' WARNING: %1$s test(s) failed in test module %2$s', $i, get_class($this)), 'WARNING');
 			$ui->output('', 'WARNING');
-			return false;
+			$ui->output(sprintf('  Time taken: %1$s ms',  microtime(true) - $pre_time), 'INFO');
+			return $i;
 		}
 		else
 		{
-			$ui->output(sprintf('NOTICE: All tests passed in test module %1$s', get_class($this)), 'INFO');
-			return true;
+			$ui->output(sprintf('  All tests passed in test module "%1$s"', get_class($this)), 'INFO');
+			$ui->output(sprintf('  Test duration: %1$s ms',  microtime(true) - $pre_time), 'INFO');
+			return false;
 		}
 	}
 
@@ -80,19 +84,20 @@ class OfTestBase implements OfTestInterface
 		/* @var OfCLI */
 		$ui = Of::obj('ui');
 
-		$ui->output(sprintf('NOTICE: Running test: %1$s', $test_name), 'INFO');
 		if($test_result !== $expect)
 		{
 			$ui->output('', 'ERROR');
-			$ui->output(sprintf('ERROR: Test "%1$s" failed!', $test_name), 'ERROR');
-			$ui->output(sprintf('ERROR: Expected:  %1$s(%2$s)', gettype($expect), $this->typeVariable($expect)), 'ERROR');
-			$ui->output(sprintf('ERROR: Got:       %1$s(%2$s)', gettype($test_result), $this->typeVariable($test_result)), 'ERROR');
+			$ui->output(sprintf(' ERROR: Test "%1$s" failed!', $test_name), 'ERROR');
+			$ui->output(sprintf('        Expected:  %1$s(%2$s)', gettype($expect), $this->typeVariable($expect)), 'ERROR');
+			$ui->output(sprintf('        Got:       %1$s(%2$s)', gettype($test_result), $this->typeVariable($test_result)), 'ERROR');
 			$ui->output('', 'ERROR');
 			return false;
 		}
 		else
 		{
-			$ui->output('NOTICE: Test passed!', 'INFO');
+			$ui->output(sprintf('     Test "%1$s" passed', $test_name), 'INFO');
+			$ui->output(sprintf('        Expected:  %1$s(%2$s)', gettype($expect), $this->typeVariable($expect)), 'INFO');
+			$ui->output(sprintf('        Got:       %1$s(%2$s)', gettype($test_result), $this->typeVariable($test_result)), 'INFO');
 			return true;
 		}
 	}
@@ -129,4 +134,5 @@ interface OfTestInterface
 	public function prepareTests();
 	public function runTests();
 	public function expect($test_name, $test_result, $expect);
+	public function typeVariable($variable);
 }

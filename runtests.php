@@ -26,6 +26,19 @@ $ignore_tests = array(
 
 require OF_TEST_ROOT . 'Bootstrap.php';
 
+$ui->output(str_pad('', 80, '='), 'STATUS');
+$ui->output('', 'STATUS');
+$ui->output(' OpenFlame Framework - Automated Test Suite', 'STATUS');
+$ui->output(str_pad('', 80, '-'), 'STATUS');
+$ui->output('@copyright:   OpenFlameCMS.com', 'STATUS');
+$ui->output('@license:     MIT License', 'STATUS');
+$ui->output('', 'STATUS');
+$ui->output('This program is subject to the MIT License that is bundled', 'STATUS');
+$ui->output('with this package in the file LICENSE.', 'STATUS');
+$ui->output(str_pad('', 80, '='), 'STATUS');
+
+sleep(1);
+
 if(!file_exists(OF_TEST_ROOT . 'tests/') || !is_dir(OF_TEST_ROOT . 'tests/'))
 	throw new Exception('OpenFlame Framework Tests directory is not available');
 
@@ -41,13 +54,14 @@ foreach($dir_contents as $file)
 
 if(empty($tests))
 {
-	$ui->output('NOTICE: No tests found, terminating script.', 'INFO');
+	$ui->output('No tests found, terminating script.', 'INFO');
 	exit;
 }
 
-$i = 0;
+$i = $j = 0;
 foreach($tests as $test)
 {
+	sleep(1);
 	if(($include = @include(OF_TEST_ROOT . 'tests/' . $test)) === false)
 		throw new Exception(sprintf('Unable to include test file "%1$s"', $test));
 
@@ -59,20 +73,21 @@ foreach($tests as $test)
 	/* @var OfTestBase */
 	$obj = new $test_class();
 	$obj->prepareTests();
-	if(!$obj->runTests())
+	$tests_failed = $obj->runTests();
+	if($tests_failed !== false)
+	{
 		$i++;
+		$j += $tests_failed;
+	}
 }
 
 if($i > 0)
 {
 	$ui->output('', 'WARNING');
-	$ui->output(sprintf('WARNING: %1$s test file(s) failed', $i), 'WARNING');
+	$ui->output(sprintf(' WARNING: %1$s test(s) in %2$s test file(s) failed', $i, $j), 'WARNING');
 	$ui->output('', 'WARNING');
 }
 else
 {
-	$ui->output('NOTICE: All tests passed', 'INFO');
+	$ui->output('All tests passed', 'INFO');
 }
-
-$ui->output('STATUS: All tests completed, terminating', 'STATUS');
-exit;
