@@ -69,37 +69,37 @@ class OfTestInput extends OfTestBase
 
 	protected function testGoodURL()
 	{
-		$input = $this->getInput('url', '', '_POST');
-		return $this->expect('valid url', $input->validate('url'), true);
+		$input = new OfInput('url', '', '_POST');
+		return $this->expect(__METHOD__, $input->validate('url'), true);
 	}
 
 	protected function testBadURL()
 	{
-		$input = $this->getInput('url_bad', '', '_POST');
-		return $this->expect('invalid url', $input->validate('url'), false);
+		$input = new OfInput('url_bad', '', '_POST');
+		return $this->expect(__METHOD__, $input->validate('url'), false);
 	}
 
 	protected function testGoodEmail()
 	{
-		$input = $this->getInput('email', '', '_POST');
-		return $this->expect('valid email', $input->validate('email'), true);
+		$input = new OfInput('email', '', '_POST');
+		return $this->expect(__METHOD__, $input->validate('email'), true);
 	}
 
 	protected function testBadEmail()
 	{
-		$input = $this->getInput('email_bad', '', '_POST');
-		return $this->expect('invalid email', $input->validate('email'), false);
+		$input = new OfInput('email_bad', '', '_POST');
+		return $this->expect(__METHOD__, $input->validate('email'), false);
 	}
 
 	protected function testGoodAlphaNumeric()
 	{
-		$input = $this->getInput('alphanumeric', '', '_POST');
-		return $this->expect('valid alphanumeric string', $input->validate('alphanumeric'), true);
+		$input = new OfInput('alphanumeric', '', '_POST');
+		return $this->expect(__METHOD__, $input->validate('alphanumeric'), true);
 	}
 
 	protected function testBadAlphaNumeric()
 	{
-		$input = $this->getInput('alphanumeric_bad', '', '_POST');
-		return $this->expect('invalid alphanumeric string', $input->validate('alphanumeric'), false);
+		$input = new OfInput('alphanumeric_bad', '', '_POST');
+		return $this->expect(__METHOD__, $input->validate('alphanumeric'), false);
 	}
 }
