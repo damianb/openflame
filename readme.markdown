@@ -16,6 +16,8 @@ Included files:
 
 * Bootstrap.php - (*File that loads all classes automatically*)
 * src/Of.php - (*Environment class which will store runtime configurations and object instances*)
+* src/OfCLI.php - (*CLI environment object providing methods to easily interact with the user, along with providing easy use of POSIX terminal colors*)
+* src/OfCLIHandler.php - (*Error and Exception handler designed for use in a CLI environment*)
 * src/OfCache.php - (*Cache interface, provides an abstract layer that can be used with interchangable caching engines*)
 * src/OfCacheEngineJSON.php - (*JSON-based cache engine, intended for use by OfCache.php*)
 * src/OfDb.php - (*Doctrine integration layer*)
