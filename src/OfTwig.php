@@ -21,7 +21,7 @@ if(!defined('ROOT_PATH'))
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
  * @link        http://github.com/OpenFlame/OpenFlame-Framework
  */
-class OfTwig
+class OfTwig implements ArrayAccess
 {
 	/**
 	 * @var array - Array of all global template variables
@@ -87,5 +87,50 @@ class OfTwig
 	public function issetVar($var_name)
 	{
 		return isset($this->data[$var_name]);
+	}
+
+	/**
+	 * ArrayAccess methods
+	 */
+
+	/**
+	 * Check if an "array" offset exists in this object.
+	 * @param mixed $offset - The offset to check.
+	 * @return boolean - Does anything exist for this offset?
+	 */
+	public function offsetExists($offset)
+	{
+		return $this->issetVar($offset);
+	}
+
+	/**
+	 * Get an "array" offset for this object.
+	 * @param mixed $offset - The offset to grab from.
+	 * @return mixed - The value of the offset, or null if the offset does not exist.
+	 */
+	public function offsetGet($offset)
+	{
+		return ($this->issetVar($offset)) ? $this->fetchVar($offset) : NULL;
+	}
+
+	/**
+	 * Set an "array" offset to a certain value, if the offset exists
+	 * @param mixed $offset - The offset to set.
+	 * @param mixed $value - The value to set to the offset.
+	 * @return void
+	 */
+	public function offsetSet($offset, $value)
+	{
+		$this->assignVar($offset, $value);
+	}
+
+	/**
+	 * Unset an "array" offset.
+	 * @param mixed $offset - The offset to clear out.
+	 * @return void
+	 */
+	public function offsetUnset($offset)
+	{
+		unset($this->data[(string) $offset]);
 	}
 }
