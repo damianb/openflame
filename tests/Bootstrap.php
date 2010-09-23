@@ -16,12 +16,14 @@ if(!defined('IN_OF_TEST')) exit;
 @ini_set('display_errors', 1);
 
 // start loading stuff
-require OF_TEST_ROOT . 'OfUI.php';
-require OF_TEST_ROOT . 'OfCLIHandler.php';
+require OF_ROOT . 'Of.php';
+require OF_ROOT . 'OfCLI.php';
+require OF_ROOT . 'OfCLIHandler.php';
 require OF_TEST_ROOT . 'OfTestBase.php';
 
 // We need the UI instantiated here before continuing.
-$ui = new OfUI();
+$ui = new OfCLI();
+Of::storeObject('ui', $ui);
 
 // Set error and exception handlers.
 set_error_handler('OfCLIHandler::catchError');

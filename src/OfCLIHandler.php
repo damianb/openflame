@@ -7,13 +7,17 @@
  * @link        http://github.com/OpenFlame/OpenFlame-Framework
  *
  * Minimum Requirement: PHP 5.2.3
+ *
+ * @uses Of
+ * @uses OfCLI
  */
 
-if(!defined('IN_OF_TEST')) exit;
+if(!defined('ROOT_PATH'))
+	define('ROOT_PATH', './');
 
 /**
  * OpenFlame Web Framework - CLI error handler class,
- * 		Provides an error/exception handler within the test framework.
+ * 		Provides an error/exception handler.
  *
  *
  * @author      Damian Bushong ("Obsidian")
@@ -36,7 +40,8 @@ class OfCLIHandler
 	 */
 	public static function catchException($e)
 	{
-		global $ui;
+		/* @var OfCLI */
+		$ui = Of::obj('ui');
 
 		self::$exception = $e;
 
@@ -66,9 +71,13 @@ EOD;
 		$ui->output($error, 'ERROR');
 	}
 
+	/**
+	 * Error handling method
+	 */
 	public static function catchError($errno, $errstr, $errfile, $errline, $errcontext)
 	{
-		global $ui;
+		/* @var OfCLI */
+		$ui = Of::obj('ui');
 
 		switch($errno)
 		{
