@@ -44,30 +44,39 @@ class OfTestBase implements OfTestInterface
 	{
 		/* @var OfCLI */
 		$ui = Of::obj('ui');
-
-		$pre_time = microtime(true);
-
 		$ui->output(sprintf(' Running test suite "%1$s"', get_class($this)), 'INFO');
 		$i = 0;
 		foreach($this->test_ary as $test)
 		{
 			$test = "test$test";
 			$ui->output(sprintf('    Running test "%1$s::%2$s"', get_class($this), $test), 'INFO');
+			$pre_time = microtime(true);
 			if(!$this->$test())
+			{
+				$ui->output(sprintf('        Time taken: %1$s seconds',  microtime(true) - $pre_time), 'ERROR');
+				$ui->output('', 'ERROR');
 				$i++;
+				if(!defined('OF_TEST_DISABLE_SLEEP'))
+					sleep(2);
+			}
+			else
+			{
+				$ui->output(sprintf('        Time taken: %1$s seconds',  microtime(true) - $pre_time), 'INFO');
+			}
+
+
 		}
 		if($i > 0)
 		{
 			$ui->output('', 'WARNING');
-			$ui->output(sprintf(' WARNING: %1$s test(s) failed in test module %2$s', $i, get_class($this)), 'WARNING');
+			$ui->output(sprintf(' %1$s test(s) failed in test module "%2$s"', $i, get_class($this)), 'WARNING');
 			$ui->output('', 'WARNING');
-			$ui->output(sprintf('  Time taken: %1$s ms',  microtime(true) - $pre_time), 'INFO');
+
 			return $i;
 		}
 		else
 		{
 			$ui->output(sprintf('  All tests passed in test module "%1$s"', get_class($this)), 'INFO');
-			$ui->output(sprintf('  Test duration: %1$s ms',  microtime(true) - $pre_time), 'INFO');
 			return false;
 		}
 	}
@@ -87,10 +96,9 @@ class OfTestBase implements OfTestInterface
 		if($test_result !== $expect)
 		{
 			$ui->output('', 'ERROR');
-			$ui->output(sprintf(' ERROR: Test "%1$s" failed!', $test_name), 'ERROR');
+			$ui->output(sprintf('     Test "%1$s" failed!', $test_name), 'ERROR');
 			$ui->output(sprintf('        Expected:  %1$s(%2$s)', gettype($expect), $this->typeVariable($expect)), 'ERROR');
 			$ui->output(sprintf('        Got:       %1$s(%2$s)', gettype($test_result), $this->typeVariable($test_result)), 'ERROR');
-			$ui->output('', 'ERROR');
 			return false;
 		}
 		else
