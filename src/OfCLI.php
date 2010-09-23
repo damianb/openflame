@@ -21,7 +21,7 @@ if(!defined('IN_OF_TEST')) exit;
  * @author      Damian Bushong ("Obsidian")
  * @license     MIT License
  */
-class OfUI
+class OfCLI
 {
 	/**
 	 * @var boolean - Do we want to enable the use of colors in our output?
