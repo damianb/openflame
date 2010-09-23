@@ -71,7 +71,6 @@ class OfTestJSON extends OfTestBase
 		return $this->expect('invalid json', $json_success, true);
 	}
 
-
 	protected function testBadJSONNoFile()
 	{
 		$json_success = false;
