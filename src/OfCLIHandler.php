@@ -59,14 +59,18 @@ class OfCLIHandler
 			$e['stack'] = 'No stack trace available.';
 
 		$error = <<<EOD
+
 Exception thrown; exception {$e['e_type']}::{$e['code']} with message "{$e['message']}"
 on line {$e['line']} in file: {$e['file']}
 
 Trace context:
+================================================================================
 {$e['trace']}
+================================================================================
 
 Stack trace
 {$e['stack']}
+
 EOD;
 		$ui->output($error, 'ERROR');
 	}
@@ -105,7 +109,7 @@ $error = <<<EOD
 Deprecation notice encountered; message "{$errstr}"
 on line {$errline} in file: {$errfile}
 EOD;
-				$type = 'info';
+				$type = 'status';
 			break;
 
 			case E_WARNING:
@@ -128,7 +132,7 @@ EOD;
 		}
 
 
-		$ui->output($error, $type);
+		$ui->output($error, strtoupper($type));
 		if($type === 'error')
 			die();
 	}
