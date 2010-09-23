@@ -115,7 +115,7 @@ class OfCLI
 	public function output($data, $color = NULL)
 	{
 		$data = rtrim($data, PHP_EOL);
-		if(is_null($color))
+		if(is_null($color) || !$this->enable_colors)
 		{
 			echo str_pad($data, 80) . PHP_EOL;
 		}
