@@ -47,13 +47,13 @@ class OfTestJSON extends OfTestBase
 		$json = OfJSON::encode($array);
 		try
 		{
-			$json_success = ($array === OfJSON::decode($json, false));
+			$json_data = OfJSON::decode($json, false);
 		}
 		catch(OfJSONException $e)
 		{
-			$json_success = false;
+			return $this->expect(__METHOD__, false, true);
 		}
-		return $this->expect(__METHOD__, $json_success, true);
+		return $this->expect(__METHOD__, $array, $json_data);
 	}
 
 	protected function testBadJSONSyntax()
