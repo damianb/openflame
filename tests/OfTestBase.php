@@ -45,7 +45,8 @@ class OfTestBase implements OfTestInterface
 		/* @var OfCLI */
 		$ui = Of::obj('ui');
 
-		$ui->output('STATUS: Running test suite ' . get_class($this), 'INFO');
+		$ui->output('', 'INFO');
+		$ui->output(sprintf('STATUS: Running test suite %1$s', get_class($this)), 'INFO');
 		$i = 0;
 		foreach($this->test_ary as $test)
 		{
@@ -56,13 +57,13 @@ class OfTestBase implements OfTestInterface
 		if($i > 0)
 		{
 			$ui->output('', 'WARNING');
-			$ui->output('WARNING: ' . $i . ' tests failed in test module ' . get_class($this), 'WARNING');
+			$ui->output(sprintf('WARNING: %1$s tests failed in test module %2$s', $i, get_class($this)), 'WARNING');
 			$ui->output('', 'WARNING');
 			return false;
 		}
 		else
 		{
-			$ui->output('NOTICE: All tests passed in test module' . get_class($this), 'INFO');
+			$ui->output(sprintf('NOTICE: All tests passed in test module %1$s', get_class($this)), 'INFO');
 			return true;
 		}
 	}
@@ -79,13 +80,13 @@ class OfTestBase implements OfTestInterface
 		/* @var OfCLI */
 		$ui = Of::obj('ui');
 
-		$ui->output('NOTICE: Running test: ' . $test_name, 'INFO');
+		$ui->output(sprintf('NOTICE: Running test: %1$s', $test_name), 'INFO');
 		if($test_result !== $expect)
 		{
 			$ui->output('', 'ERROR');
-			$ui->output('ERROR: Test failed!', 'ERROR');
-			$ui->output('ERROR: Expected:  ' . print_r($expect, true), 'ERROR');
-			$ui->output('ERROR: Got:       ' . print_r($test_result, true), 'ERROR');
+			$ui->output(sprintf('ERROR: Test "%1$s" failed!', $test_name), 'ERROR');
+			$ui->output(sprintf('ERROR: Expected:  %1$s(%2$s)', gettype($expect), $expect), 'ERROR');
+			$ui->output(sprintf('ERROR: Got:       %1$s(%2$s)', gettype($test_result), $test_result), 'ERROR');
 			$ui->output('', 'ERROR');
 			return false;
 		}
