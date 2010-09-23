@@ -54,7 +54,7 @@ foreach($tests as $test)
 	$test_class = substr($test, 0, strrpos($test, '.'));
 
 	if(!class_exists($test_class, false))
-		throw new Exception(sprintf('Test class "%1$s" missing'));
+		throw new Exception(sprintf('Test class "%1$s" missing', $test_class));
 
 	/* @var OfTestBase */
 	$obj = new $test_class();
@@ -66,7 +66,7 @@ foreach($tests as $test)
 if($i > 0)
 {
 	$ui->output('', 'WARNING');
-	$ui->output('WARNING: ' . $i . ' test files failed', 'WARNING');
+	$ui->output(sprintf('WARNING: %1$s test file(s) failed', $i), 'WARNING');
 	$ui->output('', 'WARNING');
 }
 else
