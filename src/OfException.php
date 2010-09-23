@@ -27,25 +27,6 @@ class OfException extends Exception
 }
 
 /**
- * OpenFlame Web Framework - JSON Exception class,
- * 		Used for exceptions generated in the JSON library.
- *
- *
- * @author      Damian Bushong ("Obsidian")
- * @license     http://opensource.org/licenses/mit-license.php The MIT License
- * @link        http://github.com/OpenFlame/OpenFlame-Framework
- */
-class OfJSONException extends OfException
-{
-	const ERR_JSON_NO_FILE = 4000;
-	const ERR_JSON_UNKNOWN = 4100;
-	const ERR_JSON_NO_ERROR = 4101;
-	const ERR_JSON_DEPTH = 4102;
-	const ERR_JSON_CTRL_CHAR = 4103;
-	const ERR_JSON_SYNTAX = 4104;
-}
-
-/**
  * OpenFlame Web Framework - Cache Exception class,
  * 		Used for exceptions generated in the Cache library.
  *
@@ -53,6 +34,8 @@ class OfJSONException extends OfException
  * @author      Damian Bushong ("Obsidian")
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
  * @link        http://github.com/OpenFlame/OpenFlame-Framework
+ *
+ * @note this class reserves the 2xxx exception code range
  */
 class OfCacheException extends OfException
 {
@@ -76,6 +59,8 @@ class OfCacheException extends OfException
  * @author      David King ("imkingdavid")
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
  * @link        http://github.com/OpenFlame/OpenFlame-Framework
+ *
+ * @note this class reserves the 3xxx exception code range
  */
 class OfFileException extends OfException
 {
@@ -85,4 +70,25 @@ class OfFileException extends OfException
 	const ERR_FILE_UPLOAD_ERROR = 3003;
 	const ERR_FILE_URL_INVALID = 3004;
 	const ERR_FILE_INFO_MISSING = 3005;
+}
+
+/**
+ * OpenFlame Web Framework - JSON Exception class,
+ * 		Used for exceptions generated in the JSON library.
+ *
+ *
+ * @author      Damian Bushong ("Obsidian")
+ * @license     http://opensource.org/licenses/mit-license.php The MIT License
+ * @link        http://github.com/OpenFlame/OpenFlame-Framework
+ *
+ * @note this class reserves the 4xxx exception code range
+ */
+class OfJSONException extends OfException
+{
+	const ERR_JSON_NO_FILE = 4000;
+	const ERR_JSON_UNKNOWN = 4100;
+	const ERR_JSON_NO_ERROR = 4101;
+	const ERR_JSON_DEPTH = 4102;
+	const ERR_JSON_CTRL_CHAR = 4103;
+	const ERR_JSON_SYNTAX = 4104;
 }
