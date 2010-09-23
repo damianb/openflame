@@ -7,6 +7,9 @@
  * @link        http://github.com/OpenFlame/OpenFlame-Framework
  *
  * Minimum Requirement: PHP 5.0.0
+ *
+ * @uses Of
+ * @uses OfCLI
  */
 
 if(!defined('IN_OF_TEST')) exit;
@@ -34,6 +37,9 @@ class OfTestBase implements OfTestInterface
 	 */
 	final public function runTests()
 	{
+		/* @var OfCLI */
+		$ui = Of::obj('ui');
+
 		$ui->output('STATUS: Running test suite ' . get_class($this), 'INFO');
 		$i = 0;
 		foreach($this->test_ary as $test)
@@ -65,7 +71,8 @@ class OfTestBase implements OfTestInterface
 	 */
 	final protected function expect($test_name, $test_result, $expect)
 	{
-		global $ui;
+		/* @var OfCLI */
+		$ui = Of::obj('ui');
 
 		$ui->output('NOTICE: Running test: ' . $test_name, 'INFO');
 		if($test_result !== $expect)
