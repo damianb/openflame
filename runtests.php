@@ -63,7 +63,7 @@ if(empty($tests))
 $i = $j = 0;
 foreach($tests as $test)
 {
-	if(($include = @include(OF_TEST_ROOT . 'tests/' . $test)) === false)
+	if(($include = include(OF_TEST_ROOT . 'tests/' . $test)) === false)
 		throw new Exception(sprintf('Unable to include test file "%1$s"', $test));
 
 	$test_class = substr($test, 0, strrpos($test, '.'));
