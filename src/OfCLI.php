@@ -16,10 +16,9 @@ if(!defined('IN_OF_TEST')) exit;
  * 		Provides the rough shell for interaction via CLI.
  *
  *
- * @category    OpenFlame Framework
- * @package     tests
  * @author      Damian Bushong ("Obsidian")
- * @license     MIT License
+ * @license     http://opensource.org/licenses/mit-license.php The MIT License
+ * @link        http://github.com/OpenFlame/OpenFlame-Framework
  */
 class OfCLI
 {
