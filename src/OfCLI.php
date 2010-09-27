@@ -72,7 +72,6 @@ class OfCLI
 			);
 			$this->enable_colors = true;
 		}
-
 	}
 
 	/**
