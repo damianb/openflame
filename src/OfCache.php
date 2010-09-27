@@ -66,7 +66,7 @@ class OfCache
 			return NULL;
 		$cache = $this->engine->load($file);
 		// check ttl.  If the data has expired, trash it and return null.
-		if(isset($cache['cache_expire']) && time() > $cache['cache_expire'])
+		if(isset($cache['cache_expire']) && $cache['cache_expire'] != 0 && time() > $cache['cache_expire'])
 		{
 			$this->destroyData($file);
 			return NULL;
