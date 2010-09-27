@@ -20,7 +20,7 @@ if(!defined('ROOT_PATH'))
  * @author      Damian Bushong ("Obsidian")
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
  */
-final class OfHandler
+class OfHandler
 {
 	/**
 	 * @var Exception - The exception to store
@@ -42,7 +42,7 @@ final class OfHandler
 	 * @param Exception $e - The exception to handle
 	 * @return void
 	 */
-	public static function catcher(Exception $e)
+	final public static function catcher(Exception $e)
 	{
 		self::$exception = $e;
 		if(defined('OF_DEBUG') || self::$show_throw_info)
@@ -61,7 +61,7 @@ final class OfHandler
 	 * Displays a debug page showing full info on the exception thrown
 	 * @return void
 	 */
-	public static function displayException()
+	final protected static function displayException()
 	{
 		$e = array(
 			'e_type' => get_class(self::$exception),
@@ -103,7 +103,7 @@ EOD;
 	 * Display a user-friendly (and obscure) error message.
 	 * @return void
 	 */
-	public static function badassError()
+	final public static function badassError()
 	{
 		$e = array(
 			'e_type' => get_class(self::$exception),
@@ -127,7 +127,7 @@ EOD;
 	 * @param string $message - The message to display on the page.
 	 * @return void
 	 */
-	public static function asplode($title, $message)
+	final public static function asplode($title, $message)
 	{
 		self::buildHTML($title, '<div style="padding: 50px 0;"><p>' . $message . '</p></div>');
 		echo self::$page;
@@ -205,7 +205,7 @@ EOD;
 	 * @param integer $context - How many lines of context (above AND below) the troublemaker should we grab?
 	 * @return string - String containing the perpetrator + context lines for where the error/exception was thrown.
 	 */
-	public static function traceException($file, $line, $context = 3)
+	final protected static function traceException($file, $line, $context = 3)
 	{
 		$return = array();
 		foreach (file($file) as $i => $str)
@@ -226,7 +226,7 @@ EOD;
 	 * @param string $code - The code to highlight.
 	 * @return string - The HTML highlighted trace context code.
 	 */
-	public static function highlightTrace($code)
+	final protected static function highlightTrace($code)
 	{
 		$remove_tags = false;
 		if (!preg_match('/\<\?.*?\?\>/is', $code))
@@ -273,7 +273,7 @@ EOD;
 	 * Format the stack trace for the currently loaded exception
 	 * @return string - The string containing the formatted HTML stack trace
 	 */
-	public static function formatStackTrace()
+	final protected static function formatStackTrace()
 	{
 		$return = array();
 		$stack = self::$exception->getTrace();
