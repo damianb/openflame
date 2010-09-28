@@ -31,14 +31,14 @@ class OfCLIHandler
 	/**
 	 * @var Exception - The exception to store
 	 */
-	public static $exception;
+	protected static $exception;
 
 	/**
 	 * Catches an exception and prepares to deal with it
 	 * @param Exception $e - The exception to handle
 	 * @return void
 	 */
-	public static function catchException($e)
+	final public static function catchException($e)
 	{
 		/* @var OfCLI */
 		$ui = Of::obj('ui');
@@ -78,7 +78,7 @@ EOD;
 	/**
 	 * Error handling method
 	 */
-	public static function catchError($errno, $errstr, $errfile, $errline, $errcontext)
+	final public static function catchError($errno, $errstr, $errfile, $errline, $errcontext)
 	{
 		/* @var OfCLI */
 		$ui = Of::obj('ui');
@@ -144,7 +144,7 @@ EOD;
 	 * @param integer $context - How many lines of context (above AND below) the troublemaker should we grab?
 	 * @return string - String containing the perpetrator + context lines for where the error/exception was thrown.
 	 */
-	public static function traceException($file, $line, $context = 3)
+	final public static function traceException($file, $line, $context = 3)
 	{
 		$return = array();
 		foreach (file($file) as $i => $str)
@@ -164,7 +164,7 @@ EOD;
 	 * Format the stack trace for the currently loaded exception
 	 * @return string - The string containing the formatted stack trace
 	 */
-	public static function formatStackTrace()
+	final public static function formatStackTrace()
 	{
 		$return = array();
 		$stack = self::$exception->getTrace();
