@@ -56,32 +56,41 @@ class OfJSON
 
 		if($data === NULL)
 		{
-			switch(json_last_error())
+			if(function_exists('json_last_error'))
 			{
-				case JSON_ERROR_NONE:
-					$error = 'No error';
-					$code = OfJSONException::ERR_JSON_NO_ERROR;
-				break;
+				switch(json_last_error())
+				{
+					case JSON_ERROR_NONE:
+						$error = 'No error';
+						$code = OfJSONException::ERR_JSON_NO_ERROR;
+					break;
 
-				case JSON_ERROR_DEPTH:
-					$error = 'Maximum JSON recursion limit reached.';
-					$code = OfJSONException::ERR_JSON_DEPTH;
-				break;
+					case JSON_ERROR_DEPTH:
+						$error = 'Maximum JSON recursion limit reached.';
+						$code = OfJSONException::ERR_JSON_DEPTH;
+					break;
 
-				case JSON_ERROR_CTRL_CHAR:
-					$error = 'Control character error';
-					$code = OfJSONException::ERR_JSON_CTRL_CHAR;
-				break;
+					case JSON_ERROR_CTRL_CHAR:
+						$error = 'Control character error';
+						$code = OfJSONException::ERR_JSON_CTRL_CHAR;
+					break;
 
-				case JSON_ERROR_SYNTAX:
-					$error = 'JSON syntax error';
-					$code = OfJSONException::ERR_JSON_SYNTAX;
-				break;
+					case JSON_ERROR_SYNTAX:
+						$error = 'JSON syntax error';
+						$code = OfJSONException::ERR_JSON_SYNTAX;
+					break;
 
-				default:
-					$error = 'Unknown JSON error';
-					$code = OfJSONException::ERR_JSON_UNKNOWN;
-				break;
+					default:
+						$error = 'Unknown JSON error';
+						$code = OfJSONException::ERR_JSON_UNKNOWN;
+					break;
+				}
+			}
+			else
+			{
+				// Since we don't have json_last_error(), which is PHP 5.3+, we just say it is OfJSONException::ERR_JSON_UNKNOWN, and move on.
+				$error = 'Unknown JSON error';
+				$code = OfJSONException::ERR_JSON_UNKNOWN;
 			}
 
 			throw new OfJSONException($error, $code);
