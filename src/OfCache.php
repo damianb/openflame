@@ -9,15 +9,13 @@
  * Minimum Requirement: PHP 5.0.0
  */
 
-if(!defined('ROOT_PATH'))
-	define('ROOT_PATH', './');
+if(!defined('ROOT_PATH')) exit;
 
 /**
  * OpenFlame Web Framework - Cache interface class,
  * 		Provides an easy-to-use object interface for interacting with the loaded cache engine.
  *
  *
- * @author      Damian Bushong ("Obsidian")
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
  * @link        http://github.com/OpenFlame/OpenFlame-Framework
  */

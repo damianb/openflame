@@ -11,15 +11,13 @@
  * @uses OfJSON
  */
 
-if(!defined('ROOT_PATH'))
-	define('ROOT_PATH', './');
+if(!defined('ROOT_PATH')) exit;
 
 /**
  * OpenFlame Web Framework - JSON Cache class,
  * 		JSON cache engine for use with the cache interface.
  *
  *
- * @author      Damian Bushong ("Obsidian")
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
  * @link        http://github.com/OpenFlame/OpenFlame-Framework
  */
