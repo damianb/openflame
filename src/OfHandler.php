@@ -8,17 +8,16 @@
  *
  * Minimum Requirement: PHP 5.0.0
  */
-
-if(!defined('ROOT_PATH'))
-	define('ROOT_PATH', './');
+ 
+if(!defined('ROOT_PATH')) exit;
 
 /**
  * OpenFlame Web Framework - Exception handler class,
  * 		Extension handler class, builds a page that shows debug info on an uncaught exception.
  *
  *
- * @author      Damian Bushong ("Obsidian")
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
+ * @link        http://github.com/OpenFlame/OpenFlame-Framework
  */
 class OfHandler
 {

@@ -9,8 +9,7 @@
  * Minimum Requirement: PHP 5.0.0
  */
 
-if(!defined('ROOT_PATH'))
-	define('ROOT_PATH', './');
+if(!defined('ROOT_PATH')) exit;
 
 /**
  * OpenFlame Web Framework - Hashing framework,

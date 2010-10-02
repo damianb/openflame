@@ -9,15 +9,13 @@
  * Minimum Requirement: PHP 5.0.0
  */
 
-if(!defined('ROOT_PATH'))
-	define('ROOT_PATH', './');
+if(!defined('ROOT_PATH')) exit;
 
 /**
  * OpenFlame Web Framework - Url Hanlder
  * 	     Allows handing of pretty urls within PHP and increases portability betwween Web Servers.
  *
  *
- * @author      Sam Thompson ("Sam")
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
  * @link        http://github.com/OpenFlame/OpenFlame-Framework
  */

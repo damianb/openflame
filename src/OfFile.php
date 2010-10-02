@@ -11,8 +11,7 @@
  * @uses OfInput
  */
 
-if(!defined('ROOT_PATH'))
-	define('ROOT_PATH', './');
+if(!defined('ROOT_PATH')) exit;
 
 // Make sure we have our class here
 // @todo replace with a proper dependency injection
@@ -26,7 +25,6 @@ elseif(!file_exists(ROOT_PATH . 'OfInput.php') && !class_exists('OfInput'))
  * 	     Extends the Input class to handle file uploads.
  *
  *
- * @author      David King ("imkingdavid")
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
  * @link        http://github.com/OpenFlame/OpenFlame-Framework
  */
