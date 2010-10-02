@@ -11,7 +11,7 @@
  * @uses OfJSON
  */
 
-if(!defined('ROOT_PATH')) exit;
+if(!defined('OF_ROOT')) exit;
 
 /**
  * OpenFlame Web Framework - JSON Cache class,

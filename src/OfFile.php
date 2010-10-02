@@ -11,7 +11,7 @@
  * @uses OfInput
  */
 
-if(!defined('ROOT_PATH')) exit;
+if(!defined('OF_ROOT')) exit;
 
 // Make sure we have our class here
 // @todo replace with a proper dependency injection
