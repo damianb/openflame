@@ -9,7 +9,7 @@
  * Minimum Requirement: PHP 5.0.0
  */
 
-if(!defined('ROOT_PATH')) exit;
+if(!defined('OF_ROOT')) exit;
 
 /**
  * OpenFlame Web Framework - Internationalization class,

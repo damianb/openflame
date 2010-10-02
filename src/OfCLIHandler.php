@@ -12,7 +12,7 @@
  * @uses OfCLI
  */
 
-if(!defined('ROOT_PATH')) exit;
+if(!defined('OF_ROOT')) exit;
 
 /**
  * OpenFlame Web Framework - CLI error handler class,
