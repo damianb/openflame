@@ -92,3 +92,19 @@ class OfJSONException extends OfException
 	const ERR_JSON_CTRL_CHAR = 4103;
 	const ERR_JSON_SYNTAX = 4104;
 }
+
+/**
+ * OpenFlame Web Framework - CLIArgs Exception class,
+ * 		Used for exceptions generated in the CLI Args input library.
+ *
+ *
+ * @author      Damian Bushong ("Obsidian")
+ * @license     http://opensource.org/licenses/mit-license.php The MIT License
+ * @link        http://github.com/OpenFlame/OpenFlame-Framework
+ *
+ * @note this class reserves the 5xxx exception code range
+ */
+class OfCLIArgsException extends OfException
+{
+	// asdf
+}
