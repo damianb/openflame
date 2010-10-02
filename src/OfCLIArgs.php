@@ -23,7 +23,6 @@ if(!defined('ROOT_PATH'))
  */
 class OfCLIArgs implements ArrayAccess
 {
-	const VALIDATE_NONE = 0;
 	const VALIDATE_BOOLEAN = 1;
 	const VALIDATE_INCREMENT = 2;
 	const VALIDATE_VALUE_INT = 3;
@@ -81,12 +80,19 @@ class OfCLIArgs implements ArrayAccess
 		{
 			if($arg[0] == '-')
 			{
+				/* @var $map OfCLIArgMap */
 				foreach($this->map as $map_name => $map)
 				{
 					if(!$map->handlesArg($arg))
 						continue;
 
 					// @todo process me
+					switch($map->getProperty('validate'))
+					{
+						case self::VALIDATE_BOOLEAN:
+							// asdf
+						break;
+					}
 				}
 			}
 			else
@@ -157,7 +163,6 @@ class OfCLIArgs implements ArrayAccess
 
 class OfCLIArgMap
 {
-	const VALIDATE_NONE = 0;
 	const VALIDATE_BOOLEAN = 1;
 	const VALIDATE_INCREMENT = 2;
 	const VALIDATE_VALUE_INT = 3;
@@ -265,6 +270,18 @@ class OfCLIArgMap
 	}
 
 	/**
+	 * Get the value of an internal property.
+	 * @param string $property - The name of the internal property to grab data for.
+	 * @return mixed - The value of the property if it exists, or NULL if no such property.
+	 */
+	public function getProperty($property)
+	{
+		if(!property_exists($this, $property))
+			return NULL;
+		return $this->$property;
+	}
+
+	/**
 	 * Check to see if we handle a certain argument or not.
 	 * @param string $arg_name - The argument to check.
 	 * @return boolean - Do we handle this argument or not?
@@ -281,22 +298,37 @@ class OfCLIArgMap
 	 */
 	public function addValue($value)
 	{
-		if(is_array($this->value))
+		switch($this->validate)
 		{
-			$this->value = array_merge($this->value, $value);
+			case self::VALIDATE_BOOLEAN:
+				$this->value = true;
+			break;
+
+			case self::VALIDATE_INCREMENT:
+				$this->value++;
+			break;
+
+			case self::VALIDATE_VALUE_INT:
+				$this->value += $value;
+			break;
+
+			case self::VALIDATE_VALUE_STRING:
+				$this->value = trim($this->value . " $value");
+			break;
+
+			case self::VALIDATE_MULTIVALUE_INT:
+				$this->value[] = (int) $value;
+			break;
+
+			case self::VALIDATE_MULTIVALUE_STRING:
+				$this->value[] = (string) $value;
+			break;
+
+			case self::VALIDATE_MULTIVALUE_ARRAY:
+				$value_exp = explode('=', $value);
+				$key = array_shift($value_exp);
+				$this->value[$key] = (string) $value_exp;
+			break;
 		}
-		elseif(is_int($this->value))
-		{
-			$this->value += $value;
-		}
-		elseif(is_string($this->value))
-		{
-			$this->value = trim($this->value . " $value");
-		}
-		else
-		{
-			return false;
-		}
-		return true;
 	}
 }
