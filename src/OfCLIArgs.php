@@ -162,7 +162,7 @@ class OfCLIArgs implements ArrayAccess
 	 */
 	public function offsetExists($offset)
 	{
-		return $this->issetVar($offset);
+		return isset($this->map[$offset]);
 	}
 
 	/**
@@ -172,7 +172,7 @@ class OfCLIArgs implements ArrayAccess
 	 */
 	public function offsetGet($offset)
 	{
-		return ($this->issetVar($offset)) ? $this->fetchVar($offset) : NULL;
+		return (isset($this->map[$offset])) ? $this->map[$offset] : NULL;
 	}
 
 	/**
@@ -183,7 +183,7 @@ class OfCLIArgs implements ArrayAccess
 	 */
 	public function offsetSet($offset, $value)
 	{
-		$this->assignVar($offset, $value);
+		$this->map[$offset]->addValue($value);
 	}
 
 	/**
@@ -193,7 +193,7 @@ class OfCLIArgs implements ArrayAccess
 	 */
 	public function offsetUnset($offset)
 	{
-		unset($this->data[(string) $offset]);
+		unset($this->map[$offset]);
 	}
 }
 
