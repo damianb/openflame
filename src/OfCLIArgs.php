@@ -197,6 +197,15 @@ class OfCLIArgs implements ArrayAccess
 	}
 }
 
+/**
+ * OpenFlame Web Framework - CLI arg map object,
+ * 		Provides the structure for the CLI arg objects to fill, and handles things like data validation.
+ *
+ *
+ * @author      Damian Bushong ("Obsidian")
+ * @license     http://opensource.org/licenses/mit-license.php The MIT License
+ * @link        http://github.com/OpenFlame/OpenFlame-Framework
+ */
 class OfCLIArgMap
 {
 	const VALIDATE_BOOLEAN = 1;
@@ -207,6 +216,7 @@ class OfCLIArgMap
 	const VALIDATE_MULTIVALUE_STRING = 6;
 	const VALIDATE_MULTIVALUE_ARRAY = 7;
 
+	// @todo document me
 	protected $map_name = '';
 
 	protected $long_names = array();
@@ -223,6 +233,7 @@ class OfCLIArgMap
 
 	protected $options = array();
 
+	// @todo document
 	public function __construct(array $data)
 	{
 		$this->map_name = $data['name'];
