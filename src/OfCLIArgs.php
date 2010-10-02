@@ -186,6 +186,8 @@ class OfCLIArgMap
 	{
 		$this->map_name = $data['name'];
 
+		// @todo force dashing prefixes on long and short names
+
 		if(isset($data['long_names']))
 			$this->long_names = (array) $data['long_names'];
 
@@ -262,6 +264,11 @@ class OfCLIArgMap
 			$this->type = gettype($data['default']);
 	}
 
+	/**
+	 * Check to see if we handle a certain argument or not.
+	 * @param string $arg_name - The argument to check.
+	 * @return boolean - Do we handle this argument or not?
+	 */
 	public function handlesArg($arg_name)
 	{
 		return in_array($arg_name, $this->arg_names);
