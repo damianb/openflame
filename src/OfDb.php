@@ -32,12 +32,13 @@ class OfDb
 	/**
 	 * Constructor
 	 *
+	 * @param string doctrineRoot - Path to doctirne
 	 * @param string modelsPath - Path to the models directory
 	 */
-	public function __construct($modelsPath)
+	public function __construct($doctrineRoot ,$modelsPath)
 	{
 		// Get Doctrine ready to deploy
-		require OF_ROOT . 'src/vendor/doctrine/Doctrine.php';
+		require $doctrineRoot. 'Doctrine.php';
 		spl_autoload_register(array('Doctrine', 'autoload'));
 		$this->manager = Doctrine_Manager::getInstance();
 		
