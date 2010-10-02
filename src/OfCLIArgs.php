@@ -79,7 +79,7 @@ class OfCLIArgs implements ArrayAccess
 	 */
 	public function addArg($arg_name, array $arg_options)
 	{
-		$this->map[$arg_name] = new OfCLIArgMap($arg_options);
+		$this->map[$arg_name] = new OfCLIArgMap($arg_name, $arg_options);
 	}
 
 	/**
@@ -233,20 +233,39 @@ class OfCLIArgMap
 
 	protected $options = array();
 
-	// @todo document
-	public function __construct(array $data)
+	/**
+	 * Constructor
+	 * @param string - The name assigned to this arg map object instance.
+	 * @param array $data - The data to dump into the arg.
+	 * @return void
+	 */
+	public function __construct($map_name, array $data)
 	{
-		$this->map_name = $data['name'];
-
-		// @todo force dashing prefixes on long and short names
-
-		if(isset($data['long_names']))
-			$this->long_names = (array) $data['long_names'];
+		$this->map_name = $map_name;
 
 		if(isset($data['short_names']))
+		{
+			// Force all short_names to start with the usual dash
+			foreach($data['short_names'] as $key => $name)
+			{
+				if(substr($name, 0, 1) != '-')
+					$data['short_names'][$key] = "-$name";
+			}
 			$this->short_names = (array) $data['short_names'];
+		}
 
-		$this->arg_names = array_merge($this->long_names, $this->short_names);
+		if(isset($data['long_names']))
+		{
+			// Force all long_names to start with the usual double-dash
+			foreach($data['long_names'] as $key => $name)
+			{
+				if(substr($name, 0, 2) != '--')
+					$data['long_names'][$key] = "--$name";
+			}
+			$this->long_names = (array) $data['long_names'];
+		}
+
+		$this->arg_names = array_merge($this->short_names, $this->long_names);
 
 		if(isset($data['options']))
 			$this->options = (array) $data['options'];
@@ -310,6 +329,7 @@ class OfCLIArgMap
 			}
 		}
 
+		$this->description = $data['description'];
 		$this->validate = $data['validate'];
 
 		if(!is_null($this->default_value) || !isset($this->options['typecast.disable']) || !$this->options['typecast.disable'])
