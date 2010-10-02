@@ -62,7 +62,7 @@ class OfCLIArgs implements ArrayAccess
 	 */
 	public function addArg($arg_name, $arg_options)
 	{
-		$this->map[$name] = new OfCLIArgMap($arg_options);
+		$this->map[$arg_name] = new OfCLIArgMap($arg_options);
 	}
 
 	/**
