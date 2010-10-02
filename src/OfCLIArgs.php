@@ -59,7 +59,7 @@ class OfCLIArgs implements ArrayAccess
 	 * @param array $map - The map of the CLI args we can process, to be processed and interpreted.
 	 * @return void
 	 */
-	public function __construct($app_name, $app_desc, $app_version, array $map = array())
+	final public function __construct($app_name, $app_desc, $app_version, array $map = array())
 	{
 		// Dump in some properties here regarding what the hell is using us...
 		list($this->name, $this->description, $this->version) = array($app_name, $app_desc, $app_version);
@@ -77,7 +77,7 @@ class OfCLIArgs implements ArrayAccess
 	 * @param array $arg_options - The options for this arg.
 	 * @return void
 	 */
-	public function addArg($arg_name, array $arg_options)
+	final public function addArg($arg_name, array $arg_options)
 	{
 		$this->map[$arg_name] = new OfCLIArgMap($arg_name, $arg_options);
 	}
@@ -87,7 +87,7 @@ class OfCLIArgs implements ArrayAccess
 	 * @param array $args - The array of CLI args to parse (just an exploded version of $argv is needed)
 	 * @return void
 	 */
-	public function parseArgs(array $args)
+	final public function parseArgs(array $args)
 	{
 		// Make sure we don't have an extra arg in here...
 		$first_arg = array_shift($args);
@@ -146,6 +146,14 @@ class OfCLIArgs implements ArrayAccess
 	 * asdf
 	 */
 	public function buildHelp()
+	{
+		// asdf
+	}
+
+	/**
+	 * asdf
+	 */
+	public function buildVersion()
 	{
 		// asdf
 	}
