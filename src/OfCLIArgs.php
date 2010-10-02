@@ -31,8 +31,19 @@ class OfCLIArgs implements ArrayAccess
 	const VALIDATE_MULTIVALUE_STRING = 6;
 	const VALIDATE_MULTIVALUE_ARRAY = 7;
 
+	/**
+	 * @var string - The name of of application that is using us.
+	 */
 	protected $name = '';
+
+	/**
+	 * @var string - The description of the application that is using us.
+	 */
 	protected $description = '';
+
+	/**
+	 * @var string - The version stamp of the application that is using us.
+	 */
 	protected $version = '';
 
 	/**
@@ -42,6 +53,9 @@ class OfCLIArgs implements ArrayAccess
 
 	/**
 	 * Constructor
+	 * @param string $app_name - The name of the app using us.
+	 * @param string $app_desc - The description of the app using us.
+	 * @param string $version - The version of the app using us.
 	 * @param array $map - The map of the CLI args we can process, to be processed and interpreted.
 	 * @return void
 	 */
@@ -59,23 +73,30 @@ class OfCLIArgs implements ArrayAccess
 
 	/**
 	 * Register an arg with the handler.
+	 * @param string $arg_name - The name to register this arg as.
+	 * @param array $arg_options - The options for this arg.
+	 * @return void
 	 */
-	public function addArg($arg_name, $arg_options)
+	public function addArg($arg_name, array $arg_options)
 	{
 		$this->map[$arg_name] = new OfCLIArgMap($arg_options);
 	}
 
 	/**
-	 * Blah blah blah...
+	 * Parse an array of CLI arguments against declared CLI args.
+	 * @param array $args - The array of CLI args to parse (just an exploded version of $argv is needed)
+	 * @return void
 	 */
-	public function parseArgs($args)
+	public function parseArgs(array $args)
 	{
 		// Make sure we don't have an extra arg in here...
 		$first_arg = array_shift($args);
 		if($first_arg !== basename(__FILE__))
 			array_unshift($args, $first_arg);
+		unset($first_arg);
 
 		$last_map = NULL;
+		/* @var $last_map OfCLIArgMap */
 		foreach($args as $arg)
 		{
 			if($arg[0] == '-')
@@ -86,13 +107,19 @@ class OfCLIArgs implements ArrayAccess
 					if(!$map->handlesArg($arg))
 						continue;
 
-					// @todo process me
 					switch($map->getProperty('validate'))
 					{
 						case self::VALIDATE_BOOLEAN:
-							// asdf
+							$map->addValue(true);
+						break;
+
+						case self::VALIDATE_INCREMENT:
+							$last_map->addValue(1);
 						break;
 					}
+
+					// Set $last_map, which holds the last argmap encountered.
+					$last_map = $map;
 				}
 			}
 			else
@@ -100,9 +127,18 @@ class OfCLIArgs implements ArrayAccess
 				if(is_null($last_map))
 					continue;
 
-				$last_map->addValue($arg);
+				// Using a switch here as we may want to expand upon this later.
+				switch($last_map->getProperty('validate'))
+				{
+					case self::VALIDATE_VALUE_INT:
+					case self::VALIDATE_VALUE_STRING:
+					case self::VALIDATE_MULTIVALUE_INT:
+					case self::VALIDATE_MULTIVALUE_STRING:
+					case self::VALIDATE_MULTIVALUE_ARRAY:
+						$last_map->addValue($arg);
+					break;
+				}
 			}
-			// asdf
 		}
 	}
 
@@ -301,11 +337,15 @@ class OfCLIArgMap
 		switch($this->validate)
 		{
 			case self::VALIDATE_BOOLEAN:
-				$this->value = true;
+				$this->value = $value;
 			break;
 
 			case self::VALIDATE_INCREMENT:
-				$this->value++;
+				$value = (int) $value;
+				for($i = 1; $i <= $value; $i++)
+				{
+					$this->value++;
+				}
 			break;
 
 			case self::VALIDATE_VALUE_INT:
