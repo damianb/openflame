@@ -54,7 +54,7 @@ class OfDb
 	/**
 	 * Constructor
 	 *
-	 * @param string $doctrint_root Path to doctirne
+	 * @param string $doctrine_root Path to doctirne
 	 * @param string $models_path Path to the models directory
 	 */
 	public function __construct($doctrine_root, $models_path)
@@ -71,7 +71,7 @@ class OfDb
 	 * Connects to the database via Doctrine, sets default configuration, and loads models
 	 *
 	 * @param string $dsn connection string
-	 * @param string $conneciton_name name of the connection. Leave default to assume default connection or specify custom
+	 * @param string $connection_name name of the connection. Leave default to assume default connection or specify custom
 	 *
 	 * @return void
 	 */
