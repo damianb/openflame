@@ -53,9 +53,9 @@ class OfDb
 	 *
 	 * @return void
 	 */
-	public function loadDatabase($dsn, $connectionName = '')
+	public function loadDatabase($dsn, $connection_name = '')
 	{
-		$this->connection = Doctrine_Manager::connection($dsn, (($connectionName) ? $connectionName : self::CONNECTION_NAME));
+		$this->connection = Doctrine_Manager::connection($dsn, (($connection_name) ? $connection_name : self::CONNECTION_NAME));
 		
 		$this->connection->setCharset('utf8');
 		$this->connection->setCollate('utf8_bin');
