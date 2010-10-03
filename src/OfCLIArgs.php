@@ -53,7 +53,7 @@ class OfCLIArgs implements ArrayAccess
 	 * Constructor
 	 * @param string $app_name - The name of the app using us.
 	 * @param string $app_desc - The description of the app using us.
-	 * @param string $version - The version of the app using us.
+	 * @param string $app_version - The version of the app using us.
 	 * @param array $map - The map of the CLI args we can process, to be processed and interpreted.
 	 * @return void
 	 */
