@@ -12,8 +12,8 @@
 if(!defined('OF_ROOT')) exit;
 
 /**
- * OpenFlame Web Framework - PDO extender
- * 	     Gives some more functionality to PDO.
+ * OpenFlame Web Framework - Doctrine Interface
+ * 	     Places doctrine into an Easy-to-use class to ensure it's objects stay available on a global scope.
  *
  *
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
@@ -21,12 +21,32 @@ if(!defined('OF_ROOT')) exit;
  */
 class OfDb
 {
+	/**
+	 * @var manager
+	 *
+	 * manager object used by Doctrine
+	 */
 	public $manager;
-	
+
+	/**
+	 * @var connection
+	 *
+	 * Connection object used by Doctrine
+	 */
 	public $connection;
-	
-	private $modelsPath = '';
-	
+
+	/**
+	 * @var models_path
+	 *
+	 * Path to doctrine models.
+	 */
+	private $models_path = '';
+
+	/**
+	 * @const CONNECTION_NAME
+	 *
+	 * Default name of the connection used by doctrine.
+	 */
 	const CONNECTION_NAME = 'openflameframework';
 
 	/**
@@ -35,14 +55,14 @@ class OfDb
 	 * @param string doctrineRoot - Path to doctirne
 	 * @param string modelsPath - Path to the models directory
 	 */
-	public function __construct($doctrineRoot ,$modelsPath)
+	public function __construct($doctrine_root, $models_path)
 	{
 		// Get Doctrine ready to deploy
-		require $doctrineRoot. 'Doctrine.php';
+		require $doctrine_root. 'Doctrine.php';
 		spl_autoload_register(array('Doctrine', 'autoload'));
 		$this->manager = Doctrine_Manager::getInstance();
 		
-		$this->modelsPath = $modelsPath;
+		$this->models_path = $models_path;
 	}
 
 	/**
