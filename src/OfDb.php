@@ -24,21 +24,21 @@ if(!defined('OF_ROOT')) exit;
 class OfDb
 {
 	/**
-	 * @var manager
+	 * @var $manager
 	 *
 	 * manager object used by Doctrine
 	 */
 	public $manager;
 
 	/**
-	 * @var connection
+	 * @var $connection
 	 *
 	 * Connection object used by Doctrine
 	 */
 	public $connection;
 
 	/**
-	 * @var models_path
+	 * @var $models_path
 	 *
 	 * Path to doctrine models.
 	 */
@@ -54,8 +54,8 @@ class OfDb
 	/**
 	 * Constructor
 	 *
-	 * @param string doctrineRoot - Path to doctirne
-	 * @param string modelsPath - Path to the models directory
+	 * @param string $doctrint_root Path to doctirne
+	 * @param string $models_path Path to the models directory
 	 */
 	public function __construct($doctrine_root, $models_path)
 	{
@@ -70,8 +70,8 @@ class OfDb
 	/**
 	 * Connects to the database via Doctrine, sets default configuration, and loads models
 	 *
-	 * @param string dsn - connection string
-	 * @param string connecitonName - name of the connection. Leave default to assume default connection or specify custom
+	 * @param string $dsn connection string
+	 * @param string $conneciton_name name of the connection. Leave default to assume default connection or specify custom
 	 *
 	 * @return void
 	 */
@@ -88,7 +88,7 @@ class OfDb
 
 		spl_autoload_register(array('Doctrine_Core', 'modelsAutoload'));
 		$this->manager->setAttribute(Doctrine_Core::ATTR_MODEL_LOADING, Doctrine_Core::MODEL_LOADING_CONSERVATIVE);
-		
+
 		Doctrine_Core::loadModels($this->modelsPath);
 	}
 
