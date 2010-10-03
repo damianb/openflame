@@ -7,6 +7,8 @@
  * @link        http://github.com/OpenFlame/OpenFlame-Framework
  *
  * Minimum Requirement: PHP 5.0.0
+ *
+ * @uses Doctrine 1.2
  */
 
 if(!defined('OF_ROOT')) exit;
@@ -61,7 +63,7 @@ class OfDb
 		require $doctrine_root. 'Doctrine.php';
 		spl_autoload_register(array('Doctrine', 'autoload'));
 		$this->manager = Doctrine_Manager::getInstance();
-		
+
 		$this->models_path = $models_path;
 	}
 
@@ -76,7 +78,7 @@ class OfDb
 	public function loadDatabase($dsn, $connection_name = '')
 	{
 		$this->connection = Doctrine_Manager::connection($dsn, (($connection_name) ? $connection_name : self::CONNECTION_NAME));
-		
+
 		$this->connection->setCharset('utf8');
 		$this->connection->setCollate('utf8_bin');
 
