@@ -91,17 +91,4 @@ class OfDb
 
 		Doctrine_Core::loadModels($this->modelsPath);
 	}
-
-	/**
-	 * Loads tables
-	 *
-	 * @param array tables - array of all the tables to load
-	 *
-	 * @return void
-	 */
-	public function loadTables($tables = array())
-	{
-		foreach($tables as $table)
-			$this->{"$table"} = Doctrine_Core::getTable($table);
-	}
 }
