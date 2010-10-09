@@ -22,7 +22,7 @@ if(!defined('OF_ROOT')) exit;
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
  * @link        http://github.com/OpenFlame/OpenFlame-Framework
  */
-class OfDb
+class OfConfig
 {
 	/**
 	 * @var $val
@@ -40,6 +40,8 @@ class OfDb
 	
 	/**
 	 * Constructor
+	 *
+	 * @var string $config_table_name The table name of the config table (keeps it independent of DB constants)
 	 */
 	public function __construct($config_table_name)
 	{
