@@ -68,7 +68,7 @@ class OfConfig
 	 * @return void
 	 */
 	public function set($config_name, $config_value)
-		
+	{
 		// Try the update
 		$row_count = $this->table->createQuery('c')
 			->set('c.config_value = ?', $config_value)
