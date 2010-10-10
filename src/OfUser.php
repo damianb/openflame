@@ -93,7 +93,7 @@ class OfUser extends OfSession
 		foreach($user_row as $key => $value)
 			$this->data[$key] = $value;
 	}
-	
+
 	/**
 	 * Format date
 	 * Takes the user preference for the date format and turns the passed timestap 
@@ -103,6 +103,14 @@ class OfUser extends OfSession
 	 */
 	public function formatDate($ts = time())
 	{
+		// DateTime!
+		$datetime = new DateTime($ts, $this->data['user_tz']);
+		
+		// @todo, implement the "Less than a minute ago.." text for times < 60mins
+		// Needs lang system first... 
+		
+		// That was quick
+		return $datetime->format($this->data['user_time_format']);
 	}
 
 	/**
@@ -112,10 +120,10 @@ class OfUser extends OfSession
 	 * @param string $username Username of the person to login
 	 * @param string $password Plaintext password as inputed by the user
 	 * @param bool $auto_login Set to true to allow the user to autologin every time after logging in this time
-	 * @param string $redirect_success Path to the page to redirect to after successful login. Defaults to current page
-	 * @param string $redirect_failure Path to the page to redirect to after failed login. Defaults to current page
+	 *
+	 * @return bool true on success, false on failure
 	 */
-	public function login($username, $password, $auto_login = false, $redirect_success = '', $redirect_failure = '')
+	public function login($username, $password, $auto_login = false)
 	{
 	}
 
