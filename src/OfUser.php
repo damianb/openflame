@@ -9,7 +9,6 @@
  * Minimum Requirement: PHP 5.0.0
  *
  * @uses OfDb.php
- * @uses OfConfig.php
  * @uses OfSession
  */
 
@@ -35,15 +34,32 @@ class OfUser extends OfSession
 	public $data = array();
 
 	/**
-	 * Constructor
+	 * @var $table
+	 *
+	 * Contains the doctrine table object
 	 */
-	public function __construct()
+	public $table;
+
+	/**
+	 * Anonymous user id
+	 */
+	const ANONYMOUS_USER = 0;
+
+	/**
+	 * Constructor
+	 *
+	 * @param string $user_table_name Name of the users table
+	 */
+	public function __construct($users_table_name)
 	{
 		// Just make sure all this is called
 		parent::__construct();
 		
 		// Get our stacked refs set up
 		$this->data = &$this->_session_vars;
+		
+		// Now, set our table object as a property so we can access it from anywhere
+		$this->table = Doctrine::getTable($users_table_name);
 	}
 
 	/**
@@ -55,6 +71,20 @@ class OfUser extends OfSession
 	 */
 	public function checkPersistent()
 	{
+		// Get our cookies
+		$c_user_id	= $_COOKIE[$this->cookie_name . '_uid'];
+		$c_pl_id	= $_COOKIE[$this->cookie_name . '_pl'];
+
+		// If they are already logged in or they dont have cookies don't bother with this
+		if($this->data['user_id'] != self::ANONYMOUS_USER || empty($_user_id) || empty($c_pl_id))
+			return;
+
+		// Now, we check if we have an entry in the DB
+		$query = $this->table->createQuery('u')
+			->where('u.user_id = ?', $c_user_id)
+			->andWhere('u.session_pl', $c_pl_id);
+
+		$users = $query->fetchOne()
 	}
 	
 	/**
@@ -83,27 +113,18 @@ class OfUser extends OfSession
 	}
 
 	/**
-	 * Loads user data into the $data property
-	 *
-	 * @param 
-	 */
-	public function loadUser($user_id, $data)
-	{
-	
-	}
-
-	/**
 	 * Get random text
 	 *
 	 * @param string $type Can be 'string' (full alpha-numeric),  'hex' (0-9, f-f), or 'int' (0-9)
 	 * @param int $length How long? 
+	 * @param string $seed Just some junk for addtional randomization
 	 *
 	 * @return mixed requested string 
 	 */
-	public function getRandom($type, $length = 10)
+	public function getRandom($type, $length = 10, $seed = 'z')
 	{
 		$mctime = microtime();
-		$text = md5($mctime . base_convert(mt_rand(150, 500), 10, 36));
+		$text = md5($mctime . base_convert(mt_rand(150, 500), 10, 36) . $seed);
 
 		// Get the type we requested
 		switch($type)
