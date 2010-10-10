@@ -30,4 +30,6 @@ Included files:
 * src/OfJSON.php - (*JSON interface class, which makes it easier to work with JSON files*)
 * src/OfTwig.php - (*Twig integration class, enables easy template variable management*)
 * src/OfUrlHander.php - (*Provides "pretty" urls functionality*)
-* src/OfUser.php - (*Wrapper for native PHP sessions*)
+* src/OfUser.php - (*Basic user class with login, time handling, and persistent login functionality*)
+* src/OfSession.php - (*Wrapper for native PHP sessions*)
+
