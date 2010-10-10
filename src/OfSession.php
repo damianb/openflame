@@ -201,8 +201,8 @@ class OfSession
 		// Let PHP take it from here
 		session_start();
 	
-		// Validate sessions
-		if(!empty($_SESSION['valid_ip']) || $this->settings['validate_ip'] == self::VALIDATE_NONE)
+		// Validate session IP
+		if(empty($_SESSION['valid_ip']) || $this->settings['validate_ip'] == self::VALIDATE_NONE)
 		{
 			$_SESSION['valid_ip'] = $_SERVER['REMOTE_ADDR'];
 		}
@@ -224,8 +224,23 @@ class OfSession
 			
 			// Remove their session vars (effectivly logging them out) but 
 			// don't destory the session, we can still use it.
-			if($note_valid)
+			if($not_valid)
 				session_unset();
+		}
+		
+		// Validate User Agent
+		if($this->settings['validate_ip'])
+		{
+			if(empty($_SESSION['valid_ua']))
+			{
+				$_SESSION['valid_ua'] = $_SERVER['HTTP_USER_AGENT'];
+			}
+			else
+			{
+				// Here is where we check for spys
+				if($_SESSION['valid_ua'] != $_SERVER['HTTP_USER_AGENT'])
+					session_unset(); // SPY!
+			}
 		}
 
 		// Fluid interface
