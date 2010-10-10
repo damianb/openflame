@@ -30,11 +30,13 @@ class OfSession
 	 * Reference to $_SESSION for sessions/user abstraction
 	 */
 	protected $_session_vars = array();
-	
+
 	/**
-	 * Anonymous user id
+	 * @param $cookie_name
+	 *
+	 * Name of the cookie
 	 */
-	const ANONYMOUS_USER = 0;
+	protected $cookie_name = '';
 
 	/**
 	 * Constructor
@@ -60,8 +62,9 @@ class OfSession
 	
 	/**
 	 * Set cookie params
-	 * Wrapper for the session configuraiton function session_set_cookie_params()
+	 * Sets some advanced information about the cookies
 	 *
+	 * @param string $cookie_name Name (rather prefix) of the cookie
 	 * @param int $cookie_lifetime Time in seconds after setting the cookie will expire
 	 * @param string $cookie_path Web path of the cookie
 	 * @param string $cookie_domain Domain the cookie is active in, ensure it has two dots (".")
@@ -69,8 +72,13 @@ class OfSession
 	 *
 	 * @return void
 	 */
-	public function setCookieParams($cookie_lifetime, $cookie_path, $cookie_domain, $cookie_secure = false)
+	public function setCookieParams($cookie_name, $cookie_lifetime, $cookie_path, $cookie_domain, $cookie_secure = false)
 	{
+		// Namming the session (or cookie)
+		$this->cookie_name = $cookie_name;
+		session_name($cookie_name . '_sid');
+		
+		// Get the rest of the (un)important stuff set
 		session_set_cookie_params($cookie_lifetime, $cookie_path, $cookie_domain, $cookie_secure);
 	}
 
