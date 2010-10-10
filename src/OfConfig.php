@@ -37,7 +37,7 @@ class OfConfig
 	 * Configuration table object from doctrine
 	 */
 	private $table;
-	
+
 	/**
 	 * Constructor
 	 *
