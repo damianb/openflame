@@ -9,7 +9,8 @@
  * Minimum Requirement: PHP 5.0.0
  *
  * @uses OfDb.php
- * @uses OfSession
+ * @uses OfSession.php
+ * @uses OfHash.php
  */
 
 if(!defined('OF_ROOT')) exit;
@@ -125,6 +126,36 @@ class OfUser extends OfSession
 	 */
 	public function login($username, $password, $auto_login = false)
 	{
+		// First get the user from the database
+		$query = $this->table->createQuery('u')
+			->where('u.username = ?', $username)
+		$user_row = $query->fetchOne();
+		
+		if(!class_exists('OfHash'))
+		{
+			try // @todo - clean this up
+			{
+				include OF_ROOT . 'src/OfHash.php';
+			}
+			catch(Exception $e)
+			{
+				echo "Could not load OfHash.php";
+				// exit handler
+			}
+		}
+		
+		$hash = new OfHash(8, true);
+		
+		// Check Password
+		if(!$hash->CheckPassword($password, $user_row->['user_passsword']))
+			return false;
+		
+		// We're logged in now
+		// $user_row is an object, we have to loop through it to trigger arrayAccess
+		foreach($user_row as $key => $value)
+			$this->data[$key] = $value;
+			
+		return true;
 	}
 
 	/**
