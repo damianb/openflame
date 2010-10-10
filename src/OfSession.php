@@ -39,57 +39,165 @@ class OfSession
 	protected $cookie_name = '';
 
 	/**
+	 * @param $settings
+	 *
+	 * Session settings
+	 */
+	private $settings = array();
+
+	/**
+	 * IP validation level flags
+	 */
+	const VALIDATE_NONE		= 0;
+	const VALIDATE_FIRST	= 1;
+	const VALIDATE_SECOND	= 2;
+	const VALIDATE_THRID	= 3;
+	const VALIDATE_ALL		= 4;
+
+	/**
 	 * Constructor
 	 *
 	 * @param string $session_save_path Path to store the sessions
 	 */
 	public function __construct()
 	{
+		// Mirror _SESSION
 		$this->_session_vars = &$_SESSION;
+		
+		// Set some defaults
+		$this->settings = array(
+			'cookie_lifetime'	=> 0,
+			'cookie_path'		=> '/',
+			'cookie_domain'		=> ((substr_count($_SERVER['HTTP_HOST'], '.') < 2) ? '.' : '') . $_SERVER['HTTP_HOST'],
+			'cookie_secure'		=> false,
+			'validate_ip'		=> self::VALIDATE_THRID,
+			'validate_ua'		=> true,
+		);
 	}
 
 	/**
 	 * Set session save path
 	 *
-	 * @param string $session_save_path Path to store the sessions
+	 * @param string $save_path Path to store the sessions
+	 * @return object
 	 */
-	public function setSessionSavePath($session_save_path)
+	public function setSessionSavePath($save_path)
 	{
-		// Set some defaults for the session handler to reflect our application-
-		// level configuration values.
-		session_save_path($session_save_path);
-	}
-	
-	/**
-	 * Set cookie params
-	 * Sets some advanced information about the cookies
-	 *
-	 * @param string $cookie_name Name (rather prefix) of the cookie
-	 * @param int $cookie_lifetime Time in seconds after setting the cookie will expire
-	 * @param string $cookie_path Web path of the cookie
-	 * @param string $cookie_domain Domain the cookie is active in, ensure it has two dots (".")
-	 * @param bool $cookie_secure is the cookie being sent over https?
-	 *
-	 * @return void
-	 */
-	public function setCookieParams($cookie_name, $cookie_lifetime, $cookie_path, $cookie_domain, $cookie_secure = false)
-	{
-		// Namming the session (or cookie)
-		$this->cookie_name = $cookie_name;
-		session_name($cookie_name . '_sid');
+		session_save_path($save_path);
 		
-		// Get the rest of the (un)important stuff set
-		session_set_cookie_params($cookie_lifetime, $cookie_path, $cookie_domain, $cookie_secure);
+		return $this;
+	}
+
+	/**
+	 * Set cookie name
+	 *
+	 * @param string $cookie_name Cookie name (rather prefixes to all the cookies)
+	 * @return object
+	 */
+	public function setCookieName($cookie_name)
+	{
+		// Sotre this for later
+		$this->cookie_name = $cookie_name;
+
+		// We really are not namming the cookie directly, we are just naming the session
+		session_name($cookie_name . '_sid');
+	}
+
+	/**
+	 * Set session cookie life
+	 *
+	 * @param int $cookie_life Lifetime (in seconds) to set the cookie
+	 * @return object
+	 */
+	public function setSessionCookieLife($cookie_life)
+	{
+		$this->settings['cookie_life'] = (int) $cookie_life;
+
+		return $this;
+	}
+
+	/**
+	 * Set session cookie path
+	 *
+	 * @param int $cookie_path Lifetime (in seconds) to set the cookie
+	 * @return object
+	 */
+	public function setSessionCookieLife($cookie_path)
+	{
+		$this->settings['cookie_path'] = $cookie_path;
+
+		return $this;
+	}
+
+	/**
+	 * Set session cookie domain
+	 *
+	 * @param string $cookie_domain Cookie domain (must have two dots)
+	 * @return object
+	 */
+	public function setSessionCookieDomain($cookie_domain)
+	{
+		$this->settings['cookie_domain'] = $cookie_domain;
+
+		return $this;
+	}
+
+	/**
+	 * Set session cookie secure
+	 *
+	 * @param bool $cookie_secure Set to true if trasnmitting over https
+	 * @return object
+	 */
+	public function setSessionCookieSecure($cookie_secure)
+	{
+		$this->settings['cookie_secure'] = (bool) $cookie_secure;
+
+		return $this;
+	}
+
+	/**
+	 * Set sessin IP validation level
+	 *
+	 * @param int $level Flag from the class constants
+	 * @return object
+	 */
+	public function setSessionIpValidation($level)
+	{
+		// Check for bad values
+		if($level <= self::VALIDATE_ALL || $level >= self::VALIDATE_NONE)
+			$this->settings['validate_ip'] = $level;
+		
+		return $this;
+	}
+
+	/**
+	 * Validat User Agent
+	 *
+	 * @param bool $validate Validate the user agent?
+	 * @return object
+	 */
+	public function validateUserAgent($level)
+	{
+		$this->settings['validate_ua'] = (bool) $level;
+
+		return $this;
 	}
 
 	/**
 	 * Session Start
 	 * Starts a new session
 	 *
-	 * @return void
+	 * @return object
 	 */
 	public function sessionStart()
 	{
+		session_set_cookie_params(
+			$this->settings['cookie_lifetime'], 
+			$this->settings['cookie_path'], 
+			$this->settings['cookie_domain'], 
+			$this->settings['cookie_secure']
+		);
+		
 		// Let PHP take it from here
 		session_start();
 
@@ -106,6 +214,7 @@ class OfSession
 	public function sessionKill()
 	{
 		// Let PHP clean up the trash
+		session_unset();
 		session_destroy();
 	}
 }
