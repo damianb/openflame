@@ -51,7 +51,7 @@ class OfSession
 	const VALIDATE_NONE		= 0;
 	const VALIDATE_FIRST	= 1;
 	const VALIDATE_SECOND	= 2;
-	const VALIDATE_THRID	= 3;
+	const VALIDATE_THIRD	= 3;
 	const VALIDATE_ALL		= 4;
 
 	/**
@@ -70,7 +70,7 @@ class OfSession
 			'cookie_path'		=> '/',
 			'cookie_domain'		=> ((substr_count($_SERVER['HTTP_HOST'], '.') < 2) ? '.' : '') . $_SERVER['HTTP_HOST'],
 			'cookie_secure'		=> false,
-			'validate_ip'		=> self::VALIDATE_THRID,
+			'validate_ip'		=> self::VALIDATE_THIRD,
 			'validate_ua'		=> true,
 		);
 	}
@@ -122,7 +122,7 @@ class OfSession
 	 * @param int $cookie_path Lifetime (in seconds) to set the cookie
 	 * @return object
 	 */
-	public function setSessionCookieLife($cookie_path)
+	public function setSessionCookiePath($cookie_path)
 	{
 		$this->settings['cookie_path'] = $cookie_path;
 
@@ -171,7 +171,7 @@ class OfSession
 	}
 
 	/**
-	 * Validat User Agent
+	 * Validate User Agent
 	 *
 	 * @param bool $validate Validate the user agent?
 	 * @return object
