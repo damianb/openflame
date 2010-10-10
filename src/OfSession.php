@@ -200,6 +200,30 @@ class OfSession
 		
 		// Let PHP take it from here
 		session_start();
+	
+		// Validate sessions
+		if(!empty($_SESSION['valid_ip']) || $this->settings['validate_ip'] == self::VALIDATE_NONE)
+		{
+			$_SESSION['valid_ip'] = $_SERVER['REMOTE_ADDR'];
+		}
+		else
+		{
+			$session_ip = explode('.', $_SESSION['valid_ip']);
+			$current_ip = explode('.', $_SERVER['REMOTE_ADDR']);
+			
+			$not_valid = false;
+			for($i = 0; $i < $this->settings['validate_ip']; $i++)
+			{
+				if($session_ip[$i] != $current_ip[$i])
+				{
+					$not_valid = true;
+					break;
+				}
+			}
+			
+			if($note_valid)
+				session_unset();
+		}
 
 		// Fluid interface
 		return $this;
