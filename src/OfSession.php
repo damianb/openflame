@@ -211,6 +211,7 @@ class OfSession
 			$session_ip = explode('.', $_SESSION['valid_ip']);
 			$current_ip = explode('.', $_SERVER['REMOTE_ADDR']);
 			
+			// It will loop through each part of the IP
 			$not_valid = false;
 			for($i = 0; $i < $this->settings['validate_ip']; $i++)
 			{
@@ -221,6 +222,8 @@ class OfSession
 				}
 			}
 			
+			// Remove their session vars (effectivly logging them out) but 
+			// don't destory the session, we can still use it.
 			if($note_valid)
 				session_unset();
 		}
