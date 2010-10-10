@@ -83,8 +83,15 @@ class OfUser extends OfSession
 		$query = $this->table->createQuery('u')
 			->where('u.user_id = ?', $c_user_id)
 			->andWhere('u.session_pl', $c_pl_id);
+		$user_row = $query->fetchOne();
+		
+		// send them out if we have no match
+		if(empty($user_row['user_id']))
+			return;
 
-		$users = $query->fetchOne()
+		// $user_row is an object, we have to loop through it to trigger arrayAccess
+		foreach($user_row as $key => $value)
+			$this->data[$key] = $value;
 	}
 	
 	/**
