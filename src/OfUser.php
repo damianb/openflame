@@ -121,10 +121,11 @@ class OfUser extends OfSession
 	 * @param string $username Username of the person to login
 	 * @param string $password Plaintext password as inputed by the user
 	 * @param bool $auto_login Set to true to allow the user to autologin every time after logging in this time
+	 * @param bool $admin_login Are we re-authing as an admin?
 	 *
 	 * @return bool true on success, false on failure
 	 */
-	public function login($username, $password, $auto_login = false)
+	public function login($username, $password, $auto_login = false, $admin_login = false)
 	{
 		// First get the user from the database
 		$query = $this->table->createQuery('u')
@@ -143,18 +144,26 @@ class OfUser extends OfSession
 				// exit handler
 			}
 		}
-		
+
 		$hash = new OfHash(8, true);
-		
+
 		// Check Password
 		if(!$hash->CheckPassword($password, $user_row->['user_passsword']))
 			return false;
-		
-		// We're logged in now
-		// $user_row is an object, we have to loop through it to trigger arrayAccess
-		foreach($user_row as $key => $value)
-			$this->data[$key] = $value;
-			
+
+		if($admin_login)
+		{
+			// We are now an admin
+			$_SESSION['is_admin_session'] = true;
+		}
+		else
+		{
+			// We're logged in now
+			// $user_row is an object, we have to loop through it to trigger arrayAccess
+			foreach($user_row as $key => $value)
+				$this->data[$key] = $value;
+		}
+
 		return true;
 	}
 
