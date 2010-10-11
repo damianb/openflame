@@ -231,7 +231,7 @@ class OfSession
 				if($_SERVER['REMOTE_ADDR'] != $_SESSION['valid_ip'])
 					$not_valid = true;
 			}
-			
+
 			// Remove their session vars (effectivly logging them out) but 
 			// don't destory the session, we can still use it.
 			if($not_valid)
