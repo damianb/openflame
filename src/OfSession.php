@@ -211,15 +211,25 @@ class OfSession
 			$session_ip = explode('.', $_SESSION['valid_ip']);
 			$current_ip = explode('.', $_SERVER['REMOTE_ADDR']);
 			
-			// It will loop through each part of the IP
-			$not_valid = false;
-			for($i = 0; $i < $this->settings['validate_ip']; $i++)
+			// IPv4
+			if(sizeof($current_ip))
 			{
-				if($session_ip[$i] != $current_ip[$i])
+				// It will loop through each part of the IP
+				$not_valid = false;
+				for($i = 0; $i < $this->settings['validate_ip']; $i++)
 				{
-					$not_valid = true;
-					break;
+					if($session_ip[$i] != $current_ip[$i])
+					{
+						$not_valid = true;
+						break;
+					}
 				}
+			}
+			else
+			{
+				// IPv6
+				if($_SERVER['REMOTE_ADDR'] != $_SESSION['valid_ip'])
+					$not_valid = true;
 			}
 			
 			// Remove their session vars (effectivly logging them out) but 
@@ -229,7 +239,7 @@ class OfSession
 		}
 		
 		// Validate User Agent
-		if($this->settings['validate_ip'])
+		if($this->settings['validate_ua'])
 		{
 			if(empty($_SESSION['valid_ua']))
 			{
