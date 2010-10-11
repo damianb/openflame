@@ -131,20 +131,8 @@ class OfUser extends OfSession
 		$query = $this->table->createQuery('u')
 			->where('u.username = ?', $username)
 		$user_row = $query->fetchOne();
-		
-		if(!class_exists('OfHash'))
-		{
-			try // @todo - clean this up
-			{
-				include OF_ROOT . 'src/OfHash.php';
-			}
-			catch(Exception $e)
-			{
-				echo "Could not load OfHash.php";
-				// exit handler
-			}
-		}
 
+		// This should be autoloaded
 		$hash = new OfHash(8, true);
 
 		// Check Password
