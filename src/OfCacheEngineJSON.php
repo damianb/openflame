@@ -24,17 +24,6 @@ if(!defined('OF_ROOT')) exit;
 class OfCacheEngineJSON extends OfCacheEngineBase implements OfCacheEngineInterface
 {
 	/**
-	 * Constructor
-	 * @return void
-	 */
-	public function __construct()
-	{
-		// Make sure we have the JSON extension loaded
-		//if(!class_exists('OfJSON')) // @todo replace with whatever include code we'll be using later
-		//	include OF_ROOT . 'OfJSON.php';
-	}
-
-	/**
 	 * Builds a JSON-based cache file, complete with idiot warning.
 	 * @param mixed $data - The data to cache.
 	 * @return string - Full JSON code to be stored in a cache file.
