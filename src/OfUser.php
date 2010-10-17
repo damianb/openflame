@@ -9,8 +9,8 @@
  * Minimum Requirement: PHP 5.0.0
  *
  * @uses OfDb.php
- * @uses OfConfig.php
- * @uses OfSession
+ * @uses OfSession.php
+ * @uses OfHash.php
  */
 
 if(!defined('OF_ROOT')) exit;
@@ -35,15 +35,32 @@ class OfUser extends OfSession
 	public $data = array();
 
 	/**
-	 * Constructor
+	 * @var $table
+	 *
+	 * Contains the doctrine table object
 	 */
-	public function __construct()
+	public $table;
+
+	/**
+	 * Anonymous user id
+	 */
+	const ANONYMOUS_USER = 0;
+
+	/**
+	 * Constructor
+	 *
+	 * @param string $user_table_name Name of the users table
+	 */
+	public function __construct($users_table_name)
 	{
 		// Just make sure all this is called
 		parent::__construct();
 		
 		// Get our stacked refs set up
 		$this->data = &$this->_session_vars;
+		
+		// Now, set our table object as a property so we can access it from anywhere
+		$this->table = Doctrine::getTable($users_table_name);
 	}
 
 	/**
@@ -55,8 +72,29 @@ class OfUser extends OfSession
 	 */
 	public function checkPersistent()
 	{
+		// Get our cookies
+		$c_user_id	= $_COOKIE[$this->cookie_name . '_uid'];
+		$c_pl_id	= $_COOKIE[$this->cookie_name . '_pl'];
+
+		// If they are already logged in or they dont have cookies don't bother with this
+		if($this->data['user_id'] != self::ANONYMOUS_USER || empty($_user_id) || empty($c_pl_id))
+			return;
+
+		// Now, we check if we have an entry in the DB
+		$query = $this->table->createQuery('u')
+			->where('u.user_id = ?', $c_user_id)
+			->andWhere('u.session_pl', $c_pl_id);
+		$user_row = $query->fetchOne();
+		
+		// send them out if we have no match
+		if(empty($user_row['user_id']))
+			return;
+
+		// $user_row is an object, we have to loop through it to trigger arrayAccess
+		foreach($user_row as $key => $value)
+			$this->data[$key] = $value;
 	}
-	
+
 	/**
 	 * Format date
 	 * Takes the user preference for the date format and turns the passed timestap 
@@ -66,6 +104,14 @@ class OfUser extends OfSession
 	 */
 	public function formatDate($ts = time())
 	{
+		// DateTime!
+		$datetime = new DateTime($ts, $this->data['user_tz']);
+		
+		// @todo, implement the "Less than a minute ago.." text for times < 60mins
+		// Needs lang system first... 
+		
+		// That was quick
+		return $datetime->format($this->data['user_time_format']);
 	}
 
 	/**
@@ -75,21 +121,38 @@ class OfUser extends OfSession
 	 * @param string $username Username of the person to login
 	 * @param string $password Plaintext password as inputed by the user
 	 * @param bool $auto_login Set to true to allow the user to autologin every time after logging in this time
-	 * @param string $redirect_success Path to the page to redirect to after successful login. Defaults to current page
-	 * @param string $redirect_failure Path to the page to redirect to after failed login. Defaults to current page
-	 */
-	public function login($username, $password, $auto_login = false, $redirect_success = '', $redirect_failure = '')
-	{
-	}
-
-	/**
-	 * Loads user data into the $data property
+	 * @param bool $admin_login Are we re-authing as an admin?
 	 *
-	 * @param 
+	 * @return bool true on success, false on failure
 	 */
-	public function loadUser($user_id, $data)
+	public function login($username, $password, $auto_login = false, $admin_login = false)
 	{
-	
+		// First get the user from the database
+		$query = $this->table->createQuery('u')
+			->where('u.username = ?', $username)
+		$user_row = $query->fetchOne();
+
+		// This should be autoloaded
+		$hash = new OfHash(8, true);
+
+		// Check Password
+		if(!$hash->CheckPassword($password, $user_row->['user_passsword']))
+			return false;
+
+		if($admin_login)
+		{
+			// We are now an admin
+			$_SESSION['is_admin_session'] = true;
+		}
+		else
+		{
+			// We're logged in now
+			// $user_row is an object, we have to loop through it to trigger arrayAccess
+			foreach($user_row as $key => $value)
+				$this->data[$key] = $value;
+		}
+
+		return true;
 	}
 
 	/**
@@ -97,13 +160,14 @@ class OfUser extends OfSession
 	 *
 	 * @param string $type Can be 'string' (full alpha-numeric),  'hex' (0-9, f-f), or 'int' (0-9)
 	 * @param int $length How long? 
+	 * @param string $seed Just some junk for addtional randomization
 	 *
 	 * @return mixed requested string 
 	 */
-	public function getRandom($type, $length = 10)
+	public function getRandom($type, $length = 10, $seed = 'z')
 	{
 		$mctime = microtime();
-		$text = md5($mctime . base_convert(mt_rand(150, 500), 10, 36));
+		$text = md5($mctime . base_convert(mt_rand(150, 500), 10, 36) . $seed);
 
 		// Get the type we requested
 		switch($type)
