@@ -18,5 +18,10 @@ spl_autoload_register('Of::loader');
 // Register exception handler
 set_exception_handler('OfHandler::catcher');
 
+// Initiate Doctrine
+// Initiate Twig
+// Create application-level configuration object
+// Start sessions
+
 // blah blah blah
 // add to this later
