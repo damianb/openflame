@@ -6,7 +6,7 @@
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
  * @link        http://github.com/OpenFlame/OpenFlame-Framework
  *
- * Minimum Requirement: PHP 5.0.0
+ * Minimum Requirement: PHP 5.2.3
  *
  * @uses Doctrine 1.2
  */
