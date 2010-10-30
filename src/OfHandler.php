@@ -81,7 +81,7 @@ class OfHandler
 			$e['stack'] = 'No stack trace available.';
 
 		$message = <<<EOD
-						<div style="padding: 50px 0;">
+						<div>
 							<h3 style="padding: 0 0 20px 0;">Exception information</h3>
 
 							<div>Exception thrown, error code <span style="font-weight: bold; font-family: monospace; background: #ffffff; color: #007700; padding: 0 2px; border: solid 1px #007700;">{$e['e_type']}::{$e['code']}</span> with message “<span style="font-family: monospace; font-weight: bold;">{$e['message']}</span>”<br /><br />
@@ -115,7 +115,7 @@ EOD;
 		);
 
 		$message = <<<EOD
-						<div style="padding: 50px 0;">
+						<div>
 							Looks like something blew up on our end.  If you would be so kind as to report the error below to a site administrator or site technician, we'll get right on fixing it.<br /><br />
 							Error code: <span style="font-weight: bold; font-family: monospace; background: #ffffff; color: #007700; padding: 0 3px; border: solid 1px #007700;">{$e['e_type']}::{$e['code']}</span>
 						</div>
@@ -133,7 +133,7 @@ EOD;
 	 */
 	final public static function asplode($title, $message)
 	{
-		self::buildHTML($title, '<div style="padding: 50px 0;"><p>' . $message . '</p></div>');
+		self::buildHTML($title, '<div><p>' . $message . '</p></div>');
 		echo self::$page;
 	}
 
@@ -192,7 +192,9 @@ EOD;
 			</div>
 			<div id="container">
 				<div class="retainer">
-					%2$s
+					<div style="padding: 50px 0;">
+						%2$s
+					</div>
 				</div>
 			</div>
 			<div id="footer">
