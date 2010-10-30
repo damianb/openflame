@@ -8,7 +8,7 @@
  *
  * Minimum Requirement: PHP 5.0.0
  */
- 
+
 if(!defined('OF_ROOT')) exit;
 
 /**
@@ -30,6 +30,11 @@ class OfHandler
 	 * @var string - The contents of the page to display
 	 */
 	public static $page = '';
+
+	/**
+	 * @var string - The HTML to use for the error page.
+	 */
+	public static $page_format = '';
 
 	/**
 	 * @var boolean - Do we want to show debug info to _everyone_?
@@ -137,9 +142,11 @@ EOD;
 	 * @param string $title - The title to use for the page.
 	 * @param string $page - The page content to display within the HTML layout.
 	 */
-	public static function buildHTML($title, $page)
+	final public static function buildHTML($title, $page)
 	{
-		self::$page = <<<EOD
+		if(empty(self::$page_format))
+		{
+			$page = '
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 	<head>
@@ -182,7 +189,7 @@ EOD;
 			</div>
 			<div id="container">
 				<div class="retainer">
-					{$page}
+					%2$s
 				</div>
 			</div>
 			<div id="footer">
@@ -193,8 +200,14 @@ EOD;
 			</div>
 		</div>
 	</body>
-</html>
-EOD;
+</html>';
+		}
+		else
+		{
+			$page = self::$page_format;
+		}
+
+		return sprintf($page, $title, $page);
 	}
 
 	/**
