@@ -146,7 +146,7 @@ EOD;
 	{
 		if(empty(self::$page_format))
 		{
-			$page = '
+			$page_format = '
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 	<head>
@@ -183,7 +183,7 @@ EOD;
 			<div id="header">
 				<div class="retainer">
 					<div id="logo" class="img hang-left"><div class="alt-text">OpenFlame</div></div>
-					<h1 id="title" class="hang-left">{$title}</h1>
+					<h1 id="title" class="hang-left">%1$s</h1>
 					<div class="hang-clear"><!-- // --></div>
 				</div>
 			</div>
@@ -204,10 +204,10 @@ EOD;
 		}
 		else
 		{
-			$page = self::$page_format;
+			$page_format = self::$page_format;
 		}
 
-		return sprintf($page, $title, $page);
+		return sprintf($page_format, $title, $page);
 	}
 
 	/**
