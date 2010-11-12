@@ -22,70 +22,117 @@ if(!defined('OF_ROOT')) exit;
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
  * @link        http://github.com/OpenFlame/OpenFlame-Framework
  */
-class OfConfig
+class OfConfig implements ArrayAccess
 {
 	/**
-	 * @var $val
+	 * @var $configVals
 	 *
 	 * Array of values to call from when retrieving configs
 	 */
-	public $val = array();
+	private $configVals = array();
 
 	/**
-	 * @var $table
+	 * @var $tableName
 	 *
-	 * Configuration table object from doctrine
+	 * Name of the table
 	 */
-	private $table;
+	private $tableName = '';
 
 	/**
 	 * Constructor
 	 *
-	 * @var string $config_table_name The table name of the config table (keeps it independent of DB constants)
+	 * @var string $tableName The table name of the config table (keeps it independent of DB constants)
 	 */
-	public function __construct($config_table_name)
+	public function __construct($tableName)
 	{
 		// Store this for later use
-		$this->table = Doctrine::getTable($config_table_name);
-		
+		$this->tableName = $tableName;
+
 		// Grab the values
-		$query = $this->table->createQuery('c');
-		$rawconfig = $query->fetchArray();
-		
+		$query = Doctrine_Query::create()
+			->from("{$tableName} c");
+		$rawConfig = $query->fetchArray();
+
 		// Throw them in an array
-		foreach($rawconfig as $name => $value)
-			$this->val[$name] = is_numeric($value) ? (int) $value : (string) $value;
-		
+		foreach($rawConfig as $name => $value)
+			$this->configVals[$name] = is_numeric($value) ? (int) $value : (string) $value;
+
 		return;
 	}
 
 	/**
-	 * Sets a value to a config key
+	 * Get the offset
+	 * Part of ArrayAccess
 	 *
-	 * @param string $config_name Name of the config key
-	 * @param string $config_value Value to be set
-	 *
-	 * @return void
+	 * @param mixed offset
+	 * @return mixed 
 	 */
-	public function set($config_name, $config_value)
+	public function offsetGet($configName)
 	{
-		// Try the update
-		$row_count = $this->table->createQuery('c')
-			->set('c.config_value = ?', $config_value)
-			->where('c.config_name = ?', $config_name)
+		// set it's type to whatever it is
+		$this->configVals[$configName] = $this->setType($this->configVals[$configName]);
+
+		return isset($this->configVals[$configName]) ? $this->configVals[$configName] : null;
+	}
+
+	/**
+	 * Check if the offset exists
+	 * Part of ArrayAccess
+	 *
+	 * @param mixed offset
+	 * @return bool
+	 */
+	public function offsetExists($configName)
+	{
+		return isset($this->configVals[$configName]) ? true : false;
+	}
+
+	/**
+	 * Unset the offset
+	 * This actually does nothing, we don't want people randomly deleteing stuff
+	 * Part of ArrayAccess
+	 *
+	 * @param mixed offset
+	 * @return void 
+	 */
+	public function offsetUnset($offset)
+	{
+		return;
+	}
+
+	/**
+	 * Set a new offset
+	 * Part of ArrayAccess
+	 *
+	 * @param mixed offset
+	 * @param mixed value
+	 * @return void 
+	 */
+	public function offsetSet($configName, $configValue)
+	{
+		// These are configuration values, we cannot assign them by simply
+		// saying $cfg[] = $var.
+		if($offset == null || empty($offset))
+			return;
+
+		// Stores it in the DB
+		$rowCount = Doctrine_Query::create()
+			->update("{$this->tableName} c")
+			->set('c.config_value = ?', $configValue)
+			->where('c.config_name = ?', $configName)
 			->execute();
-		
-		// Do an insert if we have nothing in our affected rows. 
-		if(!$row_count)
+
+		if($rowCount < 1)
 		{
-			$this->table->config_name	= $config_name;
-			$this->table->config_value	= $config_value;
-			$this->table->save();
+			// Insert it instead
+			$config = new {$this->tableName}();
+
+			$config->config_name = $configName;
+			$config->config_value = $configValue;
+			$config->save();
 		}
-		
-		// Finally, update the runtime config array
-		$this->val[$config_name] = $config_value;
-		
+
+		$this->configVals[$offset] = $value;
 		return;
 	}
 }
