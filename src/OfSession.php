@@ -8,9 +8,15 @@
  *
  * Minimum Requirement: PHP 5.0.0
  *
- * @uses OfDb.php
- * @uses OfConfig.php
- * @uses OfInput.php
+ * @uses OfConfig
+ *   - session.savepath
+ *   - session.length 
+ *   - session.val.iplevel
+ *   - session.cookie.name
+ *   - session.cookie.path
+ *   - session.cookie.domain
+ *   - session.cookie.secure
+ *   - session.cookie.lifetime
  */
 
 if(!defined('OF_ROOT')) exit;
@@ -18,255 +24,334 @@ if(!defined('OF_ROOT')) exit;
 /**
  * OpenFlame Web Framework - Session class
  * 	    Acts as a wrapper for the native PHP sessions with increased security and
- *		authentication capabilities
+ *		authentication capabilities. Only to be used as a parent class to an
+ *		application-level OfUser.
  *
  *
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
  * @link        http://github.com/OpenFlame/OpenFlame-Framework
  */
-class OfSession
+abstract class OfSession
 {
 	/**
-	 * Reference to $_SESSION for sessions/user abstraction
-	 */
-	protected $_session_vars = array();
-
-	/**
-	 * @param $cookie_name
+	 * Authenticate user (Abstract)
 	 *
-	 * Name of the cookie
-	 */
-	protected $cookie_name = '';
-
-	/**
-	 * @param $settings
+	 * Authenticates user upon login. Must place validated ID in $this->userId
 	 *
-	 * Session settings
+	 * @returns bool true if authenticated, false if failed
 	 */
-	private $settings = array();
+	abstract protected function authenticateUser();
 
 	/**
-	 * IP validation level flags
+	 * Fills user data (Abstract)
+	 *
+	 * Places the data associated with the user in $this->userId inside the
+	 * $this->data array. Switches $this->val['isLoggedIn'] to true.
+	 *
+	 * @return void
 	 */
-	const VALIDATE_NONE		= 0;
-	const VALIDATE_FIRST	= 1;
-	const VALIDATE_SECOND	= 2;
-	const VALIDATE_THIRD	= 3;
-	const VALIDATE_ALL		= 4;
+	abstract protected function fillUserData();
+
+	/**
+	 * Validate Auto Login (Abstract)
+	 *
+	 * Validates the Auto Login data. Places validated id in $this->userId
+	 *
+	 * @return bool true if passed, false if failed.
+	 */
+	abstract protected function validateAutoLogin();
+
+	/**
+	 * Update User (Abstract)
+	 *
+	 * This function will allow the extending class to run database updates
+	 * on the user that is currently logged in.
+	 *
+	 * @return void
+	 */
+	abstract protected function updateUser();
+
+	/**
+	 * @var array data
+	 *
+	 * Reference to $_SESSION['data']
+	 */
+	public $data = array();
+
+	/**
+	 * @var array val
+	 *
+	 * Reference to $_SESSION['val'] for session validation data
+	 */
+	public $val = array();
+
+	/**
+	 * @var string IP
+	 *
+	 * IP Address
+	 */
+	public $ip = '';
+
+	/**
+	 * @var string userId
+	 *
+	 * ID of the user as refered to in the application level. Can be
+	 * any type of data - string or int. 
+	 */
+	protected $userId = '';
 
 	/**
 	 * Constructor
 	 *
-	 * @param string $session_save_path Path to store the sessions
-	 */
-	public function __construct()
-	{
-		// Mirror _SESSION
-		$this->_session_vars = &$_SESSION;
-		
-		// Set some defaults
-		$this->settings = array(
-			'cookie_lifetime'	=> 0,
-			'cookie_path'		=> '/',
-			'cookie_domain'		=> ((substr_count($_SERVER['HTTP_HOST'], '.') < 2) ? '.' : '') . $_SERVER['HTTP_HOST'],
-			'cookie_secure'		=> false,
-			'validate_ip'		=> self::VALIDATE_THIRD,
-			'validate_ua'		=> true,
-		);
-	}
-
-	/**
-	 * Set session save path
+	 * Ensures everything is set properly and starts the PHP session
+	 * Must be called in the constructor in the main class
 	 *
-	 * @param string $save_path Path to store the sessions
-	 * @return object
+	 * @return void
 	 */
-	public function setSessionSavePath($save_path)
+	protected function init()
 	{
-		session_save_path($save_path);
-		
-		return $this;
-	}
+		// get some settings set
+		session_save_path(OF_ROOT . Of::$cfg['session.savepath']);
+		session_name(Of::$cfg['session.cookie.name'] . '_sid');
 
-	/**
-	 * Set cookie name
-	 *
-	 * @param string $cookie_name Cookie name (rather prefixes to all the cookies)
-	 * @return object
-	 */
-	public function setCookieName($cookie_name)
-	{
-		// Sotre this for later
-		$this->cookie_name = $cookie_name;
-
-		// We really are not namming the cookie directly, we are just naming the session
-		session_name($cookie_name . '_sid');
-	}
-
-	/**
-	 * Set session cookie life
-	 *
-	 * @param int $cookie_life Lifetime (in seconds) to set the cookie
-	 * @return object
-	 */
-	public function setSessionCookieLife($cookie_life)
-	{
-		$this->settings['cookie_life'] = (int) $cookie_life;
-
-		return $this;
-	}
-
-	/**
-	 * Set session cookie path
-	 *
-	 * @param int $cookie_path Lifetime (in seconds) to set the cookie
-	 * @return object
-	 */
-	public function setSessionCookiePath($cookie_path)
-	{
-		$this->settings['cookie_path'] = $cookie_path;
-
-		return $this;
-	}
-
-	/**
-	 * Set session cookie domain
-	 *
-	 * @param string $cookie_domain Cookie domain (must have two dots)
-	 * @return object
-	 */
-	public function setSessionCookieDomain($cookie_domain)
-	{
-		$this->settings['cookie_domain'] = $cookie_domain;
-
-		return $this;
-	}
-
-	/**
-	 * Set session cookie secure
-	 *
-	 * @param bool $cookie_secure Set to true if trasnmitting over https
-	 * @return object
-	 */
-	public function setSessionCookieSecure($cookie_secure)
-	{
-		$this->settings['cookie_secure'] = (bool) $cookie_secure;
-
-		return $this;
-	}
-
-	/**
-	 * Set sessin IP validation level
-	 *
-	 * @param int $level Flag from the class constants
-	 * @return object
-	 */
-	public function setSessionIpValidation($level)
-	{
-		// Check for bad values
-		if($level <= self::VALIDATE_ALL || $level >= self::VALIDATE_NONE)
-			$this->settings['validate_ip'] = $level;
-		
-		return $this;
-	}
-
-	/**
-	 * Validate User Agent
-	 *
-	 * @param bool $validate Validate the user agent?
-	 * @return object
-	 */
-	public function validateUserAgent($level)
-	{
-		$this->settings['validate_ua'] = (bool) $level;
-
-		return $this;
-	}
-
-	/**
-	 * Session Start
-	 * Starts a new session
-	 *
-	 * @return object
-	 */
-	public function sessionStart()
-	{
+		// All our custom cookie settings
 		session_set_cookie_params(
-			$this->settings['cookie_lifetime'], 
-			$this->settings['cookie_path'], 
-			$this->settings['cookie_domain'], 
-			$this->settings['cookie_secure']
-		);
-		
-		// Let PHP take it from here
+			Of::$cfg['session.cookie.lifetime'],
+			Of::$cfg['session.cookie.path'],
+			Of::$cfg['session.cookie.domain'],
+			Of::$cfg['session.cookie.secure'],
+			true);
+
+		$this->now  = time();
+
 		session_start();
-	
-		// Validate session IP
-		if(empty($_SESSION['valid_ip']) || $this->settings['validate_ip'] == self::VALIDATE_NONE)
+
+		// Our session vars, we should not need to use $_SESSION at all after this
+		$this->data	= &$_SESSION['data'];
+		$this->val	= &$_SESSION['val'];
+
+		// This IP should update at each page load. val['ip'] will update after
+		// validation to match
+		$this->ip	= !empty($_SERVER['REMOTE_ADDR']) ? htmlspecialchars($_SERVER['REMOTE_ADDR']) : '';
+	}
+
+	/**
+	 * Begin and validate the session
+	 *
+	 * @return void
+	 */
+	public function sessionBegin()
+	{
+		// Validate the session
+		// it will take care of checking for an empty session
+		$this->validateSession();
+
+		// First, check to see if they are not logged in
+		if(!$this->val['isLoggedIn'])
 		{
-			$_SESSION['valid_ip'] = $_SERVER['REMOTE_ADDR'];
-		}
-		else
-		{
-			$session_ip = explode('.', $_SESSION['valid_ip']);
-			$current_ip = explode('.', $_SERVER['REMOTE_ADDR']);
-			
-			// IPv4
-			if(sizeof($current_ip))
+			// Now, we can see if they failed autologin or not.
+			if(!$this->val['failedAutoLogin'])
 			{
-				// It will loop through each part of the IP
-				$not_valid = false;
-				for($i = 0; $i < $this->settings['validate_ip']; $i++)
+				// Validate it
+				if($this->validateAutoLogin())
 				{
-					if($session_ip[$i] != $current_ip[$i])
-					{
-						$not_valid = true;
-						break;
-					}
+					// Should fill ->data with the user id in ->userId
+					$this->fillUserData();
+				}
+				else
+				{
+					// Set this to true so we wont come back to validate
+					// the autologin again
+					$this->val['failedAutoLogin'] = true;
 				}
 			}
 			else
 			{
-				// IPv6
-				if($_SERVER['REMOTE_ADDR'] != $_SESSION['valid_ip'])
-					$not_valid = true;
+				// Logged in and failed autologin... we don't have anything to give them
 			}
-
-			// Remove their session vars (effectivly logging them out) but 
-			// don't destory the session, we can still use it.
-			if($not_valid)
-				session_unset();
 		}
-		
-		// Validate User Agent
-		if($this->settings['validate_ua'])
+		else
 		{
-			if(empty($_SESSION['valid_ua']))
-			{
-				$_SESSION['valid_ua'] = $_SERVER['HTTP_USER_AGENT'];
-			}
-			else
-			{
-				// Here is where we check for spys
-				if($_SESSION['valid_ua'] != $_SERVER['HTTP_USER_AGENT'])
-					session_unset(); // SPY!
-			}
+			// User has been logged in
+			// Run update queue
+			$this->updateUser();
 		}
 
-		// Fluid interface
-		return $this;
+		// Lastly, update the session expire so they will be good to browse 
+		// until they stop clicking for the duration of the session.length
+		$this->val['sessionExpire'] = $this->now + Of::$cfg['session.length'];
 	}
 
 	/**
-	 * Session Kill
-	 * Destorys a session, should be used ONLY on logout
+	 * Destory all session data and generate a new SID
 	 *
 	 * @return void
 	 */
 	public function sessionKill()
 	{
-		// Let PHP clean up the trash
-		session_unset();
+		// Let PHP take it from here
 		session_destroy();
+		session_start();
+
+		// Initialize an empty session
+		$this->sessionCreate(true);
+	}
+
+	/**
+	 * Creates a new session
+	 *
+	 * Called to genereate a new, empty session
+	 *
+	 * @param bool forceNewSid Force a new Session ID or not
+	 *
+	 * @return void;
+	 */
+	protected function sessionCreate($forceNewSid = false)
+	{
+		// Regenerate the ID
+		if($forceNewSid)
+		{
+			session_regenerate_id(true);
+		}
+
+		// Create new variables to validate the session
+		$this->val = array(
+			'userAgentHash'		=> md5($_SERVER['HTTP_USER_AGENT']),
+			'sessionExpire'		=> $this->now + Of::$cfg['session.length'],
+			'isLoggedIn'		=> false,
+			'sessionIp'			=> $this->ip,
+			'failedAutoLogin'	=> false,
+		);
+
+		// Empty the array
+		$this->data = array();
+	}
+
+	/**
+	 * Validate the session
+	 *
+	 * Ensures the user returning is the same user. Will force a new session
+	 * if it fails validation.
+	 *
+	 * @return bool true if success, false if failure
+	 */
+	private function validateSession()
+	{
+		$validStaus	= true;
+		$newSid		= true;
+
+		if(sizeof($this->val))
+		{
+			// Check for expired sessions
+			if($this->now > $this->val['sessionExpire'])
+			{
+				$validStaus = false;
+			}
+
+			// Validate our User Agent
+			// User agents should never change between page loads and hold the same
+			// cookie. Otherwise we can assume they ar eup to no good.
+			if($this->val['userAgentHash'] != md5($_SERVER['HTTP_USER_AGENT']) && $validStaus)
+			{
+				$validStaus = false;
+			}
+
+			// Validate IP
+			// This is tricky... we don't want to validate too much, addtionally
+			// we have IPv4 and v6 to support. First we see which version
+			if(Of::$cfg['session.val.iplevel'] > 0 && $validStaus)
+			{
+				if(strpos($this->ip, ':'))
+				{
+					// IPv6
+					// @TODO - Get partial validation working or continue to assume
+					// everyone using IPv6 will have thier own IP for the duration of
+					// the session
+					$sessionIP = $this->val['sessionIp'];
+					$currentIP = $this->ip;
+				}
+				else
+				{
+					// IPv4
+					// Easy...
+					$sessionIP = implode('.', array_slice(explode('.', $this->val['sessionIp']), 0, Of::$cfg['session.val.iplevel']));
+					$currentIP = implode('.', array_slice(explode('.', $this->ip), 0, Of::$cfg['session.val.iplevel']));
+				}
+
+				// Now do the all-important check
+				if($sessionIP !== $currentIP)
+				{
+					$validStaus = false;
+				}
+			}
+		}
+		else
+		{
+			$newSid	= false;
+		}
+
+		// Do we create a new, empty session?
+		if(!$validStaus)
+		{
+			$this->sessionCreate($newSid);
+			$this->fillUserData();
+		}
+
+		return $validStaus;
+	}
+
+	/**
+	 * Login
+	 *
+	 * Will determine if the user is authenticated 
+	 * 
+	 * @return bool true if logged in, false if not
+	 */
+	public function login()
+	{
+		// If authenticateUser is true, $this->userId will contain the 
+		// application's userId
+		if($this->authenticateUser())
+		{
+			// Go to regenerate the session ID
+			$this->sessionCreate(true);
+			$this->fillUserData();
+
+			// Run queue
+			$this->updateUser();
+
+			return true;
+		}
+
+		// Return false and let the applicaiton handle the rest
+		return false;
+	}
+
+	/**
+	 * Sets a cookie
+	 *
+	 * @param string name The name of the cookie var
+	 * @param string value Cookie var value
+	 * @param int expireTime UNIX timestamp of expiration
+	 *
+	 * @return void
+	 */
+	public function setCookie($name, $value, $expireTime = -1)
+	{
+		// If they did not specify a value, we are giving it our default
+		if($expireTime < 0)
+		{
+			$expireTime = $this->now + Of::$cfg['session.cookie.lifetime'];
+		}
+
+		// Set all our parameters
+		$name_data	= rawurlencode(Of::$cfg['session.cookie.name'] . '_' . $name) . '=' . rawurlencode($value);
+		$expire		= ($expireTime) ? '; expires=' . gmdate('D, d-M-Y H:i:s \\G\\M\\T', $expireTime) : '';
+		$path		= (Of::$cfg['session.cookie.path']) ? '; path=' . Of::$cfg['session.cookie.path'] : '';
+		$domain 	= (Of::$cfg['session.cookie.domain']) ? '; domain=' . Of::$cfg['session.cookie.domain'] : '';
+		$secure		= (Of::$cfg['session.cookie.secure']) ? '; secure' : '';
+
+		// It's header time!
+		header('Set-Cookie: ' . $name_data . $expire . $path . $domain . $secure . '; HttpOnly', false);
 	}
 }
