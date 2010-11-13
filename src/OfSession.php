@@ -73,6 +73,16 @@ abstract class OfSession
 	abstract protected function updateUser();
 
 	/**
+	 * On Session Kill (Abstract)
+	 *
+	 * This function will allow the extending class to run code upon a session
+	 * being killed at the session handler level.
+	 *
+	 * @return void
+	 */
+	abstract protected function onSessionKill();
+	
+	/**
 	 * @var array data
 	 *
 	 * Reference to $_SESSION['data']
@@ -99,7 +109,7 @@ abstract class OfSession
 	 * ID of the user as refered to in the application level. Can be
 	 * any type of data - string or int. 
 	 */
-	protected $userId = '';
+	public $userId = '';
 
 	/**
 	 * Constructor
@@ -114,7 +124,6 @@ abstract class OfSession
 		// get some settings set
 		session_save_path(OF_ROOT . Of::$cfg['session.savepath']);
 		session_name(Of::$cfg['session.cookie.name'] . '_sid');
-
 		// All our custom cookie settings
 		session_set_cookie_params(
 			Of::$cfg['session.cookie.lifetime'],
@@ -157,7 +166,12 @@ abstract class OfSession
 				if($this->validateAutoLogin())
 				{
 					// Should fill ->data with the user id in ->userId
+					// We don't have to create a new session because this should
+					// be our first go around
 					$this->fillUserData();
+
+					// Run queue
+					$this->updateUser();
 				}
 				else
 				{
@@ -168,7 +182,7 @@ abstract class OfSession
 			}
 			else
 			{
-				// Logged in and failed autologin... we don't have anything to give them
+				// Not logged in and failed autologin... we don't have anything to give them
 			}
 		}
 		else
@@ -193,6 +207,9 @@ abstract class OfSession
 		// Let PHP take it from here
 		session_destroy();
 		session_start();
+
+		// Run this just as promised
+		$this->onSessionKill();
 
 		// Initialize an empty session
 		$this->sessionCreate(true);
@@ -252,7 +269,7 @@ abstract class OfSession
 			// Validate our User Agent
 			// User agents should never change between page loads and hold the same
 			// cookie. Otherwise we can assume they ar eup to no good.
-			if($this->val['userAgentHash'] != md5($_SERVER['HTTP_USER_AGENT']) && $validStaus)
+			if($validStaus && @$this->val['userAgentHash'] != md5($_SERVER['HTTP_USER_AGENT']))
 			{
 				$validStaus = false;
 			}
@@ -260,7 +277,7 @@ abstract class OfSession
 			// Validate IP
 			// This is tricky... we don't want to validate too much, addtionally
 			// we have IPv4 and v6 to support. First we see which version
-			if(Of::$cfg['session.val.iplevel'] > 0 && $validStaus)
+			if($validStaus && Of::$cfg['session.val.iplevel'] > 0)
 			{
 				if(strpos($this->ip, ':'))
 				{
@@ -324,7 +341,9 @@ abstract class OfSession
 			return true;
 		}
 
-		// Return false and let the applicaiton handle the rest
+		// Empty out session and return false and let the applicaiton handle
+		// the rest
+		$this->sessionCreate();
 		return false;
 	}
 
