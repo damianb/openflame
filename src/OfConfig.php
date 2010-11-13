@@ -54,8 +54,8 @@ class OfConfig implements ArrayAccess
 		$rawConfig = $query->fetchArray();
 
 		// Throw them in an array
-		foreach($rawConfig as $name => $value)
-			$this->configVals[$name] = is_numeric($value) ? (int) $value : (string) $value;
+		foreach($rawConfig as $data)
+			$this->configVals[$data['config_name']] = is_numeric($data['config_value']) ? (int) $data['config_value'] : (string) $data['config_value'];
 
 		return;
 	}
@@ -69,9 +69,46 @@ class OfConfig implements ArrayAccess
 	 */
 	public function offsetGet($configName)
 	{
-		$this->configVals[$configName] = is_numeric($this->configVals[$configName]) ? (int) $this->configVals[$configName] : false;
-
 		return !empty($this->configVals[$configName]) ? $this->configVals[$configName] : null;
+	}
+
+	/**
+	 * Set a new offset
+	 * Part of ArrayAccess
+	 *
+	 * @param mixed offset
+	 * @param mixed value
+	 * @return void 
+	 */
+	public function offsetSet($configName, $configValue)
+	{
+		// These are configuration values, we cannot assign them by simply
+		// saying $cfg[] = $var.
+		if(empty($configName) || empty($configValue) || $this->configVals[$configName] == $configValue)
+			return;
+
+		if(isset($this->configVals[$configName]))
+		{
+			// update our existing value
+			Doctrine_Query::create()
+				->update($this->tableName)
+				->set('config_value', '?', $configValue)
+				->where('config_name = ?', $configName);
+				->execute();
+		}
+		else
+		{
+			// Not there? insert it
+			$tableName = &$this->tableName;
+			$config = new $tableName();
+
+			$config->config_name = $configName;
+			$config->config_value = $configValue;
+			$config->save();
+		}
+
+		$this->configVals[$configName] = $configValue;
+		return;
 	}
 
 	/**
@@ -88,50 +125,21 @@ class OfConfig implements ArrayAccess
 
 	/**
 	 * Unset the offset
-	 * This actually does nothing, we don't want people randomly deleteing stuff
 	 * Part of ArrayAccess
 	 *
 	 * @param mixed offset
 	 * @return void 
 	 */
-	public function offsetUnset($offset)
+	public function offsetUnset($configName)
 	{
-		return;
-	}
-
-	/**
-	 * Set a new offset
-	 * Part of ArrayAccess
-	 *
-	 * @param mixed offset
-	 * @param mixed value
-	 * @return void 
-	 */
-	public function offsetSet($configName, $configValue)
-	{
-		// These are configuration values, we cannot assign them by simply
-		// saying $cfg[] = $var.
-		if($offset == null || empty($offset))
-			return;
-
-		// Stores it in the DB
-		$rowCount = Doctrine_Query::create()
-			->update("{$this->tableName} c")
-			->set('c.config_value = ?', $configValue)
-			->where('c.config_name = ?', $configName)
+		Doctrine_Query::create()
+			->delete()
+			->from($this->tableName)
+			->andWhere('config_name = ?', $configName)
 			->execute();
 
-		if($rowCount < 1)
-		{
-			// Insert it instead
-			$config = new {$this->tableName}();
+		unset($this->configVals[$configName]);
 
-			$config->config_name = $configName;
-			$config->config_value = $configValue;
-			$config->save();
-		}
-
-		$this->configVals[$offset] = $value;
 		return;
 	}
 }
