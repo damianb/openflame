@@ -8,7 +8,7 @@
  *
  * Minimum Requirement: PHP 5.0.0
  *
- * @uses OfConfig
+ * @uses OfConfig.php
  *   - session.savepath
  *   - session.length 
  *   - session.val.iplevel
@@ -17,6 +17,7 @@
  *   - session.cookie.domain
  *   - session.cookie.secure
  *   - session.cookie.lifetime
+ *
  */
 
 if(!defined('OF_ROOT')) exit;
