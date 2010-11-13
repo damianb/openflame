@@ -115,32 +115,13 @@ class OfConfig implements ArrayAccess
 	{
 		// These are configuration values, we cannot assign them by simply
 		// saying $cfg[] = $var.
-		if(empty($configName) || empty($configValue) || $this->configVals[$configName] == $configValue)
+		if(empty($configName) || empty($configValue) || @$this->configVals[$configName] == $configValue)
 			return;
 
 		if(isset($this->configVals[$configName]))
-		{
 			$this->updateQueue[$configName] = $configValue;
-		}
 		else
-		{
 			$this->insertQueue[$configName] = $configValue;
-		}
-
-		if(isset($this->configVals[$configName]))
-		{
-
-		}
-		else
-		{
-			// Not there? insert it
-			$tableName = &$this->tableName;
-			$config = new $tableName();
-
-			$config->config_name = $configName;
-			$config->config_value = $configValue;
-			$config->save();
-		}
 
 		$this->configVals[$configName] = $configValue;
 		return;
@@ -167,14 +148,12 @@ class OfConfig implements ArrayAccess
 	 */
 	public function offsetUnset($configName)
 	{
-		Doctrine_Query::create()
-			->delete()
-			->from($this->tableName)
-			->where('config_name = ?', $configName)
-			->execute();
-
+		if(empty($configName))
+			return;
+		
 		unset($this->configVals[$configName]);
-
+		$this->deleteQueue[] = $configName;
+		
 		return;
 	}
 
