@@ -68,7 +68,7 @@ class OfConfig implements ArrayAccess
 	 */
 	public function offsetGet($configName)
 	{
-		return !empty($this->configVals[$configName]) ? $this->configVals[$configName] : null;
+		return isset($this->configVals[$configName]) ? $this->configVals[$configName] : null;
 	}
 
 	/**
