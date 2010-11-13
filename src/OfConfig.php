@@ -9,7 +9,6 @@
  * Minimum Requirement: PHP 5.0.0
  *
  * @uses Doctrine 1.2
- * @uses OfDb.php
  */
 
 if(!defined('OF_ROOT')) exit;
