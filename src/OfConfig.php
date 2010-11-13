@@ -49,7 +49,7 @@ class OfConfig implements ArrayAccess
 
 		// Grab the values
 		$query = Doctrine_Query::create()
-			->from("{$tableName} c");
+			->from($tableName);
 		$rawConfig = $query->fetchArray();
 
 		// Throw them in an array
@@ -92,7 +92,7 @@ class OfConfig implements ArrayAccess
 			Doctrine_Query::create()
 				->update($this->tableName)
 				->set('config_value', '?', $configValue)
-				->where('config_name = ?', $configName);
+				->where('config_name = ?', $configName)
 				->execute();
 		}
 		else
