@@ -134,7 +134,7 @@ class OfConfig implements ArrayAccess
 		Doctrine_Query::create()
 			->delete()
 			->from($this->tableName)
-			->andWhere('config_name = ?', $configName)
+			->where('config_name = ?', $configName)
 			->execute();
 
 		unset($this->configVals[$configName]);
