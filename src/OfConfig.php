@@ -38,9 +38,31 @@ class OfConfig implements ArrayAccess
 	private $tableName = '';
 
 	/**
+	 * @var $insertQueue
+	 *
+	 * Values queued for insertion
+	 */
+	private $insertQueue = array();
+
+	/**
+	 * @var $updateQueue
+	 *
+	 * Values queued for insertion
+	 */
+	private $updateQueue = array();
+
+	/**
+	 * @var $deleteQueue
+	 *
+	 * Values queued for insertion
+	 */
+	private $deleteQueue = array();
+
+	/**
 	 * Constructor
 	 *
-	 * @var string $tableName The table name of the config table (keeps it independent of DB constants)
+	 * @var string $tableName The table name of the config table (keeps it 
+	 *             independent of DB constants)
 	 */
 	public function __construct($tableName)
 	{
@@ -57,6 +79,16 @@ class OfConfig implements ArrayAccess
 			$this->configVals[$data['config_name']] = is_numeric($data['config_value']) ? (int) $data['config_value'] : (string) $data['config_value'];
 
 		return;
+	}
+
+	/**
+	 * Destructor
+	 *
+	 * All this does is call to save() to save our config values.
+	 */
+	public function __destruct()
+	{
+		$this->save();
 	}
 
 	/**
@@ -88,12 +120,16 @@ class OfConfig implements ArrayAccess
 
 		if(isset($this->configVals[$configName]))
 		{
-			// update our existing value
-			Doctrine_Query::create()
-				->update($this->tableName)
-				->set('config_value', '?', $configValue)
-				->where('config_name = ?', $configName)
-				->execute();
+			$this->updateQueue[$configName] = $configValue;
+		}
+		else
+		{
+			$this->insertQueue[$configName] = $configValue;
+		}
+
+		if(isset($this->configVals[$configName]))
+		{
+
 		}
 		else
 		{
@@ -140,5 +176,69 @@ class OfConfig implements ArrayAccess
 		unset($this->configVals[$configName]);
 
 		return;
+	}
+
+	/**
+	 * Save
+	 *
+	 * Loops through the queues and inserts, updates, or deletes thed data
+	 *
+	 * @return void
+	 */
+	public function save()
+	{
+		// Check for inserts
+		if(sizeof($this->insertQueue))
+		{
+			// Doctrine collecition this time
+			$configs = new Doctrine_Collection($this->tableName);
+
+			$i = 0;
+			foreach($this->insertQueue as $configName => $configValue)
+			{
+				$configs[$i]->config_name	= $configName;
+				$configs[$i]->config_value	= $configValue;
+
+				$i++;
+			}
+
+			// Save and empty queue
+			$configs->save();
+			$this->insertQueue = array();
+		}
+
+		// Updates
+		if(sizeof($this->updateQueue))
+		{
+			// Here is where we're going to encounter a query in a loop...
+			foreach($this->updateQueue as $configName => $configValue)
+			{
+				// update our existing value
+				Doctrine_Query::create()
+					->update($this->tableName)
+					->set('config_value', '?', $configValue)
+					->where('config_name = ?', $configName)
+					->execute();
+			}
+			// ..Oh well
+			
+			// Empty queue
+			$this->updateQueue = array();
+		}
+
+		// Deletions
+		if(sizeof($this->deleteQueue))
+		{
+			// $this->deleteQueue works a little differently, there are no
+			// values, just the configNames as the values are not needed
+			Doctrine_Query::create()
+				->delete()
+				->from($this->tableName)
+				->whereIn('config_name', $this->deleteQueue)
+				->execute();
+
+			// Piece of cake, empty the queue now
+			$this->deleteQueue = array();
+		}
 	}
 }
