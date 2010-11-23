@@ -142,7 +142,24 @@ abstract class OfSession
 
 		// This IP should update at each page load. val['ip'] will update after
 		// validation to match
-		$this->ip	= !empty($_SERVER['REMOTE_ADDR']) ? htmlspecialchars($_SERVER['REMOTE_ADDR']) : '';
+		$ip = new OfInput('REMOTE_ADDR', '127.0.0.1', '_SERVER');
+		$xip = new OfInput('HTTP_X_REMOTE_ADDR', '127.0.0.1', '_SERVER');
+
+		if(!$ip->wasSet() || !filter_var($ip, FILTER_VALIDATE_IP))
+		{
+			if(!$xip->wasSet() || !filter_var($xip, FILTER_VALIDATE_IP))
+			{
+				$this->ip = '0.0.0.0'; // impossible IP, so obviously something went wrong. D:
+			}
+			else
+			{
+				$this->ip = $xip->getClean();
+			}
+		}
+		else
+		{
+			$this->ip = $ip->getClean();
+		}
 	}
 
 	/**
