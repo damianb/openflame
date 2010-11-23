@@ -10,7 +10,7 @@
  *
  * @uses OfConfig.php
  *   - session.savepath
- *   - session.length 
+ *   - session.length
  *   - session.val.iplevel
  *   - session.cookie.name
  *   - session.cookie.path
@@ -81,7 +81,7 @@ abstract class OfSession
 	 * @return void
 	 */
 	abstract protected function onSessionKill();
-	
+
 	/**
 	 * @var array data
 	 *
@@ -107,7 +107,7 @@ abstract class OfSession
 	 * @var string userId
 	 *
 	 * ID of the user as refered to in the application level. Can be
-	 * any type of data - string or int. 
+	 * any type of data - string or int.
 	 */
 	public $userId = '';
 
@@ -192,7 +192,7 @@ abstract class OfSession
 			$this->updateUser();
 		}
 
-		// Lastly, update the session expire so they will be good to browse 
+		// Lastly, update the session expire so they will be good to browse
 		// until they stop clicking for the duration of the session.length
 		$this->val['sessionExpire'] = $this->now + Of::config('session.length');
 	}
@@ -292,8 +292,8 @@ abstract class OfSession
 				{
 					// IPv4
 					// Easy...
-					$sessionIP = implode('.', array_slice(explode('.', $this->val['sessionIp']), 0, Of::$cfg['session.val.iplevel']));
-					$currentIP = implode('.', array_slice(explode('.', $this->ip), 0, Of::$cfg['session.val.iplevel']));
+					$sessionIP = implode('.', array_slice(explode('.', $this->val['sessionIp']), 0, Of::config('session.val.iplevel')));
+					$currentIP = implode('.', array_slice(explode('.', $this->ip), 0, Of::config('session.val.iplevel')));
 				}
 
 				// Now do the all-important check
@@ -321,13 +321,13 @@ abstract class OfSession
 	/**
 	 * Login
 	 *
-	 * Will determine if the user is authenticated 
-	 * 
+	 * Will determine if the user is authenticated
+	 *
 	 * @return bool true if logged in, false if not
 	 */
 	public function login()
 	{
-		// If authenticateUser is true, $this->userId will contain the 
+		// If authenticateUser is true, $this->userId will contain the
 		// application's userId
 		if($this->authenticateUser())
 		{
