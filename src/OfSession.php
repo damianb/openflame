@@ -122,14 +122,14 @@ abstract class OfSession
 	protected function init()
 	{
 		// get some settings set
-		session_save_path(OF_ROOT . Of::$cfg['session.savepath']);
-		session_name(Of::$cfg['session.cookie.name'] . '_sid');
+		session_save_path(OF_ROOT . Of::config('session.savepath'));
+		session_name(Of::config('session.cookie.name') . '_sid');
 		// All our custom cookie settings
 		session_set_cookie_params(
-			Of::$cfg['session.cookie.lifetime'],
-			Of::$cfg['session.cookie.path'],
-			Of::$cfg['session.cookie.domain'],
-			Of::$cfg['session.cookie.secure'],
+			Of::config('session.cookie.lifetime'),
+			Of::config('session.cookie.path'),
+			Of::config('session.cookie.domain'),
+			Of::config('session.cookie.secure'),
 			true);
 
 		$this->now  = time();
@@ -194,7 +194,7 @@ abstract class OfSession
 
 		// Lastly, update the session expire so they will be good to browse 
 		// until they stop clicking for the duration of the session.length
-		$this->val['sessionExpire'] = $this->now + Of::$cfg['session.length'];
+		$this->val['sessionExpire'] = $this->now + Of::config('session.length');
 	}
 
 	/**
@@ -235,7 +235,7 @@ abstract class OfSession
 		// Create new variables to validate the session
 		$this->val = array(
 			'userAgentHash'		=> md5($_SERVER['HTTP_USER_AGENT']),
-			'sessionExpire'		=> $this->now + Of::$cfg['session.length'],
+			'sessionExpire'		=> $this->now + Of::config('session.length'),
 			'isLoggedIn'		=> false,
 			'sessionIp'			=> $this->ip,
 			'failedAutoLogin'	=> false,
@@ -277,7 +277,7 @@ abstract class OfSession
 			// Validate IP
 			// This is tricky... we don't want to validate too much, addtionally
 			// we have IPv4 and v6 to support. First we see which version
-			if($validStaus && Of::$cfg['session.val.iplevel'] > 0)
+			if($validStaus && Of::config('session.val.iplevel') > 0)
 			{
 				if(strpos($this->ip, ':'))
 				{
@@ -361,15 +361,15 @@ abstract class OfSession
 		// If they did not specify a value, we are giving it our default
 		if($expireTime < 0)
 		{
-			$expireTime = $this->now + Of::$cfg['session.cookie.lifetime'];
+			$expireTime = $this->now + Of::config('session.cookie.lifetime');
 		}
 
 		// Set all our parameters
-		$name_data	= rawurlencode(Of::$cfg['session.cookie.name'] . '_' . $name) . '=' . rawurlencode($value);
+		$name_data	= rawurlencode(Of::config('session.cookie.name') . '_' . $name) . '=' . rawurlencode($value);
 		$expire		= ($expireTime) ? '; expires=' . gmdate('D, d-M-Y H:i:s \\G\\M\\T', $expireTime) : '';
-		$path		= (Of::$cfg['session.cookie.path']) ? '; path=' . Of::$cfg['session.cookie.path'] : '';
-		$domain 	= (Of::$cfg['session.cookie.domain']) ? '; domain=' . Of::$cfg['session.cookie.domain'] : '';
-		$secure		= (Of::$cfg['session.cookie.secure']) ? '; secure' : '';
+		$path		= (Of::config('session.cookie.path')) ? '; path=' . Of::config('session.cookie.path') : '';
+		$domain 	= (Of::config('session.cookie.domain')) ? '; domain=' . Of::config('session.cookie.domain') : '';
+		$secure		= (Of::config('session.cookie.secure')) ? '; secure' : '';
 
 		// It's header time!
 		header('Set-Cookie: ' . $name_data . $expire . $path . $domain . $secure . '; HttpOnly', false);
