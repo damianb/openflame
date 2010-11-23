@@ -40,7 +40,7 @@ class OfUser extends OfSession
 	 * Array that contains the raw user row from the database
 	 */
 	private $userRow = array();
- 
+
 	/**
 	 * @var array $cookieData
 	 *
@@ -57,7 +57,7 @@ class OfUser extends OfSession
 		$this->init();
 
 		// Take two from the cookie jar and count the chocolate chips
-		$cookieName = Of::$cfg['session.cookie.name'];
+		$cookieName = Of::config('session.cookie.name');
 		$this->cookieData = array(
 			'k'		=> isset($_COOKIE[$cookieName  . '_k']) ? preg_replace('#[^0-9a-f]#i', '', $_COOKIE[$cookieName  . '_k']) : '',
 			'uid'	=> isset($_COOKIE[$cookieName  . '_uid']) ? preg_replace('#[^0-9]#', '', $_COOKIE[$cookieName  . '_uid']) : '',
@@ -65,7 +65,7 @@ class OfUser extends OfSession
 	}
 
 	/**
-	 * Authenticate user 
+	 * Authenticate user
 	 *
 	 * Authenticates user upon login. Must place validated ID in $this->userId
 	 *
@@ -82,7 +82,7 @@ class OfUser extends OfSession
 			// OfHash
 			if(!class_exists('OfHash'))
 				include OF_ROOT . 'OfHash.php';
-				
+
 			$hasher = new OfHash(8, true);
 
 			// The all important check...
@@ -92,13 +92,13 @@ class OfUser extends OfSession
 				$this->userId = $this->userRow['userId'];
 
 				// handle autologin
-				if(isset($_REQUEST['autologin']) && Of::$cfg['session.autologin'])
+				if(isset($_REQUEST['autologin']) && Of::config('session.autologin'))
 				{
 					$key = $this->generateKey();
-					
+
 					$this->setCookie('k', $key);
 					$this->setCookie('uid', $this->userId);
-					
+
 					$this->updateQueue['autoLogin'] = 1;
 					$this->updateQueue['autoLoginKey'] = $key;
 				}
@@ -111,7 +111,7 @@ class OfUser extends OfSession
 	}
 
 	/**
-	 * Validate Auto Login 
+	 * Validate Auto Login
 	 *
 	 * Validates the Auto Login data. Places validated id in $this->userId
 	 *
@@ -126,7 +126,7 @@ class OfUser extends OfSession
 		// This is temporary while we use ::grabUserData()
 		$this->userId = $this->cookieData['uid'];
 		$this->grabUserData();
-		
+
 		if($this->userRow['autoLogin'] == 1 && $this->userRow['autoLoginKey'] == $this->cookieData['k'])
 		{
 			$key = $this->generateKey();
@@ -135,7 +135,7 @@ class OfUser extends OfSession
 			$this->setCookie('uid', $this->userId);
 
 			$this->updateQueue['autoLoginKey'] = $key;
-			
+
 			return true;
 		}
 		else
@@ -151,7 +151,7 @@ class OfUser extends OfSession
 	}
 
 	/**
-	 * Fills user data 
+	 * Fills user data
 	 *
 	 * Places the data associated with the user in $this->userId inside the
 	 * $this->data array. Switches $this->val['isLoggedIn'] to true.
@@ -163,14 +163,14 @@ class OfUser extends OfSession
 		if($this->userId > 0)
 		{
 			$this->grabUserData();
-			
+
 			$this->data = $this->userRow;
 			$this->val['isLoggedIn'] = true;
 		}
 	}
 
 	/**
-	 * Update User 
+	 * Update User
 	 *
 	 * This function will allow the extending class to run database updates
 	 * on the user that is currently logged in.
@@ -246,6 +246,6 @@ class OfUser extends OfSession
 	 */
 	protected function generateKey()
 	{
-		return substr(md5(mt_rand(0, 20) . Of::$cfg['website.salt']), 1, 20);
+		return substr(md5(mt_rand(0, 20) . Of::config('website.salt')), 1, 20);
 	}
 }
