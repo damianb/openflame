@@ -234,7 +234,7 @@ abstract class OfSession
 
 		// Create new variables to validate the session
 		$this->val = array(
-			'userAgentHash'		=> md5($_SERVER['HTTP_USER_AGENT']),
+			'userAgentHash'		=> hash('md5', $_SERVER['HTTP_USER_AGENT']),
 			'sessionExpire'		=> $this->now + Of::config('session.length'),
 			'isLoggedIn'		=> false,
 			'sessionIp'			=> $this->ip,
@@ -269,7 +269,7 @@ abstract class OfSession
 			// Validate our User Agent
 			// User agents should never change between page loads and hold the same
 			// cookie. Otherwise we can assume they ar eup to no good.
-			if($validStaus && @$this->val['userAgentHash'] != md5($_SERVER['HTTP_USER_AGENT']))
+			if($validStaus && @$this->val['userAgentHash'] != hash('md5', $_SERVER['HTTP_USER_AGENT']))
 			{
 				$validStaus = false;
 			}
