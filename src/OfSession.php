@@ -140,6 +140,16 @@ abstract class OfSession
 		$this->data	= &$_SESSION['data'];
 		$this->val	= &$_SESSION['val'];
 
+		$this->pullIPAddress();
+	}
+	
+	/**
+	 * Get the IP address for this session
+	 *
+	 * @return void
+	 */
+	protected function pullIPAddress()
+	{
 		// This IP should update at each page load. val['ip'] will update after
 		// validation to match
 		$ip = new OfInput('REMOTE_ADDR', '127.0.0.1', '_SERVER');
