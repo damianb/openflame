@@ -272,29 +272,29 @@ abstract class OfSession
 	 */
 	private function validateSession()
 	{
-		$validStaus	= true;
-		$newSid		= true;
+		$validStatus	= true;
+		$newSid			= true;
 
 		if(sizeof($this->val))
 		{
 			// Check for expired sessions
 			if($this->now > $this->val['sessionExpire'])
 			{
-				$validStaus = false;
+				$validStatus = false;
 			}
 
 			// Validate our User Agent
 			// User agents should never change between page loads and hold the same
 			// cookie. Otherwise we can assume they ar eup to no good.
-			if($validStaus && @$this->val['userAgentHash'] != hash('md5', $_SERVER['HTTP_USER_AGENT']))
+			if($validStatus && @$this->val['userAgentHash'] != hash('md5', $_SERVER['HTTP_USER_AGENT']))
 			{
-				$validStaus = false;
+				$validStatus = false;
 			}
 
 			// Validate IP
 			// This is tricky... we don't want to validate too much, addtionally
 			// we have IPv4 and v6 to support. First we see which version
-			if($validStaus && Of::config('session.val.iplevel') > 0)
+			if($validStatus && Of::config('session.val.iplevel') > 0)
 			{
 				if(strpos($this->ip, ':'))
 				{
@@ -316,7 +316,7 @@ abstract class OfSession
 				// Now do the all-important check
 				if($sessionIP !== $currentIP)
 				{
-					$validStaus = false;
+					$validStatus = false;
 				}
 			}
 		}
@@ -326,13 +326,13 @@ abstract class OfSession
 		}
 
 		// Do we create a new, empty session?
-		if(!$validStaus)
+		if(!$validStatus)
 		{
 			$this->sessionCreate($newSid);
 			$this->fillUserData();
 		}
 
-		return $validStaus;
+		return $validStatus;
 	}
 
 	/**
