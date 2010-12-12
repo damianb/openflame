@@ -42,14 +42,14 @@ class OfTestHash extends OfTestBase
 
 	protected function testGoodHash()
 	{
-		$hash = new OfHash(8, true);
+		$hash = new OfHash();
 		$password = $hash->hash('some_password');
 		return $this->expect(__METHOD__, $hash->check('some_password', $password), true);
 	}
 
 	protected function testBadHash()
 	{
-		$hash = new OfHash(8, true);
+		$hash = new OfHash();
 		$password = $hash->hash('some_password');
 		return $this->expect(__METHOD__, $hash->check('some_wrong_password', $password), false);
 	}
