@@ -48,10 +48,10 @@ class OfHash
 	public $iteration_count_log2;
 	public $random_state;
 
-	public function __construct($iteration_count_log2 = 16)
+	public function __construct($iteration_count_log2 = 8)
 	{
 		if ($iteration_count_log2 < 8 || $iteration_count_log2 > 31)
-			$iteration_count_log2 = 16;
+			$iteration_count_log2 = 8;
 		$this->iteration_count_log2 = $iteration_count_log2;
 
 		$this->random_state = microtime() . getmypid();
