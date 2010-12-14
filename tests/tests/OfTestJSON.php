@@ -47,7 +47,7 @@ class OfTestJSON extends OfTestBase
 		$json = OfJSON::encode($array);
 		try
 		{
-			$json_data = OfJSON::decode($json, false);
+			$json_data = OfJSON::decode($json);
 		}
 		catch(OfJSONException $e)
 		{
@@ -62,7 +62,7 @@ class OfTestJSON extends OfTestBase
 		$json_success = false;
 		try
 		{
-			$json = OfJSON::decode($bad_json, false);
+			$json = OfJSON::decode($bad_json);
 		}
 		catch(OfJSONException $e)
 		{
