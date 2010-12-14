@@ -83,7 +83,6 @@ class OfFileException extends OfException
  */
 class OfJSONException extends OfException
 {
-	const ERR_JSON_NO_FILE = 4000;
 	const ERR_JSON_UNKNOWN = 4100;
 	const ERR_JSON_NO_ERROR = 4101;
 	const ERR_JSON_DEPTH = 4102;

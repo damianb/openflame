@@ -36,19 +36,14 @@ class OfJSON
 	/**
 	 * Loads a JSON string or file and returns the data held within.
 	 * @param string $json - The JSON string or the path of the JSON file to decode.
-	 * @param boolean $is_file - Are we loading from a JSON file?
 	 * @return array - The contents of the JSON string/file.
 	 *
 	 * @throws OfJSONException
 	 */
-	public static function decode($json, $is_file = true)
+	public static function decode($json)
 	{
-		if($is_file)
-		{
-			if(!file_exists($json))
-				throw new OfJSONException('JSON file does not exist', OfJSONException::ERR_JSON_NO_FILE);
+		if(is_file($json))
 			$json = file_get_contents($json);
-		}
 
 		$data = json_decode(preg_replace('#\#.*?' . PHP_EOL . '#', '', $json), true);
 
