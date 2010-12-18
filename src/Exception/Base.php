@@ -9,7 +9,7 @@
  * Minimum Requirement: PHP 5.3.0
  */
 
-namespace OpenFlame\Framework;
+namespace OpenFlame\Framework\Exception;
 
 if(!defined('OpenFlame\\Framework\\ROOT_PATH')) exit;
 
@@ -21,7 +21,7 @@ if(!defined('OpenFlame\\Framework\\ROOT_PATH')) exit;
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
  * @link        https://github.com/OpenFlame/OpenFlame-Framework
  */
-class SomeClass
+class Base extends \Exception
 {
-	// asdf
+	const ERR_WTF = 0;
 }
