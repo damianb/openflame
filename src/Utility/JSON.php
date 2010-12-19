@@ -48,7 +48,7 @@ abstract class JSON
 		if(is_file($json))
 			$json = file_get_contents($json);
 
-		$data = json_decode(preg_replace('#\#.*?' . PHP_EOL . '#', '', $json), true);
+		$data = json_decode(preg_replace('#\#.*?' . "\n" . '#', '', $json), true);
 
 		if($data === NULL)
 		{
