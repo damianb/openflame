@@ -10,7 +10,6 @@
  */
 
 namespace OpenFlame\Framework\Cache\Engine;
-use OpenFlame\Framework\Utility\JSON;
 
 if(!defined('OpenFlame\\Framework\\ROOT_PATH')) exit;
 
