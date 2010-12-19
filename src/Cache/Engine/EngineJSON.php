@@ -25,9 +25,18 @@ if(!defined('OpenFlame\\Framework\\ROOT_PATH')) exit;
 class EngineJSON extends EngineFileBase implements EngineInterface
 {
 	/**
-	 * @const - The algorithm to use for checksum of the cache file's contents (minus the first two lines)
+	 * @const - The algorithm to use for checksum of the cache file's cache contents
 	 */
 	const CHECKSUM_ALGO = 'md5';
+
+	/**
+	 * Get the engine name.
+	 * @return string - The engine name.
+	 */
+	public function getEngineName()
+	{
+		return 'JSON';
+	}
 
 	/**
 	 * Builds a JSON-based cache file, complete with idiot warning.
@@ -40,7 +49,8 @@ class EngineJSON extends EngineFileBase implements EngineInterface
 
 		return implode("\n", array(
 			'# OpenFlame Web Framework cache file - modify at your own risk!',
-			'# data md5 checksum: ' . hash(self::CHECKSUM_ALGO, $data),
+			'# data ' . self::CHECKSUM_ALGO . ' checksum: { ' . hash(self::CHECKSUM_ALGO, $data) . ' }',
+			'# engine: ' . $this->getEngineName(),
 			$data,
 		));
 	}
