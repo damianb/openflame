@@ -9,19 +9,24 @@
  * Minimum Requirement: PHP 5.3.0
  */
 
-namespace OpenFlame\Framework;
+namespace OpenFlame\Framework\Cache\Engine;
 
 if(!defined('OpenFlame\\Framework\\ROOT_PATH')) exit;
 
 /**
- * OpenFlame Web Framework - Some class
- * 	     Some class description.
+ * OpenFlame Web Framework - Cache Engine interface,
+ * 		Cache engine prototype, declares required methods that a cache engine must define in order to be valid.
  *
  *
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
  * @link        https://github.com/OpenFlame/OpenFlame-Framework
  */
-class SomeClass
+interface EngineInterface
 {
-	// asdf
+	public function getEngineName();
+	public function build($data);
+	public function load($file);
+	public function exists($file);
+	public function destroy($file);
+	public function store($file, $data);
 }
