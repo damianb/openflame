@@ -43,6 +43,8 @@ class Autoloader
 		{
 			$this->include_path = OpenFlame\Framework\ROOT_PATH . '/src';
 		}
+
+		$this->include_path = rtrim($this->include_path, '/') . '/';
 	}
 
 	/**
