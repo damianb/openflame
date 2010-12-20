@@ -62,7 +62,7 @@ class EngineJSON extends EngineFileBase implements EngineInterface
 	 */
 	public function load($file)
 	{
-		return JSON::decode($this->readFile("$file.json"));
+		return JSON::decode($this->readFile("$file.json.tmp"));
 	}
 
 	/**
@@ -72,7 +72,7 @@ class EngineJSON extends EngineFileBase implements EngineInterface
 	 */
 	public function exists($file)
 	{
-		return $this->fileExists("$file.json");
+		return $this->fileExists("$file.json.tmp");
 	}
 
 	/**
@@ -82,7 +82,7 @@ class EngineJSON extends EngineFileBase implements EngineInterface
 	 */
 	public function destroy($file)
 	{
-		$this->deleteFile("$file.json");
+		$this->deleteFile("$file.json.tmp");
 	}
 
 	/**
@@ -93,6 +93,6 @@ class EngineJSON extends EngineFileBase implements EngineInterface
 	 */
 	public function store($file, $data)
 	{
-		$this->writeFile("$file.json", $data);
+		$this->writeFile("$file.json.tmp", $data);
 	}
 }

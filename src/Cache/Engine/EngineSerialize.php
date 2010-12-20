@@ -61,7 +61,7 @@ class EngineSerialize extends EngineFileBase implements EngineInterface
 	 */
 	public function load($file)
 	{
-		$data = $this->readFile("$file.txt");
+		$data = $this->readFile("$file.srl.tmp");
 		$data = preg_replace('#\#.*?' . "\n" . '#', '', $data);
 		return unserialize($data);
 	}
@@ -73,7 +73,7 @@ class EngineSerialize extends EngineFileBase implements EngineInterface
 	 */
 	public function exists($file)
 	{
-		return $this->fileExists("$file.txt");
+		return $this->fileExists("$file.srl.tmp");
 	}
 
 	/**
@@ -83,7 +83,7 @@ class EngineSerialize extends EngineFileBase implements EngineInterface
 	 */
 	public function destroy($file)
 	{
-		$this->deleteFile("$file.txt");
+		$this->deleteFile("$file.srl.tmp");
 	}
 
 	/**
@@ -94,6 +94,6 @@ class EngineSerialize extends EngineFileBase implements EngineInterface
 	 */
 	public function store($file, $data)
 	{
-		$this->writeFile("$file.txt", $data);
+		$this->writeFile("$file.srl.tmp", $data);
 	}
 }
