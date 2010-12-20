@@ -26,11 +26,163 @@ if(!defined('OpenFlame\\Framework\\ROOT_PATH')) exit;
 class Core
 {
 	/**
-	 * Proposal: OpenFlame\Framework\Core could also provide the hub for managing Dependency Injection,
-	 * which would be an extremely simple solution that also provides flexibility down the road
+	 * @var array - Array of settings we have loaded and stored
+	 */
+	protected static $config = array();
+
+	/**
+	 * @var array - Array of objects we have instantiated and stored
+	 */
+	protected static $objects = array();
+
+	/**
+	 * Initiates the Framework.
+	 * @param array $settings - Array of application-specific settings to modify the default OpenFlame Framework behavior.
+	 * @return void
+	 */
+	public static function init(array $settings = NULL)
+	{
+		// Set our defaults
+		$config = array(
+			'cache.engine'		=> 'JSON',
+			'cache.path'		=> OpenFlame\Framework\ROOT_PATH . '/cache/',
+		);
+
+		// Merge in the application-specific settings.
+		if($properties !== NULL)
+			$config = array_merge($config, $properties);
+
+		// Yay lambdas!
+		array_walk($config, function($value, $key) {
+			self::setConfig($key, $value);
+		});
+	}
+
+	/**
+	 * Set a configuration entry.
+	 * @param string $config_name - The name of the configuration entry.
+	 * @param mixed $config_value - The value to store in the configuration entry
+	 * @return void
+	 */
+	public static function setConfig($config_name, $config_value)
+	{
+		// check to see if this is a namespaced config
+		$config_name = explode('.', $config_name, 1);
+		if(sizeof($config_name) > 1)
+		{
+			// it is namespaced, we need to store under said namespace
+			self::$config["_{$config_name[0]}"][$config_name[1]] = $config_value;
+		}
+		else
+		{
+			// if no namespace was declared, we store it in the global namespace
+			self::$config['global'][$config_name[0]] = $config_value;
+		}
+	}
+
+	/**
+	 * Get a specific configuration entry
+	 * @param string $config_name - The name of the configuration entry to grab.
+	 * @return mixed - The contents of the specified configuration entry.
+	 */
+	public static function getConfig($config_name)
+	{
+		// check to see if this is a namespaced config
+		$config_name_array = explode('.', $config_name, 1);
+		if(sizeof($config_name_array) > 1)
+		{
+			// it is namespaced, we need to grab from that specific namespace.
+			if(!isset(self::$config["_{$config_name_array[0]}"][$config_name]))
+				return NULL;
+
+			return self::$config["_{$config_name_array[0]}"][$config_name];
+		}
+		else
+		{
+			// not namespaced, so we use the global namespace for this. :)
+			if(!isset(self::$config['global'][$config_name]))
+				return NULL;
+
+			return self::$config['global'][$config_name];
+		}
+	}
+
+	/**
+	 * Get all configurations under a certain namespace.
+	 * @param string $namespace - The namespace to retrieve (or an empty string, to retrieve the global config namespace contents)
+	 * @return array - The array of configurations stored under the specified namespace.
+	 */
+	public static function getConfigNamespace($namespace)
+	{
+		// If an empty string is used as the namespace, we assume the global namespace.
+		if($namespace === '')
+		{
+			if(!isset(self::$config['global']))
+				return NULL;
+
+			return self::$config['global'];
+		}
+
+		if(!isset(self::$config["_{$namespace}"]))
+			return NULL;
+
+		return self::$config["_{$namespace}"];
+	}
+
+	/**
+	 * Store an object for easy global access.
+	 * @param string $slot - The slot to store in.
+	 * @param object $object - The object to store.
+	 * @return void
+	 */
+	public static function setObject($slot, $object)
+	{
+		self::$objects[(string) $slot] = $object;
+		return $object;
+	}
+
+	/**
+	 * Grab a stored object.
+	 * @param string $slot - The slot to grab from.
+	 * @return mixed - NULL if no object in specified slot, or the desired object if the slot exists.
+	 */
+	public static function getObject($slot)
+	{
+		if(!isset(self::$objects[(string) $slot]))
+			return NULL;
+
+		return self::$objects[(string) $slot];
+	}
+
+	/**
+	 * Dependency injection methods for the OpenFlame Framework
+	 * @todo maybe move this to own object?
 	 */
 
 	/**
-	 * This class will store all objects, big or small.
+	 * Get the cache object and handle all dependency injection needed for it.
+	 * @return OpenFlame\Framework\Cache\Driver - The cache object.
+	 */
+	public static function getCache()
+	{
+		// If we've not instantiated the cache yet, OpenFlame\Framework\Core::getObject() will return NULL...so we'll need to be prepared for that.
+		$cache = self::getObject('cache');
+
+		if($cache === NULL)
+		{
+			$engine_class = '\\OpenFlame\\Framework\\Cache\\Engine\\Engine' . self::getConfig('cache.engine');
+			/**
+			 * We use OpenFlame\Framework\Core::getConfigNamespace() here so that we can grab all cache options needed...
+			 * any unused options should be ignored (so long as nobody nubs the cache engine itself), so no worries about passing it extra stuff.
+			 */
+			$engine = new $engine_class(self::getConfigNamespace('cache'));
+			$cache = self::setObject('cache', new OpenFlame\Framework\Cache\Driver($engine));
+		}
+
+		return $cache;
+	}
+
+	/**
+	 * @todo more dependency injection stuff
 	 */
 }
