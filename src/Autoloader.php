@@ -66,7 +66,7 @@ class Autoloader
 		if(!defined('OpenFlame\\Framework\\USE_PHAR') && !file_exists($this->include_path . $name . '.php'))
 			return false;
 
-		if(!defined('OpenFlame\\Framework\\DEBUG'))
+		if(!defined('OpenFlame\\Framework\\DEBUG') && !defined('OpenFlame\\Framework\\USE_PHAR'))
 		{
 			include $this->include_path . $name . '.php';
 		}
