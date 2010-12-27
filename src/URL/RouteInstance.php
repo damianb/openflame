@@ -106,7 +106,7 @@ class RouteInstance
 			}
 		}
 
-		$regex .= '#i';
+		$regex .= '/?#i';
 
 		return $regex;
 	}
