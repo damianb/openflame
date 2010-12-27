@@ -56,7 +56,7 @@ class Autoloader
 	{
 		$class = ($class[0] == '\\') ? substr($class, 1) : $class;
 
-		// Only load Docile's own classes.
+		// Only load our own classes.
 		if(substr($class, 0, 20) !== 'OpenFlame\\Framework\\')
 			return false;
 
@@ -68,7 +68,7 @@ class Autoloader
 
 		if(!defined('OpenFlame\\Framework\\DEBUG'))
 		{
-			@include $this->include_path . $name . '.php';
+			include $this->include_path . $name . '.php';
 		}
 		else
 		{
@@ -81,7 +81,7 @@ class Autoloader
 	}
 
 	/**
-	 * Drop the Failnet base namespace if it is there, and replace any backslashes with slashes.
+	 * Drop the base namespace if it is there, and replace any backslashes with slashes.
 	 * @param string $class_name - The name of the class to spit-polish.
 	 * @return string - The cleaned class name.
 	 */
@@ -93,7 +93,7 @@ class Autoloader
 
 	/**
 	 * Register this class as an autoloader within the autoloader stack.
-	 * @return Docile\Autoloader - The newly created autoloader instance.
+	 * @return OpenFlame\Framework\Autoloader - The newly created autoloader instance.
 	 */
 	public static function register()
 	{
