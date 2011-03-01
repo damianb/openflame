@@ -317,8 +317,22 @@ class Instance
 		$this->processed = $this->was_set = false;
 	}
 
+	/**
+	 * Validate the contained data using a validator function registered in the input handler
+	 * @param string $type - The type of validator to use
+	 * @return boolean - Does the input validate?
+	 *
+	 * @throws \LogicException
+	 */
 	protected function validate($type)
 	{
-		// asdf
+		// get the handler here, however
+		//$handler = new \OpenFlame\Framework\Input\Handler();
+
+		$validator = $handler->getValidator($type);
+		if($validator === false)
+			throw new \LogicException(sprintf('No validator registered for validation type "%1$s" in \\OpenFlame\\Framework\\Input\\Instance', $type));
+
+		return (bool) call_user_func($validator, $this->getClean());
 	}
 }
