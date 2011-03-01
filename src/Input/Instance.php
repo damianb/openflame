@@ -298,7 +298,7 @@ class Instance
 		$this->was_set = (!empty($GLOBALS[$this->getType()][$name])) ? true : false;
 
 		$this->raw_value = ($this->getWasSet()) ? $GLOBALS[$this->getType()][$name] : $this->getDefault();
-		$this->clean_value = $this->cleanVar($this->getRaw(), $this->getDefault());
+		$this->clean_value = $this->cleanVar($this->raw_value, $this->getDefault());
 
 		// Flag this instance as having been processed, so that we don't re-process the same data again.
 		$this->processed = true;
