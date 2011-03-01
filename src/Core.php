@@ -67,7 +67,7 @@ class Core
 	public static function setConfig($config_name, $config_value)
 	{
 		// check to see if this is a namespaced config
-		$config_name = explode('.', $config_name, 1);
+		$config_name = explode('.', $config_name, 2);
 		if(sizeof($config_name) > 1)
 		{
 			// it is namespaced, we need to store under said namespace
@@ -88,7 +88,7 @@ class Core
 	public static function getConfig($config_name)
 	{
 		// check to see if this is a namespaced config
-		$config_name_array = explode('.', $config_name, 1);
+		$config_name_array = explode('.', $config_name, 2);
 		if(sizeof($config_name_array) > 1)
 		{
 			// it is namespaced, we need to grab from that specific namespace.
