@@ -168,7 +168,7 @@ class Instance
 	}
 
 	/**
-	 * Set this instance to not use field juggling
+	 * Set this instance to not use field juggling (note, field juggling defaults to being enabled)
 	 * @return \OpenFlame\Framework\Input\Instance - Provides a fluent interface.
 	 */
 	public function disableFieldJuggling()
