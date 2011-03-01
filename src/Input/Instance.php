@@ -26,46 +26,198 @@ class Instance
 	/**
 	 * @var mixed - The raw input
 	 */
-	protected $raw_input = NULL;
+	protected $raw_value = NULL;
 
 	/**
 	 * @var mixed - The cleaned input
 	 */
-	protected $cleaned_input = NULL;
+	protected $clean_value = NULL;
 
 	/**
-	 * @var boolean - Was the even set when the page was submitted
+	 * @var boolean - Has this value even been set?
 	 */
-	protected $was_set;
+	protected $was_set = false;
 
 	/**
-	 * Constructor
-	 * @param string $var_name Var name in the global you're after
-	 * @param mixed $default Default value and type to fall back on and check for good types
-	 * @param string @global_name The name of the super global to use. REQUEST, GET, POST, COOKIE, and SERVER are all avavible.
-	 * @return void
+	 * @var string - The superglobal to grab this input from.
 	 */
-	public function __construct($var_name, $default, $global_name = '_REQUEST')
+	protected $global_type = '_REQUEST';
+
+	/**
+	 * @var string - The field name we're grabbing from.
+	 */
+	protected $field_name = '';
+
+	/**
+	 * @var sting - The "juggled" field name we're grabbing from, if we are using field juggling.
+	 */
+	protected $juggled_name = '';
+
+	/**
+	 * @var mixed - The default value to use for this instance (also validates/binds the format of the input to match the default value).
+	 */
+	protected $default_value;
+
+	/**
+	 * @var boolean - Do we want to use field juggling on this input?
+	 */
+	protected $use_juggling = true;
+
+	/**
+	 * @var boolean - Has this input instance been processed since it had its properties last set?
+	 */
+	protected $processed = false;
+
+	/**
+	 * Get the superglobal to grab the input from.
+	 * @return string - The superglobal we're grabbing from.
+	 */
+	public function getType()
 	{
-		// Prepend the _ if not there
-		if($global_name[0] != '_')
-			$global_name = '_' . $global_name;
+		return $this->global_type;
+	}
 
-		// We should have a good global now.
-		$global_name = in_array($global_name, array('_REQUEST', '_GET', '_POST', '_COOKIE', '_SERVER', '_FILES')) ? $global_name : '_REQUEST';
+	/**
+	 * Set the superglobal to grab the input from.
+	 * @param string $global_type - The superglobal to grab from.
+	 * @return \OpenFlame\Framework\Input\Instance - Provides a fluent interface.
+	 */
+	public function setType($global_type)
+	{
+		$global_type = '_' . ltrim($global_type, '_');
+		if(!in_array($global_type, array('_REQUEST', '_GET', '_POST', '_COOKIE', '_SERVER', '_FILES')))
+			$global_type = '_REQUEST';
 
-		// We need to make sure that cookie is not contaminating the value of request
-		if($global_name == '_REQUEST' && isset($_COOKIE[$var_name]))
-			$_REQUEST[$var_name] = isset($_POST[$var_name]) ? $_POST[$var_name] : $_GET[$var_name];
+		$this->wipeInstance();
+		$this->global_type = $global_type;
+		return $this;
+	}
 
-		// Check to see if the variable was set when the page was submitted
-		$this->was_set = (!empty($GLOBALS[$global_name][$var_name])) ? true : false;
+	/**
+	 * Get the default value for this input instance.
+	 * @return mixed - The default value for this input instance.
+	 */
+	public function getDefault()
+	{
+		return $this->default_value;
+	}
 
-		// Assign the raw var
-		// If the global is not set at all, or is empty, use the default. Otherwise, use what was inputted
-		$this->raw_input = ($this->was_set) ? $GLOBALS[$global_name][$var_name] : $default;
+	/**
+	 * Set the default value for this input instance.
+	 * @param mixed - The default value to use for this input instance.
+	 * @return \OpenFlame\Framework\Input\Instance - Provides a fluent interface.
+	 */
+	public function setDefault($default_value)
+	{
+		$this->wipeInstance();
+		$this->default_value = $default_value;
+		return $this;
+	}
 
-		$this->cleaned_input = $this->cleanVar($this->raw_input, $default);
+	/**
+	 * Get the field name that this instance is attached to.
+	 * @return string - The field name for this instance.
+	 */
+	public function getName()
+	{
+		return $this->field_name;
+	}
+
+	/**
+	 * Set the field name that we want to attach this instance to.
+	 * @param string $name - The field name to use for this instance.
+	 * @return \OpenFlame\Framework\Input\Instance - Provides a fluent interface.
+	 */
+	public function setName($name)
+	{
+		$this->wipeInstance();
+		$this->field_name = $name;
+		return $this;
+	}
+
+	/**
+	 * Get the juggled field name that this instance is attached to.
+	 * @return string - The juggled field name for this instance.
+	 */
+	public function getJuggledName()
+	{
+		return $this->juggled_name;
+	}
+
+	/**
+	 * Set the juggled field name that we want to attach this instance to.
+	 * @param string $name - The juggled field name to use for this instance.
+	 * @return \OpenFlame\Framework\Input\Instance - Provides a fluent interface.
+	 */
+	public function setJuggledName($name)
+	{
+		$this->wipeInstance();
+		$this->juggled_name = $name;
+		return $this;
+	}
+
+	/**
+	 * Set this instance to use field juggling (note, field juggling defaults to being enabled)
+	 * @return \OpenFlame\Framework\Input\Instance - Provides a fluent interface.
+	 */
+	public function enableFieldJuggling()
+	{
+		$this->wipeInstance();
+		$this->use_juggling = true;
+		return $this;
+	}
+
+	/**
+	 * Set this instance to not use field juggling
+	 * @return \OpenFlame\Framework\Input\Instance - Provides a fluent interface.
+	 */
+	public function disableFieldJuggling()
+	{
+		$this->wipeInstance();
+		$this->use_juggling = false;
+		return $this;
+	}
+
+	/**
+	 * Check to see if this input instance is to use field juggling
+	 * @return boolean - Do we want to use field juggling?
+	 */
+	public function useJuggling()
+	{
+		return $this->use_juggling;
+	}
+
+	/**
+	 * Get the sanitized (not escaped, though!) value for this input's var
+	 * @return mixed - The cleaned value of the var.
+	 */
+	public function getClean()
+	{
+		if(!$this->processed)
+			$this->processVar();
+		return $this->clean_value;
+	}
+
+	/**
+	 * Get the raw, unprocessed value for this input's var
+	 * @return mixed - The raw value for the var.
+	 */
+	public function getRaw()
+	{
+		if(!$this->processed)
+			$this->processVar();
+		return $this->raw_value;
+	}
+
+	/**
+	 * Check to see if the input var this instance represents was set or not
+	 * @return boolean - Was the var set?
+	 */
+	public function getWasSet()
+	{
+		if(!$this->processed)
+			$this->processVar();
+		return $this->was_set;
 	}
 
 	/**
@@ -74,7 +226,7 @@ class Instance
 	 * @param mixed $default
 	 * @return mixed The cleaned data.
 	 */
-	private function cleanVar($var, $default)
+	protected function cleanVar($var, $default)
 	{
 		if(is_array($var))
 		{
@@ -92,12 +244,12 @@ class Instance
 	}
 
 	/**
-	 * Binds the var to it's final type
+	 * Binds the var to its final type
 	 * @param mixed $var - The var being bound
 	 * @param mixed $default - Default value
 	 * @return string - Cleaned output
 	 */
-	public function bindVar($var, $default)
+	protected function bindVar($var, $default)
 	{
 		$type = gettype($default);
 		settype($var, $type);
@@ -114,89 +266,54 @@ class Instance
 	}
 
 	/**
-	 * Validates the piece of data
-	 * @param string $type - The type to validate against, see the full type profile list
-	 * @return boolean - True if valid, false if not.
+	 * Internal method that processes the desired input var and loads its data (and sanitizes it)
+	 * @return void
+	 *
+	 * @throws \LogicException
 	 */
-	public function validate($type, $min = 0, $max = 0)
+	protected function processVar()
 	{
-		// @todo filter_var()
+		if($this->processed)
+			return;
 
-		switch($type)
+		if($this->getName() === NULL)
+			throw new \LogicException('No field name specified for input retrieval in \\OpenFlame\\Framework\\Input\\Instance');
+
+		if($this->getDefault() === NULL)
+			throw new \LogicException('Cannot specify NULL as the default value for input in \\OpenFlame\\Framework\\Input\\Instance');
+
+		// Check to see if we want to override the field name juggling feature
+		if($this->useJuggling())
 		{
-			// Validates /any/ email
-			case 'email':
-				// By "James Watts and Francisco Jose Martin Moreno"
-				// Assumed Public Domain
-				return preg_match("#^([\w\!\#$\%\&\'\*\+\-\/\=\?\^\`{\|\}\~]+\.)*[\w\!\#$\%\&\'\*\+\-\/\=\?\^\`{\|\}\~]+@((((([a-z0-9]{1}[a-z0-9\-]{0,62}[a-z0-9]{1})|[a-z])\.)+[a-z]{2,6})|(\d{1,3}\.){3}\d{1,3}(\:\d{1,5})?)$#i", $this->cleaned_input) === 1 ? true : false;
-			break;
-
-			case 'url':
-				// By "admin" (http://www.blog.highub.com/regular-expression/php-regex-regular-expression/php-regex-validating-a-url/)
-				// Assumed Public Domain
-				// @TODO Test cases to make sure it works.
-				return preg_match("/^(([\w]+:)?\/\/)?(([\d\w]|%[a-fA-f\d]{2,2})+(:([\d\w]|%[a-fA-f\d]{2,2})+)?@)?([\d\w][-\d\w]{0,253}[\d\w]\.)+[\w]{2,4}(:[\d]+)?(\/([-+_~.\d\w]|%[a-fA-f\d]{2,2})*)*(\?(&amp;?([-+_~.\d\w]|%[a-fA-f\d]{2,2})=?)*)?(#([-+_~.\d\w]|%[a-fA-f\d]{2,2})*)?$/", $this->cleaned_input) === 1 ? true : false;
-			break;
-
-			case 'ip4':
-				// By "G. Andrew Duthie" (http://regexlib.com/REDetails.aspx?regexp_id=32)
-				// Assumed Public Domain
-				return preg_match("#^(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9])\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9]|0)\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9]|0)\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[0-9])$#", $this->cleaned_input) === 1 ? true : false;
-			break;
-
-			case 'ip6':
-				// By "Stephen Ryan" (http://forums.dartware.com/viewtopic.php?t=452)
-				// Assumed Public Domain
-				return preg_match("#\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*$#i", $this->cleaned_input) === 1 ? true : false;
-			break;
-
-			// Alpha-numeric chars only
-			case 'alphanumeric':
-				// Check if they wanted a range
-				$range = ($max || $min && $max > $min) ? '{' . $min . ',' . $max . '}' : '';
-
-				return preg_match("#^[A-Za-z0-9]*{$range}$#i", $this->cleaned_input) === 1 ? true : false;
-			break;
-
-			// Validate a basic string, uses $min, $max
-			case 'string':
-				return (strlen($this->cleaned_input) >= $min && strlen($this->cleaned_input) <= $max) ? true : false;
-			break;
-
-			// Validates any int, uses $min and $max for the value of the int, not the size.
-			case 'int':
-				return ($this->cleaned_input >= $min && $this->cleaned_input <= $max) ? true : false;
-			break;
+			$name = $this->getName();
+		}
+		else
+		{
+			$name = $this->getJuggledName() ?: $this->getName();
 		}
 
-		// If we get a bad type or something
-		return false;
+		if($this->getType() == '_REQUEST' && isset($_COOKIE[$this->getName()]))
+			$_REQUEST[$this->getName()] = isset($_POST[$name]) ?: $_GET[$name];
+
+		$this->was_set = (!empty($GLOBALS[$this->getType()][$name])) ? true : false;
+
+		$this->raw_value = ($this->getWasSet()) ? $GLOBALS[$this->getType()][$name] : $this->getDefault();
+		$this->clean_value = $this->cleanVar($this->getRaw(), $this->getDefault());
+
+		// Flag this instance as having been processed, so that we don't re-process the same data again.
+		$this->processed = true;
 	}
 
 	/**
-	 * Returns the raw var
-	 * @return boolean - True if set, false if not.
+	 * Someone changed some of the internal data for this instance, so we need to wipe any raw/clean data if we've already been processed, just in case.
+	 * @return void
 	 */
-	public function getRaw()
+	protected function wipeInstance()
 	{
-		return $this->raw_input;
-	}
+		if(!$this->processed)
+			return;
 
-	/**
-	 * Returns the cleaned var
-	 * @return boolean - True if set, false if not.
-	 */
-	public function getClean()
-	{
-		return $this->cleaned_input;
-	}
-
-	/**
-	 * Checks to see if the var was even set when the page was submitted
-	 * @return boolean - True if set, false if not.
-	 */
-	public function wasSet()
-	{
-		return (boolean) $this->was_set;
+		$this->raw_value = $this->clean_value = NULL;
+		$this->processed = $this->was_set = false;
 	}
 }
