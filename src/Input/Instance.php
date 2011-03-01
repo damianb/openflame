@@ -316,4 +316,9 @@ class Instance
 		$this->raw_value = $this->clean_value = NULL;
 		$this->processed = $this->was_set = false;
 	}
+
+	protected function validate($type)
+	{
+		// asdf
+	}
 }

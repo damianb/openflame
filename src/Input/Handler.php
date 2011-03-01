@@ -23,10 +23,29 @@ if(!defined('OpenFlame\\Framework\\ROOT_PATH')) exit;
  */
 class Handler
 {
+	/**
+	 * @var boolean - Do we want to enable field juggling for newly created input instances?
+	 */
 	protected $enable_field_juggling = false;
+
+	/**
+	 * @var string - A unique string specific to an individual user's session
+	 */
 	protected $session_juggle_salt = '';
+
+	/**
+	 * @var string - A unique string specific to an individual installation
+	 */
 	protected $global_juggle_salt = '';
 
+	/**
+	 * Get an input instance for a specific input (in format "POST::inputfieldhere")
+	 * @note this method will automatically and transparently handle field juggling itself
+	 *      To disable field juggling per individual instance, use $instance->disableFieldJuggling();
+	 * @param string $name - The name of the input to grab (and the type of input to get, type defaults to REQUEST)
+	 *                      Format must be "TYPE::NAME", examples: POST::username, GET::sid, COOKIE::cookiename, etc
+	 * @return \OpenFlame\Framework\Input\Instance - An input instance to manipulate, set on fire, etc.
+	 */
 	public function getInput($name)
 	{
 		list($type, $field) = array_pad(explode('::', $name, 2), -2, '');
@@ -82,7 +101,6 @@ class Handler
 		return $this->enable_field_juggling;
 	}
 
-	// @note may move this to the instance itself...
 	public function getValidator($type)
 	{
 		if(!isset($this->validators[$type]))
