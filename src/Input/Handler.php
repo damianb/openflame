@@ -39,6 +39,11 @@ class Handler
 	protected $global_juggle_salt = '';
 
 	/**
+	 * @var array - Array of validator callbacks for use with individual input instances
+	 */
+	protected $validators = array();
+
+	/**
 	 * Get an input instance for a specific input (in format "POST::inputfieldhere")
 	 * @note this method will automatically and transparently handle field juggling itself
 	 *      To disable field juggling per individual instance, use $instance->disableFieldJuggling();
@@ -57,59 +62,109 @@ class Handler
 		return $instance;
 	}
 
+	/**
+	 * Builds the juggled field name to use for an input
+	 * @param string $name - The "pure" field name to use as the base for the field juggling
+	 * @return string - The juggled field name.
+	 *
+	 * @note Hopefully this will help strengthen the input system against automated submissions and CSRF.  We'll see.
+	 */
 	public function buildJuggledName($name)
 	{
+		// @note may want to do a substr or trimming of some sort on the hash to save on string length
 		return $name . '_' . hash('md5', $name . $this->getSessionJuggleSalt() . $this->getGlobalJuggleSalt());
 	}
 
+	/**
+	 * Get the session-specific salt that we're using for generating juggled field names.
+	 * @return string - The session salt for juggling.
+	 */
 	public function getSessionJuggleSalt()
 	{
 		return $this->session_juggle_salt;
 	}
 
+	/**
+	 * Set the session-specific salt that we're using for generating juggled field names.
+	 * @param string $salt - The session salt for juggling.
+	 * @return \OpenFlame\Framework\Input\Handler - Provides a fluent interface.
+	 */
 	public function setSessionJuggleSalt($salt)
 	{
 		$this->session_juggle_salt = $salt;
 		return $this;
 	}
 
+	/**
+	 * Get the installation-specific salt that we're using for generating juggled field names.
+	 * @return string - The installation salt for juggling.
+	 */
 	public function getGlobalJuggleSalt()
 	{
 		return $this->global_juggle_salt;
 	}
 
+	/**
+	 * Set the installation-specific salt that we're using for generating juggled field names.
+	 * @param string $salt - The installation salt for juggling.
+	 * @return \OpenFlame\Framework\Input\Handler - Provides a fluent interface.
+	 */
 	public function setGlobalJuggleSalt($salt)
 	{
 		$this->global_juggle_salt = $salt;
 		return $this;
 	}
 
+	/**
+	 * Enable field juggling for all newly created input instances (note, field juggling defaults to being enabled)
+	 * @return \OpenFlame\Framework\Input\Handler - Provides a fluent interface.
+	 */
 	public function enableFieldJuggling()
 	{
 		$this->enable_field_juggling = true;
 		return $this;
 	}
 
+	/**
+	 * Disable field juggling for all newly created input instances (note, field juggling defaults to being enabled)
+	 * @return \OpenFlame\Framework\Input\Handler - Provides a fluent interface.
+	 */
 	public function disableFieldJuggling()
 	{
 		$this->enable_field_juggling = false;
 		return $this;
 	}
 
+	/**
+	 * Check to see if newly created input instances are set to use field juggling
+	 * @return boolean - Do we want to use field juggling?
+	 */
 	public function useJuggling()
 	{
 		return $this->enable_field_juggling;
 	}
 
+	/**
+	 * Grabs a validator callback to use for our input instances.
+	 * @param string $type - The type of validator to grab.
+	 * @return mixed - Returns either a callback for the validator function we want, or returns boolean false if no validator is set.
+	 */
 	public function getValidator($type)
 	{
-		if(!isset($this->validators[$type]))
+		if(!isset($this->validators[(string) $type]))
 			return false;
-		return $this->validators[$type];
+		return $this->validators[(string) $type];
 	}
 
+	/**
+	 * Registers a validator for use with input instances.
+	 * @param string $type - The callback to register the validator under.
+	 * @param callback $callback - The validator's callback that we want to register.
+	 * @return \OpenFlame\Framework\Input\Handler - Provides a fluent interface.
+	 */
 	public function registerValidator($type, $callback)
 	{
-		// asdf
+		$this->validators[(string) $type] = $callback;
+		return $this;
 	}
 }
