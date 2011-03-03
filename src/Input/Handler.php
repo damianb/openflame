@@ -14,8 +14,8 @@ namespace OpenFlame\Framework\Input;
 if(!defined('OpenFlame\\Framework\\ROOT_PATH')) exit;
 
 /**
- * OpenFlame Web Framework - Some class
- * 	     Some class description.
+ * OpenFlame Web Framework - Input object handler
+ * 	     Handles fluid creation of input objects, the transparent use of field juggling, and provides registration/access to validator callbacks for input instances to use.
  *
  *
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
@@ -42,6 +42,11 @@ class Handler
 	 * @var array - Array of validator callbacks for use with individual input instances
 	 */
 	protected $validators = array();
+
+	/**
+	 * @var array - Array of juggled field names and their hashes, to allow for increased speed retrieving juggled names
+	 */
+	protected $juggle_hash_cache = array();
 
 	/**
 	 * Get an input instance for a specific input (in format "POST::inputfieldhere")
@@ -71,8 +76,13 @@ class Handler
 	 */
 	public function buildJuggledName($name)
 	{
+		if(isset($this->juggle_hash_cache[$name]))
+			return $this->juggle_hash_cache[$name];
+
 		// @note may want to do a substr or trimming of some sort on the hash to save on string length
-		return $name . '_' . hash('md5', $name . $this->getSessionJuggleSalt() . $this->getGlobalJuggleSalt());
+		$hash = $name . '_' . hash('md5', $name . $this->getSessionJuggleSalt() . $this->getGlobalJuggleSalt());
+		$this->juggle_hash_cache[$name] = $hash;
+		return $hash;
 	}
 
 	/**
@@ -91,6 +101,7 @@ class Handler
 	 */
 	public function setSessionJuggleSalt($salt)
 	{
+		$this->juggle_hash_cache = array(); // reset the hash cache as all juggled field names cached are no longer valid
 		$this->session_juggle_salt = $salt;
 		return $this;
 	}
@@ -111,6 +122,7 @@ class Handler
 	 */
 	public function setGlobalJuggleSalt($salt)
 	{
+		$this->juggle_hash_cache = array(); // reset the hash cache as all juggled field names cached are no longer valid
 		$this->global_juggle_salt = $salt;
 		return $this;
 	}
