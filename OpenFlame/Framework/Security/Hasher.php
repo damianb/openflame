@@ -44,7 +44,7 @@ if(!defined('OpenFlame\\Framework\\ROOT_PATH')) exit;
  * Obviously, since this code is in the public domain, the above are not
  * requirements (there can be none), but merely suggestions.
  */
-class Hash
+class Hasher
 {
 	protected $itoa64 = './0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
 	protected $iteration_count_log2;
