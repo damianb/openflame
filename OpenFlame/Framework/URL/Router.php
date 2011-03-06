@@ -53,6 +53,10 @@ class Router
 
 	public function processRequest($request_url)
 	{
+		// Get rid of _GET query string
+		if (strpos($request_url, '?') !== false)
+			$request_url = substr($request_url, 0, strpos($request_url, '?'));
+
 		$request = explode('/', $request_url, self::EXPLODE_LIMIT);
 
 		$request_base = $request[0];
