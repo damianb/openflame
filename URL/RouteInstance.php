@@ -23,9 +23,19 @@ if(!defined('OpenFlame\\Framework\\ROOT_PATH')) exit;
  */
 class RouteInstance
 {
-	protected $components = array();
+	protected $route_map = array();
 
-	private $supported_types = array(
+	protected $route_regexp = '';
+
+	protected $route_base = '';
+
+	protected $serialized_route = '';
+
+	protected $request_data;
+
+	//protected $route_callback;
+
+	private static $supported_types = array(
 		'str'		=> true,
 		'string'	=> true,
 		'float'		=> true,
@@ -33,51 +43,173 @@ class RouteInstance
 		'integer'	=> true,
 	);
 
-	public function __construct($route)
+	public static function newInstance()
+	{
+		return new static();
+	}
+
+	public function getRouteBase()
+	{
+		return $this->route_base;
+	}
+
+	protected function setRouteBase($base)
+	{
+		// reset the serialized route on any changes to the route...
+		$this->setSerializedRoute(NULL);
+		$this->route_base = $base;
+		return $this;
+	}
+
+	public function getRouteMap()
+	{
+		return $this->route_map;
+	}
+
+	protected function setRouteMap(array $map)
+	{
+		// reset the serialized route on any changes to the route...
+		$this->setSerializedRoute(NULL);
+		$this->route_map = $map;
+		return $this;
+	}
+
+	public function getRouteRegexp()
+	{
+		return $this->route_regexp;
+	}
+
+	protected function setRouteRegexp($regexp)
+	{
+		// reset the serialized route on any changes to the route...
+		$this->setSerializedRoute(NULL);
+		$this->route_regexp = $regexp;
+		return $this;
+	}
+
+	public function getSerializedRoute()
+	{
+		if(empty($this->serialized_route))
+		{
+			$route_array = array(
+				'route_base'	=> $this->getRouteBase(),
+				'route_map'		=> $this->getRouteMap(),
+				'route_regexp'	=> $this->getRouteRegexp(),
+			);
+
+			$this->setSerializedRoute(serialize($route_array));
+		}
+
+		return $this->serialized_route;
+	}
+
+	protected function setSerializedRoute($route_string)
+	{
+		$this->serialized_route = $route_string;
+		return $this;
+	}
+
+	final public function getTypeSupported($type)
+	{
+		return isset(self::$supported_types[$type]);
+	}
+
+	public function loadRawRoute($route)
 	{
 		$route_data = explode('/', $route, \OpenFlame\Framework\URL\Router::EXPLODE_LIMIT);
 
-		// ex format:
-		// $var:string
-		// the value for the request component is stored in "$var", and is typecast as string
+		$this->setRouteBase($route_data[0])
+			->setRouteMap($this->buildRouteMap($route_data))
+			->setRouteRegexp($this->buildRouteRegex());
+
+		return $this;
+	}
+
+	public function loadSerializedRoute($route_string)
+	{
+		$route_data = unserialize($route_string);
+
+		// Protected against bunk data
+		if($route_data === false || !isset($route_data['route_base']) || !isset($route_data['route_map']) || !isset($route_data['route_regexp']))
+		{
+			throw new \RuntimeException('Route unserialization failed, data extracted is invalid or incomplete');
+		}
+
+		// Load the route data seamlessly
+		$this->setRouteBase($route_data['route_base'])
+			->setRouteMap($route_data['route_map'])
+			->setRouteRegexp($route_data['route_regexp'])
+			->setSerializedRoute($route_string);
+
+		return $this;
+	}
+
+	// does the request match this route?
+	public function verify($request)
+	{
+		// array - $request
+		// asdf
+	}
+
+	// extract data using the regexp from the request
+	public function loadRequest($request)
+	{
+		// array - $request
+		// asdf
+	}
+
+	// will grab extracted data from the request
+	public function getDataPoint($point)
+	{
+		// asdf
+	}
+
+	protected function buildRouteMap(array $route_data)
+	{
+		// example format:
+		// "$var:string"
+		// the value for the request component is stored in entry "var", and is typecast as string
+		$route_map = array();
 		foreach($route_data as $slice)
 		{
 			// Is this a variable component in the route?
-			if(!strpos($slice, '$'))
+			if($slice[0] !== '$')
 			{
-				array_push($this->components[$i], array('value' => $slice, 'type' => 'static'));
+				array_push($route_map, array('entry' => $slice, 'type' => 'static'));
 			}
 			else
 			{
 				// Trim the dollar sign.
 				$slice = substr($slice, 1);
 
-				list($var, $type) = array_pad(explode(':', $slice, 2), 2, '');
-				if($type === '')
-					$type = 'none';
+				list($var, $type) = array_pad(explode(':', $slice, 2), 2, 'none');
 
-				if($type != 'none' && !isset($this->supported_types[$type]))
-					throw new \Exception(); // @todo exception
+				if($type != 'none' && !$this->getTypeSupported($type))
+				{
+					throw new \InvalidArgumentException(sprintf('Unsupported route variable type "%1$s" specified', $type));
+				}
 
-				array_push($this->components, array('value' => $var, 'type' => $type));
+				array_push($route_map, array('entry' => $var, 'type' => $type));
 			}
 		}
+
+		return $route_map;
 	}
 
-	protected function buildRegex()
+	protected function buildRouteRegex()
 	{
 		$regex = '#';
 
-		foreach($this->components as $component)
+		foreach($this->getRouteMap() as $component)
 		{
 			switch($component['type'])
 			{
-				case 'static':
-					$regex .= '/' . preg_quote($component['value'], '#');
-				break;
-
 				case 'none':
 					$regex .= '/([^/]+)';
+				break;
+
+				case 'static':
+					$regex .= '/' . preg_quote($component['entry'], '#');
 				break;
 
 				case 'str':
@@ -92,6 +224,10 @@ class RouteInstance
 
 				case 'float':
 					$regex .= '/([0-9\.]+)';
+				break;
+
+				default:
+					throw new \LogicException(sprintf('Unsupported route type "%1$s" encountered during route regexp creation', $component['type']));
 				break;
 			}
 		}

@@ -44,10 +44,36 @@ class Router
 		return $this;
 	}
 
-	public function newRoute($route)
+	public function newRoute($route_data)
 	{
-		list($route_base, ) = explode('/', $route, 2);
-		$this->routes[$route_base][] = new \OpenFlame\Framework\URL\RouteInstance($route);
+		$route = \OpenFlame\Framework\URL\RouteInstance::newInstance()
+			->loadRawRoute($route_data);
+
+		$this->loadRoute($route, $route->getRouteBase());
+
+		return $this;
+	}
+
+	public function newCachedRoute($route_data)
+	{
+		$route = \OpenFlame\Framework\URL\RouteInstance::newInstance()
+			->loadSerializedRoute($route_data);
+
+		$this->loadRoute($route, $route->getRouteBase());
+		return $this;
+	}
+
+	public function loadRoute(\OpenFlame\Framework\URL\RouteInstance $route, $route_base, $prepend = false)
+	{
+		if($prepend === true)
+		{
+			array_unshift($this->routes[(string) $route_base], $route);
+		}
+		else
+		{
+			array_push($this->routes[(string) $route_base], $route);
+		}
+
 		return $this;
 	}
 
@@ -55,7 +81,9 @@ class Router
 	{
 		// Get rid of _GET query string
 		if (strpos($request_url, '?') !== false)
+		{
 			$request_url = substr($request_url, 0, strpos($request_url, '?'));
+		}
 
 		$request = explode('/', $request_url, self::EXPLODE_LIMIT);
 
@@ -68,9 +96,10 @@ class Router
 
 		// We need to verify the request against the routes one by one, and go for the last one that works.
 		// We do this so that routes set later on take priority, so routes can be easily overridden in an application
+		$found = false;
 		foreach(array_reverse($this->routes[$request_base]) as $route)
 		{
-			if($route->verify($request))
+			if($route->verify($request_url))
 			{
 				$found = true;
 				break;
@@ -82,6 +111,6 @@ class Router
 			// throw 404 error here
 		}
 
-		return $route->loadRequest($request);
+		return $route;
 	}
 }
