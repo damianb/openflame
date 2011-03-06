@@ -9,7 +9,7 @@
  * Minimum Requirement: PHP 5.3.0
  */
 
-namespace OpenFlame\Framework;
+namespace OpenFlame\Framework\Exception;
 
 if(!defined('OpenFlame\\Framework\\ROOT_PATH')) exit;
 
@@ -21,7 +21,7 @@ if(!defined('OpenFlame\\Framework\\ROOT_PATH')) exit;
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
  * @link        https://github.com/OpenFlame/OpenFlame-Framework
  */
-class ExceptionHandler
+class Handler
 {
 	/**
 	 * @var Exception - The exception to store
@@ -49,7 +49,7 @@ class ExceptionHandler
 	 */
 	final public static function register()
 	{
-		set_exception_handler('\\OpenFlame\\Framework\\ExceptionHandler::catcher');
+		set_exception_handler('\\OpenFlame\\Framework\\Exception\\Handler::catcher');
 	}
 
 	/**
@@ -155,9 +155,9 @@ EOD;
 	 */
 	final public static function buildHTML($title, $page)
 	{
-		if(!empty(self::$page_format))
+		if(!empty(static::$page_format))
 		{
-			$page_format = self::$page_format;
+			$page_format = static::$page_format;
 		}
 		else
 		{
