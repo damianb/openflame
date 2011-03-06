@@ -75,12 +75,10 @@ class Handler
 			$url = substr($url, 0, strpos($url, '?'));
 
 		// if we have url_append at the end, remove it
-		if (substr($url, -1) == '/')
-			$url = substr($url, 0, -1);
+		$url = rtrim($url, '/');
 
 		// remove / at the beginning
-		if (strlen($url) && $url[0] === '/')
-			$url = substr($url, 1);
+		$url = ltrim($url, '/');
 
 		$url = explode('/', $url, self::EXPLODE_LIMIT);
 

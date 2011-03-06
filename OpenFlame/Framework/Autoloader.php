@@ -24,15 +24,16 @@ if(!defined('OpenFlame\\Framework\\ROOT_PATH')) exit;
 class Autoloader
 {
 	/**
-	 * @var string - The path that the autoloader will attempt to load files from.
+	 * @var array - The paths that Yukari will attempt to load class files from.
 	 */
-	private $include_path = '';
+	private $paths = array();
 
 	/**
 	 * Constructor
+	 * @param array $paths - Extra paths to include in the autoload search
 	 * @return void
 	 */
-	protected function __construct()
+	public function __construct(array $paths = array())
 	{
 		// Unless PHAR packaging mode is enabled, we want to grab straight from the src/ folder.
 		if(!defined('OpenFlame\\Framework\\USE_PHAR'))
@@ -87,6 +88,7 @@ class Autoloader
 	 */
 	public function cleanName($class)
 	{
+		$class = ltrim($class, '\\');
 		$class = (substr($class, 0, 19) == 'OpenFlame\\Framework') ? substr($class, 6) : $class;
 		return str_replace('\\', '/', $class);
 	}

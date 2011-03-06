@@ -26,17 +26,16 @@ class RouteInstance
 	protected $components = array();
 
 	private $supported_types = array(
-		'str',
-		'string',
-		'float',
-		'int',
-		'integer',
+		'str'		=> true,
+		'string'	=> true,
+		'float'		=> true,
+		'int'		=> true,
+		'integer'	=> true,
 	);
 
 	public function __construct($route)
 	{
 		$route_data = explode('/', $route, \OpenFlame\Framework\URL\Router::EXPLODE_LIMIT);
-		$i = 0;
 
 		// ex format:
 		// $var:string
@@ -46,31 +45,22 @@ class RouteInstance
 			// Is this a variable component in the route?
 			if(!strpos($slice, '$'))
 			{
-				$this->components[$i] = array('value' => $slice, 'type' => 'static');
+				array_push($this->components[$i], array('value' => $slice, 'type' => 'static'));
 			}
 			else
 			{
 				// Trim the dollar sign.
 				$slice = substr($slice, 1);
 
-				// Are we typecasting?
-				if(strpos($slice, ':'))
-				{
-					list($var, $type) = explode(':', $slice, 2);
-
-					if(!in_array($type, $this->supported_types))
-						throw new \Exception(); // @todo exception
-				}
-				else
-				{
-					$var = $slice;
+				list($var, $type) = array_pad(explode(':', $slice, 2), 2, '');
+				if($type === '')
 					$type = 'none';
-				}
 
-				$this->components[$i] = array('value' => $var, 'type' => $type);
+				if($type != 'none' && !isset($this->supported_types[$type]))
+					throw new \Exception(); // @todo exception
+
+				array_push($this->components, array('value' => $var, 'type' => $type));
 			}
-
-			$i++;
 		}
 	}
 
