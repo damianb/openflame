@@ -45,7 +45,7 @@ class Core
 		// Set our defaults
 		$config = array(
 			'cache.engine'		=> 'JSON',
-			'cache.path'		=> OpenFlame\Framework\ROOT_PATH . '/cache/',
+			'cache.path'		=> OpenFlame\ROOT_PATH . '/cache/',
 		);
 
 		// Merge in the application-specific settings.
