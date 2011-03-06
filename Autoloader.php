@@ -24,7 +24,7 @@ if(!defined('OpenFlame\\Framework\\ROOT_PATH')) exit;
 class Autoloader
 {
 	/**
-	 * @var array - The paths that Yukari will attempt to load class files from.
+	 * @var array - The paths that we will attempt to load class files from.
 	 */
 	private $paths = array();
 
@@ -35,50 +35,88 @@ class Autoloader
 	 */
 	public function __construct(array $paths = array())
 	{
-		// Unless PHAR packaging mode is enabled, we want to grab straight from the src/ folder.
-		if(!defined('OpenFlame\\Framework\\USE_PHAR'))
-		{
-			$this->include_path  = 'phar://' . OpenFlame\Framework\PHAR_PATH;
-		}
-		else
-		{
-			$this->include_path = OpenFlame\Framework\ROOT_PATH . '/src';
-		}
+		$paths = array_merge($paths, array(
+			\OpenFlame\ROOT_PATH,
+		));
 
-		$this->include_path = rtrim($this->include_path, '/') . '/';
+		foreach($paths as $path)
+		{
+			$this->setPath($path);
+		}
 	}
 
 	/**
 	 * Autoload callback for loading class files.
 	 * @param string $class - Class to load
 	 * @return void
+	 *
+	 * @throws \RuntimeException
 	 */
 	public function loadFile($class)
 	{
-		$class = ($class[0] == '\\') ? substr($class, 1) : $class;
-
-		// Only load our own classes.
-		if(substr($class, 0, 20) !== 'OpenFlame\\Framework\\')
-			return false;
-
 		$name = $this->cleanName($class);
 
-		// file_exists() seems to be finicky in PHARs, so we don't rely on it if we're in PHAR packaging mode.
-		if(!defined('OpenFlame\\Framework\\USE_PHAR') && !file_exists($this->include_path . $name . '.php'))
-			return false;
-
-		if(!defined('OpenFlame\\Framework\\DEBUG') && !defined('OpenFlame\\Framework\\USE_PHAR'))
+		$filepath = $this->getFile("$name.php");
+		if($filepath !== false)
 		{
-			include $this->include_path . $name . '.php';
+			require $filepath;
+			if(!class_exists($class) && !interface_exists($class))
+			{
+				throw new \RuntimeException(sprintf('Invalid class contained within file %s', $filepath));
+			}
+			return;
 		}
 		else
 		{
-			@include $this->include_path . $name . '.php';
-		}
-
-		if(!class_exists($class, false))
 			return false;
-		return true;
+		}
+	}
+
+	/**
+	 * Get the correct load path for a specified file
+	 * @param string $file - The name of the file to look for
+	 * @return mixed - String with the full filepath and name to use for loading, or false if no such file on all registered paths
+	 */
+	public function getFile($file)
+	{
+		foreach($this->paths as $path)
+		{
+			if(file_exists($path . $file))
+			{
+				return $path . $file;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * A quick method to allow adding more include paths to the autoloader.
+	 * @param string $include_path - The include path to add to the autoloader
+	 * @return void
+	 */
+	public function setPath($include_path)
+	{
+		// We use array_unshift here so that newer autoloading paths take priority.
+		array_unshift($this->paths, rtrim($include_path, '/') . '/');
+	}
+
+	/**
+	 * Checks to see whether or not the class file we're looking for exists (and also checks every loading dir)
+	 * @param string $class - The class file we're looking for.
+	 * @return boolean - Whether or not the source file we're looking for exists
+	 */
+	public function fileExists($class)
+	{
+		$name = $this->cleanName($class);
+
+		foreach($this->paths as $path)
+		{
+			if(file_exists("{$path}{$name}.php"))
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -88,14 +126,12 @@ class Autoloader
 	 */
 	public function cleanName($class)
 	{
-		$class = ltrim($class, '\\');
-		$class = (substr($class, 0, 19) == 'OpenFlame\\Framework') ? substr($class, 6) : $class;
-		return str_replace('\\', '/', $class);
+		return str_replace('\\', '/', ltrim($class, '\\'));
 	}
 
 	/**
 	 * Register this class as an autoloader within the autoloader stack.
-	 * @return OpenFlame\Framework\Autoloader - The newly created autoloader instance.
+	 * @return \OpenFlame\Framework\Autoloader - The newly created autoloader instance.
 	 */
 	public static function register()
 	{
