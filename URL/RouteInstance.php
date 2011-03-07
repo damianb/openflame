@@ -33,7 +33,7 @@ class RouteInstance
 
 	protected $request_data;
 
-	//protected $route_callback;
+	protected $route_callback;
 
 	private static $supported_types = array(
 		'str'		=> true,
@@ -87,14 +87,53 @@ class RouteInstance
 		return $this;
 	}
 
+	public function getRouteCallback()
+	{
+		return $this->route_callback;
+	}
+
+	public function setRouteCallback($callback)
+	{
+		// reset the serialized route on any changes to the route...
+		$this->setSerializedRoute(NULL);
+		if(strpos($callback, '->') !== false)
+		{
+			list($class, $method) = explode('->', $callback, 2);
+			$this->route_callback = array(
+				'callback'		=> array($class, $method),
+				'object'		=> true,
+				'static'		=> false,
+			);
+		}
+		elseif(strpos($callback, '::') !== false)
+		{
+			$this->route_callback = array(
+				'callback'		=> $callback,
+				'object'		=> true,
+				'static'		=> true,
+			);
+		}
+		else
+		{
+			$this->route_callback = array(
+				'callback'		=> $callback,
+				'object'		=> false,
+				'static'		=> false,
+			);
+		}
+
+		return $this;
+	}
+
 	public function getSerializedRoute()
 	{
 		if(empty($this->serialized_route))
 		{
 			$route_array = array(
-				'route_base'	=> $this->getRouteBase(),
-				'route_map'		=> $this->getRouteMap(),
-				'route_regexp'	=> $this->getRouteRegexp(),
+				'route_base'		=> $this->getRouteBase(),
+				'route_map'			=> $this->getRouteMap(),
+				'route_regexp'		=> $this->getRouteRegexp(),
+				'route_callback'	=> $this->getRouteCallback(),
 			);
 
 			$this->setSerializedRoute(serialize($route_array));
@@ -130,7 +169,7 @@ class RouteInstance
 		$route_data = unserialize($route_string);
 
 		// Protected against bunk data
-		if($route_data === false || !isset($route_data['route_base']) || !isset($route_data['route_map']) || !isset($route_data['route_regexp']))
+		if($route_data === false || !isset($route_data['route_base']) || !isset($route_data['route_map']) || !isset($route_data['route_regexp']) || !isset($route_data['route_callback']))
 		{
 			throw new \RuntimeException('Route unserialization failed, data extracted is invalid or incomplete');
 		}
@@ -139,6 +178,7 @@ class RouteInstance
 		$this->setRouteBase($route_data['route_base'])
 			->setRouteMap($route_data['route_map'])
 			->setRouteRegexp($route_data['route_regexp'])
+			->setRouteCallback($route_data['route_callback'])
 			->setSerializedRoute($route_string);
 
 		return $this;
@@ -155,6 +195,12 @@ class RouteInstance
 	public function loadRequest($request)
 	{
 		// array - $request
+		// asdf
+	}
+
+	// execute the stored callback
+	public function fireCallback()
+	{
 		// asdf
 	}
 
