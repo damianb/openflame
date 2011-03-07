@@ -166,7 +166,7 @@ class RouteInstance
 
 	public function loadSerializedRoute($route_string)
 	{
-		$route_data = unserialize($route_string);
+		$route_data = @unserialize($route_string);
 
 		// Protected against bunk data
 		if($route_data === false || !isset($route_data['route_base']) || !isset($route_data['route_map']) || !isset($route_data['route_regexp']) || !isset($route_data['route_callback']))
