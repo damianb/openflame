@@ -35,7 +35,7 @@ class Router
 	{
 		foreach($routes as $route)
 		{
-			$this->newRoute($route);
+			$this->newRoute($route['path'], $route['callback']);
 		}
 
 		return $this;
@@ -62,10 +62,11 @@ class Router
 		return $route_cache;
 	}
 
-	public function newRoute($route_data)
+	public function newRoute($route_data, $route_callback)
 	{
 		$route = \OpenFlame\Framework\URL\RouteInstance::newInstance()
-			->loadRawRoute($route_data);
+			->loadRawRoute($route_data)
+			->setRouteCallback($route_callback);
 
 		$this->loadRoute($route, $route->getRouteBase());
 
@@ -103,9 +104,8 @@ class Router
 			$request_url = substr($request_url, 0, strpos($request_url, '?'));
 		}
 
-		$request = explode('/', $request_url, self::EXPLODE_LIMIT);
+		list($request_base, ) = explode('/', $request_url, 2);
 
-		$request_base = $request[0];
 		// We're cheating a bit here to boost performance under load.
 		if(!isset($this->routes[$request_base]))
 		{
