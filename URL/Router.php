@@ -31,17 +31,35 @@ class Router
 
 	protected $routes = array();
 
-	public function __construct()
-	{
-		// asdf
-	}
-
 	public function newRoutes(array $routes)
 	{
 		foreach($routes as $route)
+		{
 			$this->newRoute($route);
+		}
 
 		return $this;
+	}
+
+	public function newCachedRoutes(array $routes)
+	{
+		foreach($routes as $route)
+		{
+			$this->newCachedRoute($route);
+		}
+
+		return $this;
+	}
+
+	public function getFullRouteCache()
+	{
+		$route_cache = array();
+		foreach($this->routes as $route)
+		{
+			array_push($route_cache, $route->getSerializedRoute());
+		}
+
+		return $route_cache;
 	}
 
 	public function newRoute($route_data)
@@ -91,7 +109,8 @@ class Router
 		// We're cheating a bit here to boost performance under load.
 		if(!isset($this->routes[$request_base]))
 		{
-			// throw 404 error here
+			// 404 error
+			return false;
 		}
 
 		// We need to verify the request against the routes one by one, and go for the last one that works.
@@ -108,7 +127,8 @@ class Router
 
 		if($found !== true)
 		{
-			// throw 404 error here
+			// 404 error
+			return false;
 		}
 
 		return $route;
