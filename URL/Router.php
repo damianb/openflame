@@ -95,42 +95,62 @@ class Router
 		return $route;
 	}
 
+	/**
+	 * Define a batch of new routes (using \OpenFlame\Framework\URL\Router->newRoute()).
+	 * @param array $routes - The array of routes to create.
+	 * @return \OpenFlame\Framework\URL\Router - Provides a fluent interface.
+	 */
 	public function newRoutes(array $routes)
 	{
 		foreach($routes as $route_data)
 		{
-			$route = $this->newRoute($route_data['path'], $route_data['callback']);
-			$this->loadRoute($route, $route->getRouteBase());
+			$this->storeRoute($this->newRoute($route_data['path'], $route_data['callback']));
 		}
 
 		return $this;
 	}
 
+	/**
+	 * Restore a batch of previously generated routes  (using \OpenFlame\Framework\URL\Router->newCachedRoute()).
+	 * @param array $routes - The array of routes to restore.
+	 * @return \OpenFlame\Framework\URL\Router - Provides a fluent interface.
+	 */
 	public function newCachedRoutes(array $routes)
 	{
 		foreach($routes as $route_data)
 		{
-			$this->newCachedRoute($route_data);
-			$this->loadRoute($route, $route->getRouteBase());
+			$this->storeRoute($this->newCachedRoute($route_data));
 		}
 
 		return $this;
 	}
 
-	public function loadRoute(\OpenFlame\Framework\URL\RouteInstance $route, $route_base, $prepend = false)
+	/**
+	 * Store a generated route in the router.
+	 * @param \OpenFlame\Framework\URL\RouteInstance $route - The route to store.
+	 * @param boolean $prepend - Do we want to prepend the addition, to have the route encountered earlier?
+	 * @return \OpenFlame\Framework\URL\Router - Provides a fluent interface.
+	 */
+	public function storeRoute(\OpenFlame\Framework\URL\RouteInstance $route, $prepend = true)
 	{
 		if($prepend === true)
 		{
-			array_unshift($this->routes[(string) $route_base], $route);
+			array_unshift($this->routes[(string) $route->getRouteBase()], $route);
 		}
 		else
 		{
-			array_push($this->routes[(string) $route_base], $route);
+			array_push($this->routes[(string) $route->getRouteBase()], $route);
 		}
 
 		return $this;
 	}
 
+	/**
+	 * Get the currently defined "home" route.
+	 * @return \OpenFlame\Framework\URL\RouteInstance $route - The currently defined "home" route.
+	 *
+	 * @throws \RuntimeException
+	 */
 	public function getHomeRoute()
 	{
 		if($this->home_route === NULL)
@@ -141,6 +161,11 @@ class Router
 		return $this->home_route;
 	}
 
+	/**
+	 * Set a route to be used as the "home" route.
+	 * @param \OpenFlame\Framework\URL\RouteInstance $route - The route to use as our "home" route.
+	 * @return \OpenFlame\Framework\URL\Router - Provides a fluent interface.
+	 */
 	public function setHomeRoute(\OpenFlame\Framework\URL\RouteInstance $route)
 	{
 		$this->home_route = $route;
@@ -148,6 +173,12 @@ class Router
 		return $this;
 	}
 
+	/**
+	 * Get the currently defined "error" route.
+	 * @return \OpenFlame\Framework\URL\RouteInstance $route - The currently defined "error" route.
+	 *
+	 * @throws \RuntimeException
+	 */
 	public function getErrorRoute()
 	{
 		if($this->error_route === NULL)
@@ -158,6 +189,11 @@ class Router
 		return $this->error_route;
 	}
 
+	/**
+	 * Set a route to be used as the "error" route.
+	 * @param \OpenFlame\Framework\URL\RouteInstance $route - The route to use as our "error" route.
+	 * @return \OpenFlame\Framework\URL\Router - Provides a fluent interface.
+	 */
 	public function setErrorRoute(\OpenFlame\Framework\URL\RouteInstance $route)
 	{
 		$this->error_route = $route;
@@ -220,10 +256,9 @@ class Router
 			return $this->getErrorRoute();
 		}
 
-		// We need to verify the request against the routes one by one, and go for the last one that works.
-		// We do this so that routes set later on take priority, so routes can be easily overridden in an application
+		// We need to verify the request against the routes one by one, and go for the first one that works.
 		$found = false;
-		foreach(array_reverse($this->routes[$request_base]) as $route)
+		foreach($this->routes[$request_base] as $route)
 		{
 			if($route->verify($request_url))
 			{
