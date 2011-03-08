@@ -244,7 +244,7 @@ class RouteInstance
 
 	protected function buildRouteRegex()
 	{
-		$regex = '#';
+		$regex = '#^';
 
 		foreach($this->getRouteMap() as $component)
 		{
@@ -278,7 +278,7 @@ class RouteInstance
 			}
 		}
 
-		$regex .= '/?#i';
+		$regex .= '/?$#i';
 
 		return $regex;
 	}
