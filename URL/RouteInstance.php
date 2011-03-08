@@ -23,18 +23,39 @@ if(!defined('OpenFlame\\Framework\\ROOT_PATH')) exit;
  */
 class RouteInstance
 {
+	/**
+	 * @var array - The array of the various path components that we're using to validate
+	 */
 	protected $route_map = array();
 
+	/**
+	 * @var string - The generated regular expression that represents this route instance.
+	 */
 	protected $route_regexp = '';
 
+	/**
+	 * @var string - The "base" of the route, used to help boost efficiency of the router.
+	 */
 	protected $route_base = '';
 
+	/**
+	 * @var string - The serialized representation of this route instance
+	 */
 	protected $serialized_route = '';
 
+	/**
+	 * @var array - The array of data extracted from the request URL, if this route matches the request.
+	 */
 	protected $request_data;
 
+	/**
+	 * @var callable - The callback to assign to this route, if the route matches the current request.
+	 */
 	protected $route_callback;
 
+	/**
+	 * @var array - The "types" that we can typecast URL variables as.
+	 */
 	private static $supported_types = array(
 		'str'		=> true,
 		'string'	=> true,
@@ -43,16 +64,29 @@ class RouteInstance
 		'integer'	=> true,
 	);
 
+	/**
+	 * Create a new instance of this class.
+	 * @return \OpenFlame\Framework\URL\RouteInstance - The newly created instance.
+	 */
 	public static function newInstance()
 	{
 		return new static();
 	}
 
+	/**
+	 * Get the route base for this instance.
+	 * @return string - The route base for the path this instance covers.
+	 */
 	public function getRouteBase()
 	{
 		return $this->route_base;
 	}
 
+	/**
+	 * Set the route base for this instance.
+	 * @param string $base - The route base string.
+	 * @return \OpenFlame\Framework\URL\RouteInstance - Provides a fluent interface.
+	 */
 	protected function setRouteBase($base)
 	{
 		// reset the serialized route on any changes to the route...
@@ -61,11 +95,20 @@ class RouteInstance
 		return $this;
 	}
 
+	/**
+	 * Get the route component map for this instance.
+	 * @return array - The route component array for this instance.
+	 */
 	public function getRouteMap()
 	{
 		return $this->route_map;
 	}
 
+	/**
+	 * Set the route component map for this instance.
+	 * @param array $map - An array containing the full route component map.
+	 * @return \OpenFlame\Framework\URL\RouteInstance - Provides a fluent interface.
+	 */
 	protected function setRouteMap(array $map)
 	{
 		// reset the serialized route on any changes to the route...
@@ -74,11 +117,20 @@ class RouteInstance
 		return $this;
 	}
 
+	/**
+	 * Get the regular expression used for this route instance
+	 * @return string - The regular expression of this route instance.
+	 */
 	public function getRouteRegexp()
 	{
 		return $this->route_regexp;
 	}
 
+	/**
+	 * Set the regular expression for this route instance.
+	 * @param string $regexp - The regular expression for this route instance.
+	 * @return \OpenFlame\Framework\URL\RouteInstance - Provides a fluent interface.
+	 */
 	protected function setRouteRegexp($regexp)
 	{
 		// reset the serialized route on any changes to the route...
@@ -87,11 +139,20 @@ class RouteInstance
 		return $this;
 	}
 
+	/**
+	 * Get the callback assigned to this route instance.
+	 * @return callable - The callback assigned to this route instance.
+	 */
 	public function getRouteCallback()
 	{
 		return $this->route_callback;
 	}
 
+	/**
+	 * Assign a callback to this route instance.
+	 * @param callable $callback - The callback to assign to this route instance.
+	 * @return \OpenFlame\Framework\URL\RouteInstance - Provides a fluent interface.
+	 */
 	public function setRouteCallback($callback)
 	{
 		// reset the serialized route on any changes to the route...
@@ -125,6 +186,10 @@ class RouteInstance
 		return $this;
 	}
 
+	/**
+	 * Get the serialized representation of this route.
+	 * @return string - The serialized string of all necessary data relevant to this specific route.
+	 */
 	public function getSerializedRoute()
 	{
 		if(empty($this->serialized_route))
@@ -142,28 +207,50 @@ class RouteInstance
 		return $this->serialized_route;
 	}
 
+	/**
+	 * Set the serialized representation of this route instance.
+	 * @param string $route_string - The serialized representation of the route instance.
+	 * @return \OpenFlame\Framework\URL\RouteInstance - Provides a fluent interface.
+	 */
 	protected function setSerializedRoute($route_string)
 	{
 		$this->serialized_route = $route_string;
 		return $this;
 	}
 
+	/**
+	 * Get whether a certain "type" of URL variable supports typecasting.
+	 * @param string $type - The type of variable to check.
+	 * @return boolean - Does this type support casting in the route instance?
+	 */
 	final public function getTypeSupported($type)
 	{
 		return isset(self::$supported_types[$type]);
 	}
 
+	/**
+	 * Load up the route data from the raw route path provided.
+	 * @param string $route - The raw route path string to interpret and parse.
+	 * @return \OpenFlame\Framework\URL\RouteInstance - Provides a fluent interface.
+	 */
 	public function loadRawRoute($route)
 	{
 		$route_data = explode('/', $route, \OpenFlame\Framework\URL\Router::EXPLODE_LIMIT);
 
 		$this->setRouteBase($route_data[0])
 			->setRouteMap($this->buildRouteMap($route_data))
-			->setRouteRegexp($this->buildRouteRegex());
+			->setRouteRegexp($this->buildRouteRegex($this->getRouteMap()));
 
 		return $this;
 	}
 
+	/**
+	 * Load up a previously serialized (cached) route instance's data and restore it to like-new condition.
+	 * @param string $route_string - The serialized route instance data to restore.
+	 * @return \OpenFlame\Framework\URL\RouteInstance - Provides a fluent interface.
+	 *
+	 * @throws \RuntimeException
+	 */
 	public function loadSerializedRoute($route_string)
 	{
 		$route_data = @unserialize($route_string);
@@ -185,43 +272,50 @@ class RouteInstance
 	}
 
 	// does the request match this route?
+	// @todo writeme, documentme
 	public function verify($request)
 	{
-		// array - $request
-		// asdf
-	}
-
-	// extract data using the regexp from the request
-	public function loadRequest($request)
-	{
-		// array - $request
+		// string - $request
 		// asdf
 	}
 
 	// execute the stored callback
+	// @todo writeme, documentme
 	public function fireCallback()
 	{
 		// asdf
 	}
 
 	// will grab extracted data from the request
+	// @todo writeme, documentme
 	public function getDataPoint($point)
 	{
 		// asdf
 	}
 
+	/**
+	 * Build the map of route components based on the array of path chunks extracted from the route path.
+	 * @param array $route_data - The array of chunks extracted from the raw route path string.
+	 * @return array - The parsed array of route components that we've hammered out.
+	 *
+	 * @throws \InvalidArgumentException
+	 */
 	protected function buildRouteMap(array $route_data)
 	{
 		// example format:
 		// "$var:string"
 		// the value for the request component is stored in entry "var", and is typecast as string
 		$route_map = array();
+		$i = 0;
 		foreach($route_data as $slice)
 		{
+			// Trim out any extra slashes if they exist.
+			$slice = trim($slice, '/');
+
 			// Is this a variable component in the route?
 			if($slice[0] !== '$')
 			{
-				array_push($route_map, array('entry' => $slice, 'type' => 'static'));
+				$route_map[$i] = array('entry' => $slice, 'type' => 'static');
 			}
 			else
 			{
@@ -235,18 +329,26 @@ class RouteInstance
 					throw new \InvalidArgumentException(sprintf('Unsupported route variable type "%1$s" specified', $type));
 				}
 
-				array_push($route_map, array('entry' => $var, 'type' => $type));
+				$route_map[$i] = array('entry' => $var, 'type' => $type);
 			}
+			$i++;
 		}
 
 		return $route_map;
 	}
 
-	protected function buildRouteRegex()
+	/**
+	 * Build a regular expression to represent this current route instance based on an array containing the route component map.
+	 * @param array $route_map - The route map to use to build the regular expression.
+	 * @return string - The regular expression to use for this route instance.
+	 *
+	 * @throws \LogicException
+	 */
+	protected function buildRouteRegex($route_map)
 	{
 		$regex = '#^';
 
-		foreach($this->getRouteMap() as $component)
+		foreach($route_map as $component)
 		{
 			switch($component['type'])
 			{
