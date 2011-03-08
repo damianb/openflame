@@ -15,7 +15,7 @@ if(!defined('OpenFlame\\Framework\\ROOT_PATH')) exit;
 
 /**
  * OpenFlame Web Framework - Static URL router,
- * 	     A simple and easy to understand static URL router, provides an alternative to the fluid URL handler.
+ * 	     A straightforward and powerful router, provides an alternative to the previous fluid URL handler.
  *
  *
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
@@ -201,6 +201,10 @@ class Router
 		return $this;
 	}
 
+	/**
+	 * Get a full cached representation of all defined routes stored in the router.
+	 * @return array - Array containing serialized forms of all routes stored.
+	 */
 	public function getFullRouteCache()
 	{
 		$route_cache = array();
@@ -218,6 +222,11 @@ class Router
 		return $cache;
 	}
 
+	/**
+	 * Load previously cached routes en masse (must be used with the exact data provided by \OpenFlame\Framework\URL\Router->getFullRouteCache()).
+	 * @param array $cache_array - The array returned by \OpenFlame\Framework\URL\Router->getFullRouteCache()
+	 * @return \OpenFlame\Framework\URL\Router - Provides a fluent interface.
+	 */
 	public function loadFromFullRouteCache(array $cache_array)
 	{
 		$this->newCachedRoutes($cache_array['routes'])
@@ -227,6 +236,12 @@ class Router
 		return $this;
 	}
 
+	/**
+	 * Take the (dirty) request url for the current request and return the route that matches it.
+	 * @param string $request_url - The requested local url.
+	 * @return \OpenFlame\Framework\URL\RouteInstance - The matching route instance.
+	 * @note This method will sanitize the URL before processing.
+	 */
 	public function processRequest($request_url)
 	{
 		// Get rid of the _GET stuff.
@@ -249,7 +264,7 @@ class Router
 
 		list( , $request_base, ) = explode('/', $request_url, 3);
 
-		// We're cheating a bit here to boost performance under load.
+		// We're cheating a bit here to boost performance a bit.
 		if(!isset($this->routes[$request_base]))
 		{
 			// 404 error
