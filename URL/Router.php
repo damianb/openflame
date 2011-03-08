@@ -79,8 +79,6 @@ class Router
 			->loadRawRoute($route_data)
 			->setRouteCallback($route_callback);
 
-		$this->loadRoute($route, $route->getRouteBase());
-
 		return $route;
 	}
 
@@ -94,16 +92,15 @@ class Router
 		$route = \OpenFlame\Framework\URL\RouteInstance::newInstance()
 			->loadSerializedRoute($route_data);
 
-		$this->loadRoute($route, $route->getRouteBase());
-
 		return $route;
 	}
 
 	public function newRoutes(array $routes)
 	{
-		foreach($routes as $route)
+		foreach($routes as $route_data)
 		{
-			$this->newRoute($route['path'], $route['callback']);
+			$route = $this->newRoute($route_data['path'], $route_data['callback']);
+			$this->loadRoute($route, $route->getRouteBase());
 		}
 
 		return $this;
@@ -111,9 +108,10 @@ class Router
 
 	public function newCachedRoutes(array $routes)
 	{
-		foreach($routes as $route)
+		foreach($routes as $route_data)
 		{
-			$this->newCachedRoute($route);
+			$this->newCachedRoute($route_data);
+			$this->loadRoute($route, $route->getRouteBase());
 		}
 
 		return $this;
