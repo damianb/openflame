@@ -11,7 +11,7 @@
 
 namespace OpenFlame\Framework\Exception\Cache\Engine;
 
-if(!defined('OpenFlame\\Framework\\ROOT_PATH')) exit;
+if(!defined('OpenFlame\\ROOT_PATH')) exit;
 
 /**
  * OpenFlame Web Framework - File-based cache engine Exception class,
