@@ -12,7 +12,7 @@
 namespace OpenFlame\Framework\Utility;
 use \OpenFlame\Framework\Exception\Utility\JSON as JSONException;
 
-if(!defined('OpenFlame\\Framework\\ROOT_PATH')) exit;
+if(!defined('OpenFlame\\ROOT_PATH')) exit;
 
 /**
  * OpenFlame Web Framework - JSON handling class,

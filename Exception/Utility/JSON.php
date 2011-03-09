@@ -11,7 +11,7 @@
 
 namespace OpenFlame\Framework\Exception\Utility;
 
-if(!defined('OpenFlame\\Framework\\ROOT_PATH')) exit;
+if(!defined('OpenFlame\\ROOT_PATH')) exit;
 
 /**
  * OpenFlame Web Framework - JSON Exception class,

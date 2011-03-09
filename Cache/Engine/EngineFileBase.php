@@ -12,7 +12,7 @@
 namespace OpenFlame\Framework\Cache\Engine;
 use OpenFlame\Framework\Exception\Cache\Engine\EngineFileBase as EngineFileBaseException;
 
-if(!defined('OpenFlame\\Framework\\ROOT_PATH')) exit;
+if(!defined('OpenFlame\\ROOT_PATH')) exit;
 
 /**
  * OpenFlame Web Framework - File-based cache engine base class,

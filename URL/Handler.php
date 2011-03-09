@@ -11,7 +11,7 @@
 
 namespace OpenFlame\Framework\URL;
 
-if(!defined('OpenFlame\\Framework\\ROOT_PATH')) exit;
+if(!defined('OpenFlame\\ROOT_PATH')) exit;
 
 /**
  * OpenFlame Web Framework - Fluid URL Handler
