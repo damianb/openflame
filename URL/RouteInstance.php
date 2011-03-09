@@ -271,24 +271,68 @@ class RouteInstance
 		return $this;
 	}
 
-	// does the request match this route?
-	// @todo writeme, documentme
+	/**
+	 * Verify the request URL against this route instance -- does the request match this route?
+	 * @param string $request - The request URL to check.
+	 * @return boolean - Does the request match this route?
+	 */
 	public function verify($request)
 	{
-		// string - $request
-		// asdf
+		$result = preg_match($this->getRouteRegexp(), $request, $matches);
+		if(!$result)
+		{
+			return false;
+		}
+		else
+		{
+			// We need to load the matches into the request data property
+			$map = $this->getRouteMap();
+			foreach($matches as $key => $match)
+			{
+				if(isset($map[$key]))
+				{
+					$this->setRequestDataPoint($map[$key]['entry'], $match);
+				}
+			}
+
+			return true;
+		}
+	}
+
+	/**
+	 * Get a request URL variable extracted from the request.
+	 * @param string $point - The name of the variable to retrieve.
+	 * @return mixed - returns NULL if no such variable, or the variable's data.
+	 */
+	public function getRequestDataPoint($point)
+	{
+		if(isset($this->request_data[(string) $point]))
+		{
+			return $this->request_data[(string) $point];
+		}
+		else
+		{
+			return NULL;
+		}
+
+	}
+
+	/**
+	 * Set a request URL variable extracted from the current request.
+	 * @param string $point - The name of the variable to store this as.
+	 * @param mixed $data - The data to store.
+	 * @return \OpenFlame\Framework\URL\RouteInstance - Provides a fluent interface.
+	 */
+	public function setRequestDataPoint($point, $data)
+	{
+		$this->request_data[(string) $point] = $data;
+
+		return $this;
 	}
 
 	// execute the stored callback
 	// @todo writeme, documentme
 	public function fireCallback()
-	{
-		// asdf
-	}
-
-	// will grab extracted data from the request
-	// @todo writeme, documentme
-	public function getDataPoint($point)
 	{
 		// asdf
 	}
