@@ -133,6 +133,12 @@ class Router
 	 */
 	public function storeRoute(\OpenFlame\Framework\URL\RouteInstance $route, $prepend = true)
 	{
+		// Prepare the array in advance in case it's not there yet
+		if(!isset($this->routes[(string) $route->getRouteBase()]))
+		{
+			$this->routes[(string) $route->getRouteBase()] = array();
+		}
+
 		if($prepend === true)
 		{
 			array_unshift($this->routes[(string) $route->getRouteBase()], $route);
@@ -244,6 +250,7 @@ class Router
 	 */
 	public function processRequest($request_url)
 	{
+
 		// Get rid of the _GET stuff.
 		if (strpos($request_url, '?') !== false)
 		{
@@ -252,12 +259,13 @@ class Router
 
 		// Make sure we've got beginning and ending slashes.
 		// @note can't use trim() here, it'll cause an issue on a single slash and suddenly we'd have two slashes
-		$request_url = '/' . ltrim(rtrim($request_url, '/') . '/');
+		$request_url = rtrim($request_url, '/') . '/';
+		$request_url = '/' . ltrim($request_url, '/');
 
 		// Trim out the base URL.
 		$request_url = stripos($request_url, $this->getBaseURL()) === 0 ? substr($request_url, strlen($this->getBaseURL())) : $request_url;
 
-		if($request_url = '/')
+		if($request_url == '/')
 		{
 			return $this->getHomeRoute();
 		}
