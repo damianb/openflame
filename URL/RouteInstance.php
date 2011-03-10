@@ -10,6 +10,7 @@
  */
 
 namespace OpenFlame\Framework\URL;
+use OpenFlame\Framework\Core;
 
 if(!defined('OpenFlame\\ROOT_PATH')) exit;
 
@@ -330,11 +331,29 @@ class RouteInstance
 		return $this;
 	}
 
-	// execute the stored callback
-	// @todo writeme, documentme
+	/**
+	 * Trigger the route callback.
+	 * @return mixed - The returned data from the callback.
+	 *
+	 * @throws \LogicException
+	 */
 	public function fireCallback()
 	{
-		// asdf
+		$callback = $this->getRouteCallback();
+		if($callback === NULL)
+		{
+			throw new \LogicException('Attempted to fire callback when no callback has been set')
+		}
+
+		if($callback['object'] === true && $callback['static'] === true)
+		{
+			return call_user_func(array(Core::getObject($callback['callback'][0], $callback['callback'][1])), $this);
+		}
+		else
+		{
+			return call_user_func($callback['callback'], $this);
+		}
+
 	}
 
 	/**
