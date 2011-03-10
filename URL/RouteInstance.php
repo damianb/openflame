@@ -158,7 +158,7 @@ class RouteInstance
 	{
 		// reset the serialized route on any changes to the route...
 		$this->setSerializedRoute(NULL);
-		if(strpos($callback, '->') !== false)
+		if(is_string($callback) && strpos($callback, '->') !== false)
 		{
 			list($class, $method) = explode('->', $callback, 2);
 			$this->route_callback = array(
@@ -167,7 +167,7 @@ class RouteInstance
 				'static'		=> false,
 			);
 		}
-		elseif(strpos($callback, '::') !== false)
+		elseif(is_string($callback) && strpos($callback, '::') !== false)
 		{
 			$this->route_callback = array(
 				'callback'		=> $callback,
@@ -236,7 +236,7 @@ class RouteInstance
 	 */
 	public function loadRawRoute($route)
 	{
-		$route_data = explode('/', $route, \OpenFlame\Framework\URL\Router::EXPLODE_LIMIT);
+		$route_data = explode('/', trim($route, '/'), \OpenFlame\Framework\URL\Router::EXPLODE_LIMIT);
 
 		$this->setRouteBase($route_data[0])
 			->setRouteMap($this->buildRouteMap($route_data))
@@ -342,7 +342,7 @@ class RouteInstance
 		$callback = $this->getRouteCallback();
 		if($callback === NULL)
 		{
-			throw new \LogicException('Attempted to fire callback when no callback has been set')
+			throw new \LogicException('Attempted to fire callback when no callback has been set');
 		}
 
 		if($callback['object'] === true && $callback['static'] === true)
