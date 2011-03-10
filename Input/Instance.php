@@ -69,6 +69,15 @@ class Instance
 	protected $processed = false;
 
 	/**
+	 * Get a new input instance.
+	 * @return \OpenFlame\Framework\Input\Instance - The newly created input instance.
+	 */
+	final public static function newInstance()
+	{
+		return new static();
+	}
+
+	/**
 	 * Get the superglobal to grab the input from.
 	 * @return string - The superglobal we're grabbing from.
 	 */
@@ -297,7 +306,7 @@ class Instance
 
 		$this->was_set = (!empty($GLOBALS[$this->getType()][$name])) ? true : false;
 
-		$this->raw_value = ($this->getWasSet()) ? $GLOBALS[$this->getType()][$name] : $this->getDefault();
+		$this->raw_value = ($this->was_set) ? $GLOBALS[$this->getType()][$name] : $this->getDefault();
 		$this->clean_value = $this->cleanVar($this->raw_value, $this->getDefault());
 
 		// Flag this instance as having been processed, so that we don't re-process the same data again.
