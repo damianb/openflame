@@ -21,6 +21,8 @@ if(!defined('OpenFlame\\ROOT_PATH')) exit;
  *
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
  * @link        https://github.com/OpenFlame/OpenFlame-Framework
+ *
+ * @note It is recommended to use \OpenFlame\Framework\Router instead of the fluid URL handler for more exact URL handling.
  */
 class Handler
 {
