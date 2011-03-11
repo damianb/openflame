@@ -10,7 +10,7 @@
  */
 
 namespace OpenFlame\Framework\Utility;
-use \OpenFlame\Framework\Exception\Utility\JSON as JSONException;
+use OpenFlame\Framework\Core;
 
 if(!defined('OpenFlame\\ROOT_PATH')) exit;
 
@@ -41,7 +41,7 @@ abstract class JSON
 	 * @param string $json - The JSON string or the path of the JSON file to decode.
 	 * @return array - The contents of the JSON string/file.
 	 *
-	 * @throws OfJSONException
+	 * @throws \RuntimeException
 	 */
 	public static function decode($json)
 	{
@@ -52,44 +52,30 @@ abstract class JSON
 
 		if($data === NULL)
 		{
-			if(function_exists('json_last_error'))
+			switch(json_last_error())
 			{
-				switch(json_last_error())
-				{
-					case JSON_ERROR_NONE:
-						$error = 'No error';
-						$code = JSONException::ERR_JSON_NO_ERROR;
-					break;
+				case JSON_ERROR_NONE:
+					$error = 'No error';
+				break;
 
-					case JSON_ERROR_DEPTH:
-						$error = 'Maximum JSON recursion limit reached.';
-						$code = JSONException::ERR_JSON_DEPTH;
-					break;
+				case JSON_ERROR_DEPTH:
+					$error = 'Maximum JSON recursion limit reached.';
+				break;
 
-					case JSON_ERROR_CTRL_CHAR:
-						$error = 'Control character error';
-						$code = JSONException::ERR_JSON_CTRL_CHAR;
-					break;
+				case JSON_ERROR_CTRL_CHAR:
+					$error = 'Control character error';
+				break;
 
-					case JSON_ERROR_SYNTAX:
-						$error = 'JSON syntax error';
-						$code = JSONException::ERR_JSON_SYNTAX;
-					break;
+				case JSON_ERROR_SYNTAX:
+					$error = 'JSON syntax error';
+				break;
 
-					default:
-						$error = 'Unknown JSON error';
-						$code = JSONException::ERR_JSON_UNKNOWN;
-					break;
-				}
-			}
-			else
-			{
-				// Since we don't have json_last_error(), which is PHP 5.3+, we just say it is OfJSONException::ERR_JSON_UNKNOWN, and move on.
-				$error = 'Unknown JSON error';
-				$code = JSONException::ERR_JSON_UNKNOWN;
+				default:
+					$error = 'Unknown JSON error';
+				break;
 			}
 
-			throw new JSONException($error, $code);
+			throw new \RuntimeException(sprintf('JSON error:"%1$s"', $error));
 		}
 
 		return $data;
