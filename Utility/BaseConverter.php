@@ -21,6 +21,7 @@ if(!defined('OpenFlame\\ROOT_PATH')) exit;
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
  * @link        https://github.com/OpenFlame/OpenFlame-Framework
  *
+ * @todo		Refactor class to remove the base 10 proxy of conversion 
  */
 class BaseConverter
 {
