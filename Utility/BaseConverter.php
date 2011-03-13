@@ -39,12 +39,12 @@ class BaseConverter
 	 */
 	const BASE_2 	= '01';
 	const BASE_10	= '0123456789';
-	const BASE_16	= '0123456789ABCDE';
+	const BASE_16	= '0123456789ABCDEF';
 
 	/*
 	 * Get Instance
 	 *
-	 * @return instance of this class
+	 * @return \OpenFlame\Framework\Utility\BaseConverter - Provides a fluent interface.
 	 */
 	public static function getInstance()
 	{
