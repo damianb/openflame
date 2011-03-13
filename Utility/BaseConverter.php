@@ -97,6 +97,12 @@ class BaseConverter
 		$output = '';
 		for($i = 0; $inputSize > $i; $i++)
 		{
+			// Throw an exception if we should encounter an illegal key
+			if(!array_key_exists($input[$i], $_charsetTo))
+			{
+				throw new \OutOfRangeException();
+			}
+
 			$output = bcadd($output, bcmul($_charsetTo[$input[$i]], bcpow($base, $i, 0)));
 		}
 
