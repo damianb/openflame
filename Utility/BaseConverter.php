@@ -27,12 +27,12 @@ class BaseConverter
 	/*
 	 * @var string - convert to charset (defaults to hex)
 	 */
-	private $charsetTo = array();
+	protected $charsetTo = array();
 
 	/*
 	 * @var string - convert from charset (defaults to dec)
 	 */
-	private $charsetFrom = array();
+	protected $charsetFrom = array();
 
 	/*
 	 * Build-in bases 
@@ -87,12 +87,13 @@ class BaseConverter
 		$_charsetTo = array_flip($this->charsetTo);
 		$input = str_split(strrev($input));
 		$base = (string) sizeof($_charsetTo);
-		
+
 		// No support for floating point integers for the base 10 proxy 
 		bcscale(0);
-		
+
+		$inputSize = sizeof($input);
 		$output = '';
-		for($i = 0; sizeof($input) > $i; $i++)
+		for($i = 0; $inputSize > $i; $i++)
 		{
 			$output = bcadd($output, bcmul($_charsetTo[$input[$i]], bcpow($base, $i, 0)));
 		}
