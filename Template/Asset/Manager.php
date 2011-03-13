@@ -97,6 +97,11 @@ class Manager
 			throw new \InvalidArgumentException(sprintf('The class "%1$s" does not exist and cannot be instantiated in \\OpenFlame\\Framework\\Template\\Asset\\Manager->registerAsset()'));
 		}
 
+		if(!($asset_class instanceof \OpenFlame\Framework\Template\Asset\AssetInstanceInterface))
+		{
+			throw new \LogicException(sprintf('The class "%1$s" does not implement the interface \\OpenFlame\\Framework\\Template\\Asset\\AssetInstanceInterface as required', $asset_class));
+		}
+
 		return $asset_class::newInstance()->setBaseURL($this->getBaseURL());
 	}
 
