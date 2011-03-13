@@ -59,7 +59,7 @@ class BaseConverter
 	 */
 	public function setCharsetTo($charset)
 	{
-		$this->charsetTo = is_array($charset) ? $charset : array((string) $charset);
+		$this->charsetTo = is_array($charset) ? $charset : str_split((string) $charset);
 		return $this;
 	}
 
@@ -71,27 +71,30 @@ class BaseConverter
 	 */
 	public function setCharsetFrom($charset)
 	{
-		$this->charsetFrom = is_array($charset) ? $charset : array((string) $charset);
+		$this->charsetFrom = is_array($charset) ? $charset : str_split((string) $charset);
 		return $this;
 	}
 
 	/*
 	 * Decode to base 10
 	 *
-	 * @param string - String to be encoded, must be within the charset of 
+	 * @param string - String to be decoded, must be within the charset of 
 	 *	charsetTo.
 	 * @return string - Base 10 representation of the number 
 	 */
 	public function decode($input)
 	{
 		$_charsetTo = array_flip($this->charsetTo);
-		$_inputAry = str_split(strrev($input));
+		$input = str_split(strrev($input));
 		$base = (string) sizeof($_charsetTo);
-
+		
+		// No support for floating point integers for the base 10 proxy 
+		bcscale(0);
+		
 		$output = '';
-		for($i = 0; sizeof($_inputAry) > $i; $i++)
+		for($i = 0; sizeof($input) > $i; $i++)
 		{
-			$output = bcadd($output, bcmul($_charsetTo[$_inputAry[$i]], bcpow($base, $i)));
+			$output = bcadd($output, bcmul($_charsetTo[$input[$i]], bcpow($base, $i, 0)));
 		}
 
 		return $output;
@@ -107,6 +110,9 @@ class BaseConverter
 	{
 		$output = '';
 		$base = (string) sizeof($this->charsetFrom);
+
+		// No support for floating point integers for the base 10 proxy 
+		bcscale(0);
 
 		do
 		{
@@ -126,8 +132,9 @@ class BaseConverter
 	 * @var string convert - The string to convert
 	 * @return string - The output string 
 	 */
-	public function convert($convert)
+	public function convert($convert = '')
 	{
-		return $this->encode($this->decode($convert));
+		// All your base are belong to us.
+		return empty($convert) ? '' : $this->encode($this->decode($convert));
 	}
 }
