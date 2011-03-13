@@ -27,19 +27,12 @@ class BaseConverter
 	/*
 	 * @var string - convert to charset (defaults to hex)
 	 */
-	private $charsetTo = '0123456789ABCDEF';
+	private $charsetTo = array();
 
 	/*
 	 * @var string - convert from charset (defaults to dec)
 	 */
-	private $charsetFrom = '0123456789';
-
-	/*
-	 * Constructor
-	 */
-	public function __construct()
-	{
-	}
+	private $charsetFrom = array();
 
 	/*
 	 * Get Instance
@@ -83,8 +76,6 @@ class BaseConverter
 	 */
 	public function convert($convert)
 	{
-		$output = '';
-		
 		return $output;
 	}
 }
