@@ -15,14 +15,14 @@ use OpenFlame\Framework\Core;
 if(!defined('OpenFlame\\ROOT_PATH')) exit;
 
 /**
- * OpenFlame Web Framework - Some class
- * 	     Some class description.
+ * OpenFlame Web Framework - Asset instance object
+ * 	     Represents the individual asset instance and its properties.
  *
  *
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
  * @link        https://github.com/OpenFlame/OpenFlame-Framework
  */
-class AssetInstance
+class AssetInstance implements \OpenFlame\Framework\Template\Asset\AssetInstanceInterface
 {
 	protected $name = '';
 
