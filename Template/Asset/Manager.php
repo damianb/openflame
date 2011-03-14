@@ -24,10 +24,19 @@ if(!defined('OpenFlame\\ROOT_PATH')) exit;
  */
 class Manager
 {
+	/**
+	 * @var string - The base url to prepend to all asset URL's.
+	 */
 	protected $base_url = '';
 
+	/**
+	 * @var array - The array of asset instances.
+	 */
 	protected $assets = array();
 
+	/**
+	 * @var boolean - Do we want to throw an exception when accessing an invalid asset or asset type?
+	 */
 	protected $exception_on_invalid_asset = false;
 
 	/**
@@ -60,6 +69,10 @@ class Manager
 		return $this;
 	}
 
+	/**
+	 * Do we want to use invalid asset exceptions, or return NULL?
+	 * @return boolean - Whether or not to use invalid asset exceptions.
+	 */
 	public function usingInvalidAssetExceptions()
 	{
 		return $this->exception_on_invalid_asset;
@@ -86,10 +99,14 @@ class Manager
 	}
 
 	/**
-	 *
+	 * Create a new asset instance.
+	 * @param string $asset_class - The class to instantiate for the AssetInstance object
 	 * @return \OpenFlame\Framework\Template\Asset\AssetInstance - The newly created AssetInstance object.
+	 *
+	 * @throws \InvalidArgumentException
+	 * @throws \LogicException
 	 */
-	protected function registerAsset($asset_class = '\\OpenFlame\\Framework\\Template\\Asset\\AssetInstance')
+	public function registerAsset($asset_class = '\\OpenFlame\\Framework\\Template\\Asset\\AssetInstance')
 	{
 		// We want to make sure the class exists, even with autoloading -- if we can't load it, we need to asplode.
 		if(!class_exists($asset_class, true))
@@ -106,38 +123,83 @@ class Manager
 		return $asset_class::newInstance()->setBaseURL($this->getBaseURL());
 	}
 
-	protected function storeAsset(\OpenFlame\Framework\Template\Asset\AssetInstance $asset)
+	/**
+	 * Store the provided asset inside the manager.
+	 * @param \OpenFlame\Framework\Template\Asset\AssetInstanceInterface $asset - The asset instance to store.
+	 * @return \OpenFlame\Framework\Template\Asset\AssetInstanceInterface - The asset just stored.
+	 */
+	protected function storeAsset(\OpenFlame\Framework\Template\Asset\AssetInstanceInterface $asset)
 	{
 		$this->assets[$asset->getType()][$asset->getName()] = $asset;
 
 		return $asset;
 	}
 
+	/**
+	 * Create a custom-type asset instance and store it in the manager.
+	 * @param string $type - The asset type (java, flash, etc.).
+	 * @param string $name - A unique name to refer to the asset.
+	 * @return \OpenFlame\Framework\Template\Asset\AssetInstanceInterface - The newly created asset instance.
+	 */
 	public function registerCustomAsset($type, $name)
 	{
 		return $this->storeAsset($this->registerAsset()->setType($type)->setName($name));
 	}
 
+	/**
+	 * Create a new javascript asset instance and store it in the manager.
+	 * @param string $name - A unique name to refer to the asset.
+	 * @return \OpenFlame\Framework\Template\Asset\AssetInstanceInterface - The newly created asset instance.
+	 */
 	public function registerJSAsset($name)
 	{
-		return $this->registerCustomAsset('js', $name);
+		return $this->storeAsset($this->registerAsset()->setType('js')->setName($name));
 	}
 
+	/**
+	 * Create a new cascading-stylesheet asset instance and store it in the manager.
+	 * @param string $name - A unique name to refer to the asset.
+	 * @return \OpenFlame\Framework\Template\Asset\AssetInstanceInterface - The newly created asset instance.
+	 */
 	public function registerCSSAsset($name)
 	{
-		return $this->registerCustomAsset('css', $name);
+		return $this->storeAsset($this->registerAsset()->setType('css')->setName($name));
 	}
 
+	/**
+	 * Create a new XML asset instance and store it in the manager.
+	 * @param string $name - A unique name to refer to the asset.
+	 * @return \OpenFlame\Framework\Template\Asset\AssetInstanceInterface - The newly created asset instance.
+	 */
+	public function registerXMLAsset($name)
+	{
+		return $this->storeAsset($this->registerAsset()->setType('css')->setName($name));
+	}
+
+	/**
+	 * Create a new image asset instance and store it in the manager.
+	 * @param string $name - A unique name to refer to the asset.
+	 * @return \OpenFlame\Framework\Template\Asset\AssetInstanceInterface - The newly created asset instance.
+	 */
 	public function registerImageAsset($name)
 	{
-		return $this->registerCustomAsset('image', $name);
+		return $this->storeAsset($this->registerAsset()->setType('image')->setName($name));
 	}
 
+	/**
+	 * Get the array of currently defined asset types available
+	 * @return array - The array of asset types currently defined.
+	 */
 	public function getAssetTypes()
 	{
 		return array_keys($this->assets);
 	}
 
+	/**
+	 * Get an array of asset instance names of a specific asset type
+	 * @param string $type - The asset type to grab the array of instance names of.
+	 * @return array - The array of asset names for instances declared as the specified asset type.
+	 */
 	public function getAssetsForType($type)
 	{
 		if(empty($this->assets[$type]))
@@ -148,6 +210,14 @@ class Manager
 		return array_keys($this->assets[$type]);
 	}
 
+	/**
+	 * Get a stored asset instance object
+	 * @param string $type - The asset type.
+	 * @param string $name - The asset name.
+	 * @return \OpenFlame\Framework\Template\Asset\AssetInstanceInterface - The asset instance to grab.
+	 *
+	 * @throws \RuntimeException
+	 */
 	public function getAsset($type, $name)
 	{
 		if(!isset($this->assets[$type]) || !isset($this->assets[$type][$name]))
