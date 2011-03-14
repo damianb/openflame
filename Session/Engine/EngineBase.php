@@ -42,11 +42,6 @@ abstract class EngineBase
 	private $cfg = array();
 
 	/*
-	 * Set cookie property method prefix
-	 */
-	const SET_COOKIE_METHOD = 'setCookie';
-
-	/*
 	 * Pseudo Constructor
 	 * Must be called right after an instance is created
 	 * 
@@ -63,10 +58,72 @@ abstract class EngineBase
 	}
 
 	/*
+	 * Set cookie name
+	 *
+	 * @param string - cookie name
+	 * @return OpenFlame\Framework\Session\Engine\EngineBase - Provides a fluent interface.
+	 */
+	public function setCookieName($name)
+	{
+		$this->cfg['cookie.name'] = (string) $name;
+		return $this;
+	}
+
+	/*
+	 * Set cookie life
+	 *
+	 * @param int - cookie life (in seconds)
+	 * @return OpenFlame\Framework\Session\Engine\EngineBase - Provides a fluent interface.
+	 */
+	public function setCookieLife($life)
+	{
+		$this->cfg['cookie.life'] = (int) $life;
+		return $this;
+	}
+
+	/*
+	 * Set cookie path
+	 *
+	 * @param string - cookie path
+	 * @return OpenFlame\Framework\Session\Engine\EngineBase - Provides a fluent interface.
+	 */
+	public function setCookiePath($path)
+	{
+		$this->cfg['cookie.path'] = (string) $path;
+		return $this;
+	}
+
+	/*
+	 * Set cookie domain
+	 *
+	 * @param string - cookie domain
+	 * @return OpenFlame\Framework\Session\Engine\EngineBase - Provides a fluent interface.
+	 */
+	public function setCookieDomain($domain)
+	{
+		$this->cfg['cookie.domain'] = (string) $domain;
+		return $this;
+	}
+
+	/*
+	 * Set cookie secure flag
+	 *
+	 * @param bool - Should the cookie be secure?
+	 * @return OpenFlame\Framework\Session\Engine\EngineBase - Provides a fluent interface.
+	 */
+	public function setCookieSecure($secure)
+	{
+		$this->cfg['cookie.secure'] = (bool) $secure;
+		return $this;
+	}
+
+	/*
 	 * Start our session
 	 */
 	public function start()
 	{
+		session_name($this->cfg['cookie.name']);
+
 		// Set the params
 		session_set_cookie_params(
 			$this->cfg['cookie.lifetime'],
