@@ -9,20 +9,26 @@
  * Minimum Requirement: PHP 5.3.0
  */
 
-namespace OpenFlame\Framework;
+namespace OpenFlame\Framework\Template\Asset;
 use OpenFlame\Framework\Core;
 
 if(!defined('OpenFlame\\ROOT_PATH')) exit;
 
 /**
- * OpenFlame Web Framework - Some class
- * 	     Some class description.
+ * OpenFlame Web Framework - Asset Instance interface,
+ * 	     Makes sure that we have the methods necessary to manipulate the asset instance object.
  *
  *
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
  * @link        https://github.com/OpenFlame/OpenFlame-Framework
  */
-class SomeClass
+interface AssetInstanceInterface
 {
-	// asdf
+	public static function newInstance();
+	public function getName();
+	public function setName($name);
+	public function getType();
+	public function setType($type);
+	public function getBaseURL();
+	public function setBaseURL($base_url);
 }
