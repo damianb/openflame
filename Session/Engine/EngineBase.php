@@ -63,25 +63,6 @@ abstract class EngineBase
 	}
 
 	/*
-	 * Our setters
-	 *
-	 * @param string - Method name
-	 * @param array - arguements
-	
-	 */
-	public function __call($name, $args)
-	{
-		// Provide for setCookie* methods
-		if(stripos($name, self::SET_COOKIE_METHOD) === 0)
-		{
-			$method = strtolower(substr($name, strlen(self::SET_COOKIE_METHOD)));
-			$this->cfg['cookie.' . $method] = is_numeric($args[0]) ? (int) $args[0] : (string) $args[0];
-		}
-
-		return $this;
-	}
-
-	/*
 	 * Start our session
 	 */
 	public function start()
