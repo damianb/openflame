@@ -86,9 +86,9 @@ class BaseConverter
 	 */
 	public function decode($input)
 	{
-		$_charsetTo = array_flip($this->charsetTo);
+		$_charsetFrom = array_flip($this->charsetFrom);
 		$input = str_split(strrev($input));
-		$base = (string) sizeof($_charsetTo);
+		$base = (string) sizeof($_charsetFrom);
 
 		// No support for floating point integers for the base 10 proxy 
 		bcscale(0);
@@ -98,12 +98,12 @@ class BaseConverter
 		for($i = 0; $inputSize > $i; $i++)
 		{
 			// Throw an exception if we should encounter an illegal key
-			if(!array_key_exists($input[$i], $_charsetTo))
+			if(!array_key_exists($input[$i], $_charsetFrom))
 			{
 				throw new \OutOfRangeException("Input of base conversion is out of range from the specified charset");
 			}
 
-			$output = bcadd($output, bcmul($_charsetTo[$input[$i]], bcpow($base, $i, 0)));
+			$output = bcadd($output, bcmul($_charsetFrom[$input[$i]], bcpow($base, $i, 0)));
 		}
 
 		return $output;
@@ -118,7 +118,7 @@ class BaseConverter
 	public function encode($input)
 	{
 		$output = '';
-		$base = (string) sizeof($this->charsetFrom);
+		$base = (string) sizeof($this->charsetTo);
 
 		// No support for floating point integers for the base 10 proxy 
 		bcscale(0);
@@ -128,7 +128,7 @@ class BaseConverter
 			$rem	= bcmod($input, $base);
 			$input	= bcdiv($input, $base);
 
-			$output = $this->charsetFrom[(int) $rem] . $output;
+			$output = $this->charsetTo[(int) $rem] . $output;
 		}
 		while(bccomp($input, '1') != -1);
 
