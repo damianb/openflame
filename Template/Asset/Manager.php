@@ -97,6 +97,7 @@ class Manager
 			throw new \InvalidArgumentException(sprintf('The class "%1$s" does not exist and cannot be instantiated in \\OpenFlame\\Framework\\Template\\Asset\\Manager->registerAsset()'));
 		}
 
+		// Require the use of the AssetInstanceInterface for the provided class
 		if(!($asset_class instanceof \OpenFlame\Framework\Template\Asset\AssetInstanceInterface))
 		{
 			throw new \LogicException(sprintf('The class "%1$s" does not implement the interface \\OpenFlame\\Framework\\Template\\Asset\\AssetInstanceInterface as required', $asset_class));
@@ -130,6 +131,21 @@ class Manager
 	public function registerImageAsset($name)
 	{
 		return $this->registerCustomAsset('image', $name);
+	}
+
+	public function getAssetTypes()
+	{
+		return array_keys($this->assets);
+	}
+
+	public function getAssetsForType($type)
+	{
+		if(empty($this->assets[$type]))
+		{
+			return array();
+		}
+
+		return array_keys($this->assets[$type]);
 	}
 
 	public function getAsset($type, $name)

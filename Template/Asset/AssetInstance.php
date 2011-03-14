@@ -42,9 +42,32 @@ class AssetInstance implements \OpenFlame\Framework\Template\Asset\AssetInstance
 		return $this->name;
 	}
 
+	public function setName($name)
+	{
+		$this->name = (string) $name;
+		return $this;
+	}
+
 	public function getType()
 	{
 		return $this->type;
+	}
+
+	public function setType($type)
+	{
+		$this->type = (string) $type;
+		return $this;
+	}
+
+	public function getURL()
+	{
+		return $this->url;
+	}
+
+	public function setURL($url)
+	{
+		$this->url = '/' . ltrim($url, '/');
+		return $this;
 	}
 
 	/**
@@ -66,5 +89,10 @@ class AssetInstance implements \OpenFlame\Framework\Template\Asset\AssetInstance
 		$this->base_url = rtrim($base_url, '/'); // We don't want a trailing slash here.
 
 		return $this;
+	}
+
+	public function __toString()
+	{
+		return $this->url;
 	}
 }
