@@ -56,9 +56,36 @@ class Seeder
 		return $this;
 	}
 
-	public function buildRandomString($seed, $charset = NULL)
+	public function buildRandomString($length = 12, $seed = '', $charset = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')
 	{
-		// asdf
+		if($length > 64)
+		{
+			throw new \InvalidArgumentException('Length specified for random string exceeds maximum allowed length of 88 characters');
+		}
+		elseif($length < 1)
+		{
+			return '';
+		}
+
+		$converter = \OpenFlame\Framework\Utility\BaseConverter::newInstance()
+			->setCharsetTo($charset);
+
+		$seed_string = $this->buildSeedString('sha256', 88, array(mt_rand(), $seed));
+		$string = $converter->encode($seed_string);
+
+		// Random offset here, we'll loop over to the start of the string if we don't have enough characters at the start of the string.
+		$start = mt_rand(0, strlen($string));
+		if($start == 0)
+		{
+			return substr($string, 0, $length);
+		}
+
+		$return = substr($string, $start, $length);
+		if(strlen($return) < $length)
+		{
+			$return .= substr($return, 0, strlen($return) - $length);
+		}
+		return $return;
 	}
 
 	public function buildSeedString($algo = 'md5', $pad_length = 46, array $extra = array())
