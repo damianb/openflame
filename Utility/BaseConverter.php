@@ -103,7 +103,7 @@ class BaseConverter
 				throw new \OutOfRangeException("Input of base conversion is out of range from the specified charset");
 			}
 
-			$output = bcadd($output, bcmul($_charsetFrom[$input[$i]], bcpow($base, $i, 0)));
+			$output = bcadd($output, bcmul($_charsetFrom[$input[$i]], bcpow($base, $i)));
 		}
 
 		return $output;
