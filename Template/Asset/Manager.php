@@ -173,7 +173,7 @@ class Manager
 	 */
 	public function registerXMLAsset($name)
 	{
-		return $this->storeAsset($this->registerAsset()->setType('css')->setName($name));
+		return $this->storeAsset($this->registerAsset()->setType('xml')->setName($name));
 	}
 
 	/**
