@@ -70,7 +70,7 @@ class Subproxy
 
 	/**
 	 * Set the asset type for this subproxy
-	 * @param string - The asset type to set.
+	 * @param string $type - The asset type to set.
 	 * @return \OpenFlame\Framwork\Template\Asset\Subproxy - Provides a fluent interface.
 	 */
 	public function setType($type)
