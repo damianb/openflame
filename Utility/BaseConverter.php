@@ -8,7 +8,7 @@
  *
  * Minimum Requirement: PHP 5.3.0
  */
- 
+
 namespace OpenFlame\Framework\Utility;
 use OpenFlame\Framework\Core;
 
@@ -22,7 +22,7 @@ if(!defined('OpenFlame\\ROOT_PATH')) exit;
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
  * @link        https://github.com/OpenFlame/OpenFlame-Framework
  *
- * @todo		Refactor class to remove the base 10 proxy of conversion 
+ * @todo		Refactor class to remove the base 10 proxy of conversion
  */
 class BaseConverter
 {
@@ -37,7 +37,7 @@ class BaseConverter
 	protected $charsetFrom = array();
 
 	/*
-	 * Build-in bases 
+	 * Build-in bases
 	 */
 	const BASE_2 	= '01';
 	const BASE_10	= '0123456789';
@@ -48,7 +48,7 @@ class BaseConverter
 	 *
 	 * @return \OpenFlame\Framework\Utility\BaseConverter - Provides a fluent interface.
 	 */
-	public static function getInstance()
+	public static function newInstance()
 	{
 		return new static();
 	}
@@ -56,8 +56,8 @@ class BaseConverter
 	/*
 	 * Set Charset (coverting to)
 	 *
-	 * @var mixed charset - String of characters for converting to
-	 * @return $this
+	 * @var mixed $charset - String of characters for converting to
+	 * @return \OpenFlame\Framework\Utility\BaseConverter - Provides a fluent interface.
 	 */
 	public function setCharsetTo($charset)
 	{
@@ -68,8 +68,8 @@ class BaseConverter
 	/*
 	 * Set Charset (coverting from)
 	 *
-	 * @var mixed charset - String of characters for converting from
-	 * @return $this	 
+	 * @var mixed $charset - String of characters for converting from.
+	 * @return \OpenFlame\Framework\Utility\BaseConverter - Provides a fluent interface.
 	 */
 	public function setCharsetFrom($charset)
 	{
@@ -80,9 +80,8 @@ class BaseConverter
 	/*
 	 * Decode to base 10
 	 *
-	 * @param string - String to be decoded, must be within the charset of 
-	 *	charsetTo.
-	 * @return string - Base 10 representation of the number 
+	 * @param string - String to be decoded, must be within the charset of charsetTo.
+	 * @return string - Base 10 representation of the number
 	 */
 	public function decode($input)
 	{
@@ -90,7 +89,7 @@ class BaseConverter
 		$input = str_split(strrev($input));
 		$base = (string) sizeof($_charsetFrom);
 
-		// No support for floating point integers for the base 10 proxy 
+		// No support for floating point integers for the base 10 proxy
 		bcscale(0);
 
 		$inputSize = sizeof($input);
@@ -112,15 +111,15 @@ class BaseConverter
 	/*
 	 * Encode to base from base 10
 	 *
-	 * @param string - base 10 integer
-	 * @return string base in the charset of 
+	 * @param string $input - base 10 integer
+	 * @return string base in the charset of
 	 */
 	public function encode($input)
 	{
 		$output = '';
 		$base = (string) sizeof($this->charsetTo);
 
-		// No support for floating point integers for the base 10 proxy 
+		// No support for floating point integers for the base 10 proxy
 		bcscale(0);
 
 		do
@@ -139,7 +138,7 @@ class BaseConverter
 	 * Convert
 	 *
 	 * @var string convert - The string to convert
-	 * @return string - The output string 
+	 * @return string - The output string
 	 */
 	public function convert($convert = '')
 	{
