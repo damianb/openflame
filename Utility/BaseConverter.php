@@ -100,7 +100,7 @@ class BaseConverter
 			// Throw an exception if we should encounter an illegal key
 			if(!array_key_exists($input[$i], $_charsetTo))
 			{
-				throw new \OutOfRangeException();
+				throw new \OutOfRangeException("Input of base conversion is out of range from the specified Character set");
 			}
 
 			$output = bcadd($output, bcmul($_charsetTo[$input[$i]], bcpow($base, $i, 0)));
