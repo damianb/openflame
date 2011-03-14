@@ -55,12 +55,21 @@ class Proxy
 	 * Magic method, providing seamless access to asset data in Twig templates.
 	 * @param string $name - The type of the asset to grab.
 	 * @return \OpenFlame\Framework\Template\Asset\Subproxy - The subproxy for the asset type that we want.
+	 *
+	 * @throws \RuntimeException
 	 */
 	public function __get($name)
 	{
 		if(!isset($this->subproxies[$name]))
 		{
-			return NULL;
+			if($this->manager->usingInvalidAssetExceptions())
+			{
+				throw new \RuntimeException(sprintf('Attempted to access invalid asset type "%1$s"', $name));
+			}
+			else
+			{
+				return NULL;
+			}
 		}
 
 		return $this->subproxies[$name];
