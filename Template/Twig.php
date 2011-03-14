@@ -42,12 +42,13 @@ class Twig
 	public function setTwigRootPath($twig_root_path)
 	{
 		$twig_root_path = rtrim($twig_root_path, '/') . '/';
-		if(!is_file($twig_root_path . '/lib/Twig/Autoloader.php'))
+		if(!is_file($twig_root_path . 'Autoloader.php'))
 		{
 			throw new \InvalidArgumentException(sprintf('Could not locate the Twig autoloader at "%1$s"', $twig_root_path . '/lib/Twig/Autoloader.php'));
 		}
 
 		$this->twig_root_path = $twig_root_path;
+
 		return $this;
 	}
 
@@ -65,6 +66,7 @@ class Twig
 		}
 
 		$this->twig_cache_path = $twig_cache_path;
+
 		return $this;
 	}
 
@@ -88,6 +90,7 @@ class Twig
 	public function setTwigOption($option, $value)
 	{
 		$this->twig_environment_options[(string) $option] = $value;
+
 		return $this;
 	}
 
@@ -102,6 +105,7 @@ class Twig
 
 		// Update the template paths in the twig loader
 		$this->updateTemplatePaths();
+
 		return $this;
 	}
 
@@ -123,7 +127,7 @@ class Twig
 
 	public function initTwig()
 	{
-		require $this->getTwigRootPath() . '/lib/Twig/Autoloader.php';
+		require $this->getTwigRootPath() . 'Autoloader.php';
 		\Twig_Autoloader::register();
 
 		$loader = Core::setObject('twig.loader', new Twig_Loader_Filesystem($this->getTemplatePaths()));
