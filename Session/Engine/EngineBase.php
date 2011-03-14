@@ -39,20 +39,27 @@ abstract class EngineBase
 	/*
 	 * @var - Configuration data surrounding the session
 	 */
-	private $cfg;
+	private $cfg = array();
 
 	/*
 	 * Set cookie property method prefix
 	 */
-	const SET_COOKIE = 'setCookie';
+	const SET_COOKIE_METHOD = 'setCookie';
 
 	/*
 	 * Pseudo Constructor
-	 *
-	 * Must be called at the construction of the extending class
+	 * Must be called right after an instance is created
+	 * 
+	 * @return OpenFlame\Framework\Session\Engine\EngineBase - Provides a fluent interface.
 	 */
 	public function init()
 	{
+		$this->cfg = array(
+			'cookie.lifetime'	=> 0,
+			'cookie.path'		=> '/',
+			'cookie.domain'		=> $_SERVER['HTTP_HOST'],
+			'cookie.secure'		=> true,
+		);
 	}
 
 	/*
@@ -60,17 +67,32 @@ abstract class EngineBase
 	 *
 	 * @param string - Method name
 	 * @param array - arguements
-	 * @return OpenFlame\Framework\Session\Engine\EngineBase - Provides a fluent interface.
+	
 	 */
 	public function __call($name, $args)
 	{
 		// Provide for setCookie* methods
-		if(stripos($name, self::SET_COOKIE) === 0)
+		if(stripos($name, self::SET_COOKIE_METHOD) === 0)
 		{
-			$method = strtolower(substr($name, strlen(self::SET_COOKIE)));
+			$method = strtolower(substr($name, strlen(self::SET_COOKIE_METHOD)));
 			$this->cfg['cookie.' . $method] = is_numeric($args[0]) ? (int) $args[0] : (string) $args[0];
 		}
 
 		return $this;
+	}
+
+	/*
+	 * Start our session
+	 */
+	public function start()
+	{
+		// Set the params
+		session_set_cookie_params(
+			$this->cfg['cookie.lifetime'],
+			$this->cfg['cookie.path'],
+			$this->cfg['cookie.domain'],
+			$this->cfg['cookie.secure'],
+			true
+		);
 	}
 }
