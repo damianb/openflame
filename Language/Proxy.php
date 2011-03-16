@@ -10,6 +10,7 @@
  */
 
 namespace OpenFlame\Framework\Language;
+use \OpenFlame\Framework\Core;
 
 if(!defined('OpenFlame\\ROOT_PATH')) exit;
 
