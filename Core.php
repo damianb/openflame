@@ -153,36 +153,4 @@ class Core
 
 		return self::$objects[(string) $slot];
 	}
-
-	/**
-	 * Dependency injection methods for the OpenFlame Framework
-	 * @todo maybe move this to own object?
-	 */
-
-	/**
-	 * Get the cache object and handle all dependency injection needed for it.
-	 * @return OpenFlame\Framework\Cache\Driver - The cache object.
-	 */
-	public static function getCache()
-	{
-		// If we've not instantiated the cache yet, OpenFlame\Framework\Core::getObject() will return NULL...so we'll need to be prepared for that.
-		$cache = self::getObject('cache');
-
-		if($cache === NULL)
-		{
-			$engine_class = '\\OpenFlame\\Framework\\Cache\\Engine\\Engine' . self::getConfig('cache.engine');
-			/**
-			 * We use OpenFlame\Framework\Core::getConfigNamespace() here so that we can grab all cache options needed...
-			 * any unused options should be ignored (so long as nobody nubs the cache engine itself), so no worries about passing it extra stuff.
-			 */
-			$engine = new $engine_class(self::getConfigNamespace('cache'));
-			$cache = self::setObject('cache', new OpenFlame\Framework\Cache\Driver($engine));
-		}
-
-		return $cache;
-	}
-
-	/**
-	 * @todo more dependency injection stuff
-	 */
 }
