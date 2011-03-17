@@ -92,10 +92,10 @@ class Core
 		if(sizeof($config_name_array) > 1)
 		{
 			// it is namespaced, we need to grab from that specific namespace.
-			if(!isset(self::$config["_{$config_name_array[0]}"][$config_name]))
+			if(!isset(self::$config["_{$config_name_array[0]}"][$config_name_array[1]]))
 				return NULL;
 
-			return self::$config["_{$config_name_array[0]}"][$config_name];
+			return self::$config["_{$config_name_array[0]}"][$config_name_array[1]];
 		}
 		else
 		{
