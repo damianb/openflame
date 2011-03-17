@@ -22,7 +22,7 @@ if(!defined('OpenFlame\\ROOT_PATH')) exit;
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
  * @link        https://github.com/OpenFlame/OpenFlame-Framework
  */
-class AssetInstance implements \OpenFlame\Framework\Template\Asset\AssetInstanceInterface
+class AssetInstance implements \OpenFlame\Framework\Template\Asset\AssetInstanceInterface 
 {
 	/**
 	 * @var string - The name for this instance.
