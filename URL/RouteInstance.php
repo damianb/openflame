@@ -162,6 +162,7 @@ class RouteInstance
 		{
 			list($class, $method) = explode('->', $callback, 2);
 			$this->route_callback = array(
+				'raw'			=> $callback,
 				'callback'		=> array($class, $method),
 				'object'		=> true,
 				'static'		=> false,
@@ -170,6 +171,7 @@ class RouteInstance
 		elseif(is_string($callback) && strpos($callback, '::') !== false)
 		{
 			$this->route_callback = array(
+				'raw'			=> $callback,
 				'callback'		=> $callback,
 				'object'		=> true,
 				'static'		=> true,
@@ -178,6 +180,7 @@ class RouteInstance
 		else
 		{
 			$this->route_callback = array(
+				'raw'			=> $callback,
 				'callback'		=> $callback,
 				'object'		=> false,
 				'static'		=> false,
@@ -266,7 +269,7 @@ class RouteInstance
 		$this->setRouteBase($route_data['route_base'])
 			->setRouteMap($route_data['route_map'])
 			->setRouteRegexp($route_data['route_regexp'])
-			->setRouteCallback($route_data['route_callback'])
+			->setRouteCallback($route_data['route_callback']['raw'])
 			->setSerializedRoute($route_string);
 
 		return $this;
@@ -345,12 +348,13 @@ class RouteInstance
 			throw new \LogicException('Attempted to fire callback when no callback has been set');
 		}
 
-		if($callback['object'] === true && $callback['static'] === true)
+		if($callback['object'] === true && $callback['static'] !== true)
 		{
-			return call_user_func(array(Core::getObject($callback['callback'][0], $callback['callback'][1])), $this);
+			return call_user_func(array(Core::getObject($callback['callback'][0]), $callback['callback'][1]), $this);
 		}
 		else
 		{
+			
 			return call_user_func($callback['callback'], $this);
 		}
 
