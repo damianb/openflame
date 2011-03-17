@@ -130,8 +130,8 @@ class Twig
 		require $this->getTwigRootPath() . 'Autoloader.php';
 		\Twig_Autoloader::register();
 
-		$loader = Core::setObject('twig.loader', new Twig_Loader_Filesystem($this->getTemplatePaths()));
-		$twig = Core::setObject('twig.environment', new Twig_Environment($loader, array_merge(array('cache' => $this->getTwigCachePath()), $this->getTwigOptions())));
+		$loader = Core::setObject('twig.loader', new \Twig_Loader_Filesystem($this->getTemplatePaths()));
+		$twig = Core::setObject('twig.environment', new \Twig_Environment($loader, array_merge(array('cache' => $this->getTwigCachePath()), $this->getTwigOptions())));
 
 		$this->twig_launched = true;
 
