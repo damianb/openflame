@@ -115,7 +115,7 @@ class Manager
 		}
 
 		// Require the use of the AssetInstanceInterface for the provided class
-		if(!($asset_class instanceof \OpenFlame\Framework\Template\Asset\AssetInstanceInterface))
+		if(in_array('\\OpenFlame\\Framework\\Template\\Asset\\AssetInstanceInterface', class_implements($asset_class)))
 		{
 			throw new \LogicException(sprintf('The class "%1$s" does not implement the interface \\OpenFlame\\Framework\\Template\\Asset\\AssetInstanceInterface as required', $asset_class));
 		}
