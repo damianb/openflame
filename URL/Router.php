@@ -214,9 +214,12 @@ class Router
 	public function getFullRouteCache()
 	{
 		$route_cache = array();
-		foreach($this->routes as $route)
+		foreach($this->routes as $route_base)
 		{
-			array_push($route_cache, $route->getSerializedRoute());
+			foreach($route_base as $route)
+			{
+				array_push($route_cache, $route->getSerializedRoute());
+			}
 		}
 
 		$cache = array(
