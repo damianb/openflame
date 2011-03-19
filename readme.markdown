@@ -8,6 +8,10 @@ The OpenFlame Framework is a collection of scripts used to power OpenFlame CMS a
 
 This library generously provided for free by the OpenFlame CMS Development Team.
 
+## WARNING
+
+This branch is no longer maintained by the OpenFlame Development team.  We have moved on and have developed a branch intended for use with PHP 5.3+, as PHP 5.2 has been declared end of life by the PHP development team themselves.  If you are still on PHP 5.2, please consider upgrading ASAP.
+
 ## Contents
 
 All files within the src/ directory are named by the class they contain.
