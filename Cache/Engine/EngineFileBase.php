@@ -10,7 +10,7 @@
  */
 
 namespace OpenFlame\Framework\Cache\Engine;
-use OpenFlame\Framework\Exception\Cache\Engine\EngineFileBase as EngineFileBaseException;
+use \OpenFlame\Framework\Core;
 
 if(!defined('OpenFlame\\ROOT_PATH')) exit;
 
@@ -30,14 +30,12 @@ abstract class EngineFileBase
 	protected $cache_path = '';
 
 	/**
-	 * Constructor
-	 * @param array $properties - Array of properties to set for the various options in the engine.
-	 * @return void
+	 * Do we want to use a TTL check for this cache engine?
+	 * @return true - Filecache-based engines don't implement TTL themselves.
 	 */
-	public function __construct(array $properties)
+	public function useTTLCheck()
 	{
-		if(isset($properties['cache_path']))
-			$this->setCachePath($properties['cache_path']);
+		return true;
 	}
 
 	/**
@@ -45,14 +43,19 @@ abstract class EngineFileBase
 	 * @param string $path - The path to store cache files in.
 	 * @return OpenFlame\Framework\Cache\Engine\EngineFileBase - Provides a fluent interface.
 	 *
-	 * @throws OpenFlame\Framework\Exception\Cache\Engine\EngineFileBase
+	 * @throws \LogicException
+	 * @throws \RuntimeException
 	 */
 	public function setCachePath($path)
 	{
 		if(!is_dir($path))
-			throw new EngineFileBaseException(sprintf('The cache path "%1$s" is not a directory or does not exist', $path), EngineFileBaseException::ERR_CACHE_PATH_NOT_DIR);
+		{
+			throw new \LogicException(sprintf('The cache path "%1$s" is not a directory or does not exist', $path));
+		}
 		if(!is_readable($path) || !is_writable($path))
-			throw new EngineFileBaseException(sprintf('The cache path "%1$s" is not accessible', $path), EngineFileBaseException::ERR_CACHE_PATH_NO_ACCESS);
+		{
+			throw new \RuntimeException(sprintf('The cache path "%1$s" is not accessible', $path));
+		}
 
 		$this->cache_path = rtrim($path, '/') . '/'; // ensure that the path has a trailing slash
 		return $this;
@@ -82,15 +85,20 @@ abstract class EngineFileBase
 	 * @param string $file - The file to read from.
 	 * @return string - The file's data
 	 *
-	 * @throws OpenFlame\Framework\Exception\Cache\Engine\EngineFileBase
+	 * @throws \RuntimeException
 	 */
 	protected function readFile($file)
 	{
 		$file = $this->cache_path . basename($file);
 		if(!@is_readable($file))
-			throw new EngineFileBaseException(sprintf('Cache file "%1$s" is unreadable', $file), EngineFileBaseException::ERR_CACHE_UNREADABLE);
+		{
+			throw new \RuntimeException(sprintf('Cache file "%1$s" is unreadable', $file));
+		}
 		if(!$f = @fopen($file, 'r'))
-			throw new EngineFileBaseException(sprintf('fopen() call failed for cache file "%1$s"', $file), EngineFileBaseException::ERR_CACHE_FOPEN_FAILED);
+		{
+			throw new \RuntimeException(sprintf('fopen() call failed for cache file "%1$s"', $file));
+		}
+
 		if(@flock($f, LOCK_EX))
 		{
 			$data = @fread($f, @filesize($file));
@@ -98,8 +106,9 @@ abstract class EngineFileBase
 		}
 		else
 		{
-			throw new EngineFileBaseException(sprintf('flock() call failed for cache file "%1$s"', $file), EngineFileBaseException::ERR_CACHE_FLOCK_FAILED);
+			throw new \RuntimeException(sprintf('flock() call failed for cache file "%1$s"', $file));
 		}
+
 		@fclose($f);
 
 		return $data;
@@ -111,25 +120,32 @@ abstract class EngineFileBase
 	 * @param string $data - The data to write to the cache file.
 	 * @return void
 	 *
-	 * @throws OpenFlame\Framework\Exception\Cache\Engine\EngineFileBase
+	 * @throws \RuntimeException
 	 */
 	protected function writeFile($file, $data)
 	{
 		$file = $this->cache_path . basename($file);
 		if(@file_exists($file) && !@is_writable($file))
-			throw new EngineFileBaseException(sprintf('Cache file "%1$s" is unwritable', $file), EngineFileBaseException::ERR_CACHE_UNWRITABLE);
+		{
+			throw new \RuntimeException(sprintf('Cache file "%1$s" is unwritable', $file));
+		}
 		if(!$f = @fopen($file, 'w'))
-			throw new EngineFileBaseException(sprintf('fopen() call failed for cache file "%1$s"', $file), EngineFileBaseException::ERR_CACHE_FOPEN_FAILED);
+		{
+			throw new \RuntimeException(sprintf('fopen() call failed for cache file "%1$s"', $file));
+		}
+
 		if(@flock($f, LOCK_EX))
 		{
 			$length = @fwrite($f, $data);
 			if($length !== strlen($data))
-				throw new EngineFileBaseException(sprintf('fwrite() call failed for cache file "%1$s"', $file), EngineFileBaseException::ERR_CACHE_FWRITE_FAILED);
+			{
+				throw new \RuntimeException(sprintf('fwrite() call failed for cache file "%1$s"', $file));
+			}
 			@flock($f, LOCK_UN);
 		}
 		else
 		{
-			throw new EngineFileBaseException(sprintf('flock() call failed for cache file "%1$s"', $file), EngineFileBaseException::ERR_CACHE_FLOCK_FAILED);
+			throw new \RuntimeException(sprintf('flock() call failed for cache file "%1$s"', $file));
 		}
 		@fclose($f);
 	}

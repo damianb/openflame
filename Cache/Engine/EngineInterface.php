@@ -10,6 +10,7 @@
  */
 
 namespace OpenFlame\Framework\Cache\Engine;
+use \OpenFlame\Framework\Core;
 
 if(!defined('OpenFlame\\ROOT_PATH')) exit;
 
@@ -24,6 +25,7 @@ if(!defined('OpenFlame\\ROOT_PATH')) exit;
 interface EngineInterface
 {
 	public function getEngineName();
+	public function useTTLCheck();
 	public function build($data);
 	public function load($file);
 	public function exists($file);

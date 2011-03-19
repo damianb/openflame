@@ -10,7 +10,7 @@
  */
 
 namespace OpenFlame\Framework\Cache\Engine;
-use OpenFlame\Framework\Utility\JSON;
+use \OpenFlame\Framework\Core;
 
 if(!defined('OpenFlame\\ROOT_PATH')) exit;
 
@@ -22,7 +22,7 @@ if(!defined('OpenFlame\\ROOT_PATH')) exit;
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
  * @link        https://github.com/OpenFlame/OpenFlame-Framework
  */
-class EngineJSON extends EngineFileBase implements EngineInterface
+class EngineJSON extends \OpenFlame\Framework\Cache\Engine\EngineFileBase implements \OpenFlame\Framework\Cache\Engine\EngineInterface
 {
 	/**
 	 * @const - The algorithm to use for checksum of the cache file's cache contents
@@ -45,7 +45,7 @@ class EngineJSON extends EngineFileBase implements EngineInterface
 	 */
 	public function build($data)
 	{
-		$data = JSON::encode($data);
+		$data = \OpenFlame\Framework\Utility\JSON::encode($data);
 
 		return implode("\n", array(
 			'# OpenFlame Web Framework cache file - modify at your own risk!',
@@ -62,7 +62,7 @@ class EngineJSON extends EngineFileBase implements EngineInterface
 	 */
 	public function load($file)
 	{
-		return JSON::decode($this->readFile("$file.json.tmp"));
+		return \OpenFlame\Framework\Utility\JSON::decode($this->readFile("$file.json.tmp"));
 	}
 
 	/**
