@@ -10,6 +10,7 @@
  */
 
 namespace OpenFlame\Framework\Cache\Engine;
+use \OpenFlame\Framework\Core;
 
 if(!defined('OpenFlame\\ROOT_PATH')) exit;
 
@@ -21,7 +22,7 @@ if(!defined('OpenFlame\\ROOT_PATH')) exit;
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
  * @link        https://github.com/OpenFlame/OpenFlame-Framework
  */
-class EngineSerialize extends EngineFileBase implements EngineInterface
+class EngineSerialize extends \OpenFlame\Framework\Cache\Engine\EngineFileBase implements \OpenFlame\Framework\Cache\Engine\EngineInterface
 {
 	/**
 	 * @const - The algorithm to use for checksum of the cache file's cache contents
@@ -62,7 +63,7 @@ class EngineSerialize extends EngineFileBase implements EngineInterface
 	public function load($file)
 	{
 		$data = $this->readFile("$file.srl.tmp");
-		$data = preg_replace('#\#.*?' . "\n" . '#', '', $data);
+		$data = preg_replace("/#.*?\n/", '', $data);
 		return unserialize($data);
 	}
 
