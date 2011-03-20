@@ -61,7 +61,7 @@ class Handler
 	{
 		list($type, $field) = array_pad(explode('::', $name, 2), -2, '');
 
-		$instance = \OpenFlame\Framework\Input\Instance::newInstance()->setType($type)->setName($field);
+		$instance = \OpenFlame\Framework\Input\Instance::newInstance()->setHandler($this)->setType($type)->setName($field);
 		if($this->useJuggling())
 			$instance->setJuggledName($this->buildJuggledName($field));
 
