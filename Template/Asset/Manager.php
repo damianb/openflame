@@ -115,12 +115,14 @@ class Manager
 		}
 
 		// Require the use of the AssetInstanceInterface for the provided class
-		if(in_array('\\OpenFlame\\Framework\\Template\\Asset\\AssetInstanceInterface', class_implements($asset_class)))
+		$asset = $asset_class::newInstance();
+		if(!($asset instanceof \OpenFlame\Framework\Template\Asset\AssetInstanceInterface))
 		{
 			throw new \LogicException(sprintf('The class "%1$s" does not implement the interface \\OpenFlame\\Framework\\Template\\Asset\\AssetInstanceInterface as required', $asset_class));
 		}
+		$asset->setBaseURL($this->getBaseURL());
 
-		return $asset_class::newInstance()->setBaseURL($this->getBaseURL());
+		return $asset;
 	}
 
 	/**
