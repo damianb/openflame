@@ -69,6 +69,8 @@ class Handler
 			self::badassError();
 		}
 
+		// Flush all output buffers before exit.
+		while (@ob_end_flush());
 		exit;
 	}
 
