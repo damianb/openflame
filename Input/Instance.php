@@ -25,6 +25,11 @@ if(!defined('OpenFlame\\ROOT_PATH')) exit;
 class Instance
 {
 	/**
+	 * @var \OpenFlame\Framework\Input\Handler - The input handler.
+	 */
+	protected $handler;
+
+	/**
 	 * @var mixed - The raw input
 	 */
 	protected $raw_value = NULL;
@@ -76,6 +81,17 @@ class Instance
 	final public static function newInstance()
 	{
 		return new static();
+	}
+
+	/**
+	 * Link the input handler to this input instance
+	 * @param \OpenFlame\Framework\Input\Handler $handler - The input handler.
+	 * @return \OpenFlame\Framework\Input\Instance - Provides a fluent interface.
+	 */
+	public function setHandler(\OpenFlame\Framework\Input\Handler $handler)
+	{
+		$this->handler = $handler;
+		return $this;
 	}
 
 	/**
@@ -333,15 +349,20 @@ class Instance
 	 * @return boolean - Does the input validate?
 	 *
 	 * @throws \LogicException
+	 * @throws \RuntimeException
 	 */
 	protected function validate($type)
 	{
-		// get the handler here, however
-		//$handler = new \OpenFlame\Framework\Input\Handler();
+		if(empty($this->handler))
+		{
+			throw new \LogicException('Cannot validate input instance as input handler has not been linked to the instance');
+		}
 
-		$validator = $handler->getValidator($type);
+		$validator = $this->handler->getValidator($type);
 		if($validator === false)
-			throw new \LogicException(sprintf('No validator registered for validation type "%1$s" in \\OpenFlame\\Framework\\Input\\Instance', $type));
+		{
+			throw new \RuntimeException(sprintf('No validator registered for validation type "%1$s" in \\OpenFlame\\Framework\\Input\\Instance', $type));
+		}
 
 		return (bool) call_user_func($validator, $this->getClean());
 	}
