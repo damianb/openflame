@@ -91,7 +91,6 @@ class Dispatcher
 		ksort($this->listeners[$event->getName()]);
 		foreach($this->listeners[$event->getName()] as $priority => $priority_thread)
 		{
-			$p_count = sizeof($priority_thread);
 			for($i = 0, $size = sizeof($priority_thread); $i <= $size; $i++)
 			{
 				list($listener_callback, $listener_params) = $priority_thread[$i];
@@ -116,7 +115,6 @@ class Dispatcher
 		ksort($this->listeners[$event->getName()]);
 		foreach($this->listeners[$event->getName()] as $priority => $priority_thread)
 		{
-			$p_count = sizeof($priority_thread);
 			for($i = 0, $size = sizeof($priority_thread); $i <= $size; $i++)
 			{
 				list($listener_callback, $listener_params) = $priority_thread[$i];
