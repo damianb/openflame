@@ -24,4 +24,7 @@ if(!defined('OpenFlame\\ROOT_PATH')) exit;
  */
 interface EngineInterface
 {
+	public function init();
+	public function getData();
+	public function getFingerprint();
 }
