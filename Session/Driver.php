@@ -65,6 +65,16 @@ class Driver
 	protected $sessionExpiry = 3600;
 
 	/*
+	 * @var http user agent
+	 */
+	protected $useragent = '';
+
+	/*
+	 * @var rand seed
+	 */
+	protected $randSeed = 'O';
+
+	/*
 	 * Cookie base names
 	 */
 	const SID_COOKIE	= '_sid';
@@ -73,7 +83,7 @@ class Driver
 
 	/**
 	 * Get the session storage engine currently in use.
-	 * @return \OpenFlame\Framework\Session\Storage\EngineInterface - The session storage engine in use.
+	 * @return \OpenFlame\Framework\Session\Storage\* - The session storage engine in use.
 	 */
 	public function getEngine()
 	{
@@ -92,16 +102,75 @@ class Driver
 		return $this;
 	}
 
+	/**
+	 * Set the cookie name prefix (not required)
+	 *
+	 * @var string - Name of the cookie
+	 * @return \OpenFlame\Framework\Session\Driver - Provides a fluent interface.
+	 */
 	public function setCookieName($name)
 	{
 		$this->cookieName = (string) $name;
+
+		return $this;
 	}
 
+	/**
+	 * Set the session expiry 
+	 *
+	 * @var int - Time in seconds before the session exipires
+	 * @return \OpenFlame\Framework\Session\Driver - Provides a fluent interface.
+	 */
 	public function setSessionExpiry($time)
 	{
 		$this->sessionExpiry = (int) $time;
+
+		return $this;
 	}
 
+	/**
+	 * Set user agent 
+	 *
+	 * @var string - user agent
+	 * @return \OpenFlame\Framework\Session\Driver - Provides a fluent interface.
+	 */
+	public function setUseragent($useragent)
+	{
+		$this->useragent = (string) $useragent;
+
+		return $this;
+	}
+
+	/**
+	 * Set the random seed (not required)
+	 *
+	 * @var string - random string
+	 * @return \OpenFlame\Framework\Session\Driver - Provides a fluent interface.
+	 */
+	public function setRandSeed($seed)
+	{
+		$this->randSeed = (string) $seed;
+
+		return $this;
+	}
+
+	/*
+	 * Set an IP
+	 *
+	 * @param string cleaned IP address
+	 */
+	public function setIp($ip)
+	{
+		$this->ipAddr = $ip;
+
+		// @todo create setter for ip val level and pull the partial IP here
+	}
+
+	/**
+	 * Init the session handler (called after construction)
+	 *
+	 * @return \OpenFlame\Framework\Session\Driver - Provides a fluent interface.
+	 */
 	public function init()
 	{
 		// Get the validated cookie
@@ -112,24 +181,31 @@ class Driver
 		);
 
 		// Call anything that needs to be initialized in the engine
-		$this->engine->init();
+		$this->engine->init(
+			$this->cookieData[self::SID_COOKIE],
+			$this->cookieData[self::UID_COOKIE],
+			$this->cookieData[self::AL_COOKIE],
+		);
 
 		return $this;
 	}
 
+	/*
+	 * Start the session
+	 *
+	 * @return void
+	 */
 	public function start()
 	{
 		$valid = false;
-		$this->extractIp();
 
 		// Check for a returning click
-		if (!empty($this->cookieData[self::SID_COOKIE]))
+		if ($this->cookieData[self::SID_COOKIE])
 		{
 			// Check to see if the currrent fingerprint matches the one from the
 			// previous request. Then check to see if the session expired.
 			if(	$this->createFingerprint() === $this->engine->getFingerprint() &&
-				($this->sessionExpiry + time()) > $this->engine->getSessionExpiry()
-			)
+				($this->sessionExpiry + time()) > $this->engine->getSessionExpiry())
 			{
 				$this->data = $this->engine->getData();
 				$valid = true;
@@ -139,6 +215,8 @@ class Driver
 		// If they are not returning on a click, check their autologin
 		if (!$valid && $this->engine->checkAutoLogin())
 		{
+			// create the new session
+			$this->create();
 			$this->data = $this->engine->getData();
 			$valid = true;
 		}
@@ -151,22 +229,50 @@ class Driver
 		}
 	}
 
+	/*
+	 * Create a session
+	 *
+	 * @return void
+	 */
 	public function create()
 	{
+		$this->engine->setFingerprint($this->createFingerprint());
 	}
 
+	/*
+	 * Kill the session (logout)
+	 *
+	 * @return void
+	 */
 	public function kill()
 	{
 	}
 
+	/*
+	 * Login
+	 *
+	 * @param string - Username
+	 * @param string - Password
+	 * @param bool - autologin box checked?
+	 * @return void
+	 */
 	public function login($username, $password, $autologin = false)
 	{
+		// @todo provide some sort of hook for the application, waiting on the
+		// event handler
 	}
 
+	/*
+	 * Set the cookie
+	 */
 	public function setCookie()
 	{
 	}
 
+	/*
+	 * Garbage collection
+	 * still working on exact logistics
+	 */
 	public function gc()
 	{
 		$this->engine->gc();
@@ -183,13 +289,9 @@ class Driver
 	{
 		if(strlen($this->fingerprint) == 0)
 		{
-			$this->fingerprint = sha1($_SERVER['HTTP_USER_AGENT'] . $this->ipPartial);
+			$this->fingerprint = hash('sha1', $this->useragent . $this->ipPartial . $this->randSeed);
 		}
 
 		return $this->fingerprint;
-	}
-
-	private function extractIp()
-	{
 	}
 }

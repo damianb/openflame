@@ -24,7 +24,11 @@ if(!defined('OpenFlame\\ROOT_PATH')) exit;
  */
 interface EngineInterface
 {
-	public function init();
+	public function init($_sid, $_uid, $_al);
 	public function getData();
+	public function setFingerprint();
+	public function getSessionExpiry();
 	public function getFingerprint();
+	public function checkAutoLogin();
+	public function gc();
 }
