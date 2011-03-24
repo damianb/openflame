@@ -15,8 +15,8 @@ use \OpenFlame\Framework\Core;
 if(!defined('OpenFlame\\ROOT_PATH')) exit;
 
 /**
- * OpenFlame Web Framework - Cache Engine interface,
- * 		Cache engine prototype, declares required methods that a cache engine must define in order to be valid.
+ * OpenFlame Web Framework - Sessions Engine interface,
+ * 		Sessions engine prototype, declares required methods that a sessions engine must define in order to be valid.
  *
  *
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
@@ -25,9 +25,10 @@ if(!defined('OpenFlame\\ROOT_PATH')) exit;
 interface EngineInterface
 {
 	public function init($_sid, $_uid, $_al);
-	public function getData();
+	public function setCookieName();
 	public function setFingerprint();
 	public function getSessionExpiry();
+	public function getData();
 	public function getFingerprint();
 	public function checkAutoLogin();
 	public function gc();
