@@ -57,7 +57,7 @@ class Handler
 	 * @param Exception $e - The exception to handle
 	 * @return void
 	 */
-	final public static function catcher(Exception $e)
+	final public static function catcher(\Exception $e)
 	{
 		self::$exception = $e;
 		if(defined('OpenFlame\\Framework\\DEBUG') || self::$show_throw_info)

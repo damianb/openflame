@@ -119,7 +119,7 @@ class Driver
 		}
 
 		// build the cache, with data and ttl expiry included
-		$this->engine->store($index, $this->engine>build(array(
+		$this->engine->store($index, $this->engine->build(array(
 			'data'			=> $data,
 			'cache_expire'	=> ($ttl) ? time() + (int) $ttl : 0,
 		)));
