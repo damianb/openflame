@@ -45,6 +45,11 @@ class Driver
 	protected $ipPartial = '';
 
 	/*
+	 * @var IP validation level 
+	 */
+	protected $ipValLvl = 3;
+
+	/*
 	 * @var cookie data
 	 */
 	protected $cookieData = array();
@@ -53,11 +58,6 @@ class Driver
 	 * @var cookie name
 	 */
 	protected $cookieName = '';
-
-	/*
-	 * @var fingerprint
-	 */
-	protected $fingerprint = '';
 
 	/*
 	 * @var session expiry (seconds) - defaults to an hour 
@@ -73,6 +73,11 @@ class Driver
 	 * @var rand seed
 	 */
 	protected $randSeed = 'O';
+
+	/*
+	 * @var fingerprint
+	 */
+	protected $fingerprint = '';
 
 	/*
 	 * Cookie base names
@@ -111,6 +116,7 @@ class Driver
 	public function setCookieName($name)
 	{
 		$this->cookieName = (string) $name;
+		$this->engine->setCookieName((string) $name);
 
 		return $this;
 	}
@@ -158,12 +164,27 @@ class Driver
 	 * Set an IP
 	 *
 	 * @param string cleaned IP address
+	 * @return \OpenFlame\Framework\Session\Driver - Provides a fluent interface.
 	 */
 	public function setIp($ip)
 	{
 		$this->ipAddr = $ip;
+		$this->ipPartial = (strpos($ip, '.') && $this->ipValLvl > 0) ? implode('.', array_slice(explode('.', $ip), 0, $this->ipValLvl)) : $ip;
 
-		// @todo create setter for ip val level and pull the partial IP here
+		return $this;
+	}
+
+	/*
+	 * Set the IP validation level
+	 *
+	 * @param int - 1-4, makes no differnece on IPv6
+	 * @return \OpenFlame\Framework\Session\Driver - Provides a fluent interface.
+	 */
+	public function setValLevel($level)
+	{
+		$this->ipValLvl = ($level >= 0 && $level <= 4) ? $level : 3;
+
+		return $this;
 	}
 
 	/**
