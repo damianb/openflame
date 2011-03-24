@@ -29,6 +29,41 @@ class Config implements ArrayAccess
 	protected $data = array();
 
 	/*
+	 * @var - config keys to delete when the script is done
+	 */
+	protected $toDelete = array();
+
+	/*
+	 * @var - config keys to add when the script is done
+	 */
+	protected $toInsert = array();
+
+	/*
+	 * @var - config keys to update when the script is done
+	 */
+	protected $toUpdate = array();
+
+	/*
+	 * Bulk set the keys
+	 *
+	 * @param array - Key/value configuration
+	 */
+	public function bulkSet($data)
+	{
+		$this->data = array_merge($this->data, $data);
+	}
+
+	/*
+	 * Get the queue
+	 *
+	 * @return array - all they keys to sync to their new values in the storage system
+	 */
+	public function getQueues()
+	{
+		return array($toDelete, $toUpdate, $toInsert);
+	}
+
+	/*
 	 * ArrayAccess - Exists
 	 *
 	 * @param mixed - Offest to unset
@@ -42,7 +77,7 @@ class Config implements ArrayAccess
 	/*
 	 * ArrayAccess - Get
 	 *
-	 * @param mixed - Offest to get
+	 * @param mixed - Offset to get
 	 * @return mixed - The value at the offset
 	 */
 	public function offestGet($offset)
@@ -52,6 +87,7 @@ class Config implements ArrayAccess
 
 	/*
 	 * ArrayAccess - Set
+	 * Does not allow setting of 
 	 *
 	 * @param mixed - Key to store the new value in
 	 * @param mixed - New value
@@ -61,12 +97,19 @@ class Config implements ArrayAccess
 	{
 		if($offset == null)
 		{
-			$this->data[] = $value;
+			throw new RuntimeException('The configuration manager cannot accept empty keys');
+		}
+
+		if(isset($this->data[$offset]))
+		{
+			$toUpdate[] = $offset;
 		}
 		else
 		{
-			$this->data[$offset] = $value;
+			$toInsert[] = $offset;
 		}
+		
+		$this->data[$offset] = $value;
 	}
 
 	/*
@@ -78,5 +121,6 @@ class Config implements ArrayAccess
 	public function offestUnset($offset)
 	{
 		unset($this->data[$offset];
+		$toDelete[] = $offset;
 	}
 }
