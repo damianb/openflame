@@ -208,6 +208,10 @@ class Driver
 			$this->cookieData[self::AL_COOKIE],
 		);
 
+		// Let the session handler have this so we can be sure the rand seed is
+		// the same each time
+		$this->engine->setRandSeed($this->randSeed);
+
 		return $this;
 	}
 
@@ -226,7 +230,7 @@ class Driver
 			// Check to see if the currrent fingerprint matches the one from the
 			// previous request. Then check to see if the session expired.
 			if(	$this->createFingerprint() === $this->engine->getFingerprint() &&
-				($this->sessionExpiry + time()) > $this->engine->getSessionExpiry())
+				(time() > $this->engine->getLastClickTime() + $this->sessionExpiry)
 			{
 				$this->data = $this->engine->getData();
 				$valid = true;
@@ -310,7 +314,7 @@ class Driver
 	{
 		if(strlen($this->fingerprint) == 0)
 		{
-			$this->fingerprint = hash('sha1', $this->useragent . $this->ipPartial . $this->randSeed);
+			$this->fingerprint = hash('sha1', $this->useragent . $this->ipPartial . $this->engine->getRandSeed());
 		}
 
 		return $this->fingerprint;

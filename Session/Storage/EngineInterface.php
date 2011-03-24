@@ -27,9 +27,12 @@ interface EngineInterface
 	public function init($_sid, $_uid, $_al);
 	public function setCookieName();
 	public function setFingerprint();
+	public function setRandSeed();
 	public function getSessionExpiry();
 	public function getData();
 	public function getFingerprint();
+	public function getLastClickTime();
+	public function getRandSeed();
 	public function checkAutoLogin();
 	public function gc();
 }
