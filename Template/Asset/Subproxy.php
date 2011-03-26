@@ -98,7 +98,7 @@ class Subproxy
 	 */
 	public function __get($name)
 	{
-		if(!isset($this->asset_list[$name]))
+		if(!in_array($name, $this->asset_list))
 		{
 			if($this->manager->usingInvalidAssetExceptions())
 			{
@@ -120,7 +120,7 @@ class Subproxy
 	 */
 	public function __isset($name)
 	{
-		return isset($this->asset_list[$name]);
+		return in_array($name, $this->asset_list);
 	}
 
 	/**
