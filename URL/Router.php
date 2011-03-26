@@ -279,7 +279,7 @@ class Router
 		if(!isset($this->routes[$request_base]))
 		{
 			// 404 error
-			return $this->getErrorRoute();
+			return $this->getErrorRoute()->setRequestDataPoint('code', 404);
 		}
 
 		// We need to verify the request against the routes one by one, and go for the first one that works.
@@ -296,7 +296,7 @@ class Router
 		if($found !== true)
 		{
 			// 404 error
-			return $this->getErrorRoute();
+			return $this->getErrorRoute()->setRequestDataPoint('code', 404);
 		}
 
 		return $route;

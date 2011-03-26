@@ -47,7 +47,7 @@ class RouteInstance
 	/**
 	 * @var array - The array of data extracted from the request URL, if this route matches the request.
 	 */
-	protected $request_data;
+	protected $data;
 
 	/**
 	 * @var callable - The callback to assign to this route, if the route matches the current request.
@@ -310,9 +310,9 @@ class RouteInstance
 	 */
 	public function getRequestDataPoint($point)
 	{
-		if(isset($this->request_data[(string) $point]))
+		if(isset($this->data[(string) $point]))
 		{
-			return $this->request_data[(string) $point];
+			return $this->data[(string) $point];
 		}
 		else
 		{
@@ -329,7 +329,7 @@ class RouteInstance
 	 */
 	public function setRequestDataPoint($point, $data)
 	{
-		$this->request_data[(string) $point] = $data;
+		$this->data[(string) $point] = $data;
 
 		return $this;
 	}
@@ -354,7 +354,7 @@ class RouteInstance
 		}
 		else
 		{
-			
+
 			return call_user_func($callback['callback'], $this);
 		}
 
