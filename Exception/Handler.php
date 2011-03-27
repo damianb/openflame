@@ -212,7 +212,7 @@ EOD;
 			</div>
 			<div id="footer">
 				<div class="retainer">
-					<p class="copyright hang-right"><a href="http://www.openflamecms.com/" target="_blank" title="OpenFlame: Community Content Management">OpenFlame</a> v1.0.x &copy; WebSyntax. Licensed under <del><a href="http://www.gplv4.org/" target="_blank" title="GNU General Public License v4">GPLv4</a></del> <a href="http://www.gnu.org/licenses/gpl-3.0.html" target="_blank" title="GNU General Public License v4">GPLv3</a>.</p>
+					<p class="copyright hang-right"><a href="http://www.openflamecms.com/" target="_blank" title="OpenFlame: Community Content Management">OpenFlame</a></p>
 					<div class="hang-clear"><!-- // --></div>
 				</div>
 			</div>
