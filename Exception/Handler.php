@@ -97,7 +97,7 @@ class Handler
 						<div>
 							<h3 style="padding: 0 0 20px 0;">Exception information</h3>
 
-							<div>Exception thrown, error code <span style="font-weight: bold; font-family: monospace; background: #ffffff; color: #007700; padding: 0 2px; border: solid 1px #007700;">{$e['e_type']}::{$e['code']}</span> with message “<span style="font-family: monospace; font-weight: bold;">{$e['message']}</span>”<br /><br />
+							<div>Exception thrown, error code <span style="font-weight: bold; font-family: monospace; background: #ffffff; color: #007700; padding: 0 2px; border: solid 1px #007700;">{$e['e_type']}::{$e['code']}</span> with message &quot;<span style="font-family: monospace; font-weight: bold;">{$e['message']}</span>&quot;<br /><br />
 								on line <span style="font-weight: bold;">{$e['line']}</span> in file: <span style="font-weight: bold; font-family: monospace; background: #ffffff; color: #007700; padding: 0 3px; border: solid 1px #007700;">{$e['file']}</span>
 							</div>
 
@@ -366,12 +366,11 @@ EOD;
 			}
 
 			$callback = (isset($trace['class']) ? $trace['class'] . '<span style="color: #007700; font-weight: bold;">' . $trace['type'] . '</span>' : '') . '<span style="color: #0000BB; font-weight: bold;">' . $trace['function'] . '</span><span style="color: #007700; font-weight: bold;">(</span>' . $args . '<span style="color: #007700; font-weight: bold;">)</span>';
+			$line_stack = '<span style="padding-left: 20px;">on line <span style="font-weight: bold;">' . $trace['line'] . '</span> of file: <span style="font-weight: bold; font-family: monospace; background: #ffffff; color: #007700; padding: 0 3px; border: solid 1px #007700;">' . $trace['file'] . '</span></span>';
 			$return[] = <<<EOD
 				<li style="padding-left: 0px;">
 					<span style="font-weight: bold;">#{$id}</span><br />
 					<span style="padding-left: 20px;">callback: {$callback}</span><br /><br />
-					<span style="padding-left: 20px;">on line <span style="font-weight: bold;">{$trace['line']}</span> of file: <span style="font-weight: bold; font-family: monospace; background: #ffffff; color: #007700; padding: 0 3px; border: solid 1px #007700;">{$trace['file']}</span></span>
-
 				</li>
 EOD;
 		}
