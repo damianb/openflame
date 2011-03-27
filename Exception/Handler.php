@@ -366,11 +366,12 @@ EOD;
 			}
 
 			$callback = (isset($trace['class']) ? $trace['class'] . '<span style="color: #007700; font-weight: bold;">' . $trace['type'] . '</span>' : '') . '<span style="color: #0000BB; font-weight: bold;">' . $trace['function'] . '</span><span style="color: #007700; font-weight: bold;">(</span>' . $args . '<span style="color: #007700; font-weight: bold;">)</span>';
-			$line_stack = '<span style="padding-left: 20px;">on line <span style="font-weight: bold;">' . $trace['line'] . '</span> of file: <span style="font-weight: bold; font-family: monospace; background: #ffffff; color: #007700; padding: 0 3px; border: solid 1px #007700;">' . $trace['file'] . '</span></span>';
+			$line_stack = (isset($trace['file']) && isset($trace['line'])) ? '<span style="padding-left: 20px;">on line <span style="font-weight: bold;">' . $trace['line'] . '</span> of file: <span style="font-weight: bold; font-family: monospace; background: #ffffff; color: #007700; padding: 0 3px; border: solid 1px #007700;">' . $trace['file'] . '</span></span>' : '';
 			$return[] = <<<EOD
 				<li style="padding-left: 0px;">
 					<span style="font-weight: bold;">#{$id}</span><br />
 					<span style="padding-left: 20px;">callback: {$callback}</span><br /><br />
+					{$line_stack}
 				</li>
 EOD;
 		}
