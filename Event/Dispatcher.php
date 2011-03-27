@@ -95,8 +95,14 @@ class Dispatcher
 			{
 				list($listener_callback, $listener_params) = $priority_thread[$i];
 				call_user_func_array($listener_callback, array_merge(array($event), $listener_params));
+				if($return !== NULL)
+				{
+					$event->setReturn($return);
+				}
 			}
 		}
+
+		return $event;
 	}
 
 	/**
@@ -118,7 +124,11 @@ class Dispatcher
 			for($i = 0, $size = sizeof($priority_thread); $i <= $size; $i++)
 			{
 				list($listener_callback, $listener_params) = $priority_thread[$i];
-				call_user_func_array($listener_callback, array_merge(array($event), $listener_params));
+				$return = call_user_func_array($listener_callback, array_merge(array($event), $listener_params));
+				if($return !== NULL)
+				{
+					$event->setReturn($return);
+				}
 
 				if($event->wasBreakTriggered())
 				{
