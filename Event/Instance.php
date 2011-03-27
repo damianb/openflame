@@ -30,14 +30,19 @@ class Instance
 	protected $name = '';
 
 	/**
-	 * @var array - Related event data
-	 */
-	protected $data = array();
-
-	/**
 	 * @var mixed - The source of the event, may be null.
 	 */
 	protected $source;
+
+	/**
+	 * @var array - Related event data.
+	 */
+	public $data = array();
+
+	/**
+	 * @var array - The data returned from the individual listeners.
+	 */
+	protected $returns = array();
 
 	/**
 	 * @var boolean - Should the event tell the dispatcher to break out of the trigger cycle?
@@ -53,6 +58,7 @@ class Instance
 	{
 		$self = new static();
 		$self->setName($name);
+
 		return $self;
 	}
 
@@ -73,6 +79,7 @@ class Instance
 	public function setName($name)
 	{
 		$this->name = (string) $name;
+
 		return $this;
 	}
 
@@ -100,6 +107,7 @@ class Instance
 		}
 
 		$this->source = $source;
+
 		return $this;
 	}
 
@@ -115,11 +123,12 @@ class Instance
 	/**
 	 * Set the array of data to attach to this event.
 	 * @param array $data - The array of data to attach.
-	 * @return \Yukari\Event\Instance - Provides a fluent interface.
+	 * @return \OpenFlame\Framework\Event\Instance - Provides a fluent interface.
 	 */
 	public function setData(array $data = array())
 	{
 		$this->data = $data;
+
 		return $this;
 	}
 
@@ -146,6 +155,7 @@ class Instance
 		{
 			throw new \InvalidArgumentException('Invalid event parameter specified');
 		}
+
 		return $this->data[$point];
 	}
 
@@ -153,21 +163,74 @@ class Instance
 	 * Attach a single point of data to this event
 	 * @param string $point - The key to attach the data under.
 	 * @param mixed $value - The data to attach.
-	 * @return \Yukari\Event\Instance - Provides a fluent interface.
+	 * @return \OpenFlame\Framework\Event\Instance - Provides a fluent interface.
 	 */
 	public function setDataPoint($point, $value)
 	{
 		$this->data[$point] = $value;
+
 		return $this;
 	}
 
+	/**
+	 * Trigger a break of the event dispatch cycle.
+	 * @return \OpenFlame\Framework\Event\Instance - Provides a fluent interface.
+	 */
 	public function breakTrigger()
 	{
-		// asdf
+		$this->trigger_break = true;
+
+		return $this;
 	}
 
+	/**
+	 * Should we break out of the dispatch cycle?
+	 * @return boolean - Whether or not the event dispatch cycle should be broken.
+	 */
 	public function wasBreakTriggered()
 	{
 		return (bool) $this->trigger_break;
+	}
+
+	/**
+	 * Get the number of values returned.
+	 * @return integer - The number of values
+	 */
+	public function countReturns()
+	{
+		return sizeof($this->returns);
+	}
+
+	/**
+	 * Get the return values provided by the listeners.
+	 * @return mixed - Returns an array of returned data, the single piece of returned data, or NULL if no returned datta present.
+	 */
+	public function getReturns()
+	{
+		$results = $this->countReturns();
+		if($results > 1)
+		{
+			return $this->returns;
+		}
+		elseif($results == 1)
+		{
+			return reset($this->returns);
+		}
+		else
+		{
+			return NULL;
+		}
+	}
+
+	/**
+	 * Set a "return" value from a listener.
+	 * @param mixed $return - The value to set as the "return value" provided.
+	 * @return \OpenFlame\Framework\Event\Instance - Provides a fluent interface.
+	 */
+	public function setReturn($return)
+	{
+		array_push($this->returns, $return);
+
+		return $this;
 	}
 }
