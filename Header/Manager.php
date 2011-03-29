@@ -216,6 +216,7 @@ class Manager
 	 * @return \OpenFlame\Framework\Header\Submodule\SubmoduleInterface - The submodule just loaded.
 	 *
 	 * @throws \RuntimeException
+	 * @throws \LogicException
 	 */
 	public function loadSubmodule($submodule)
 	{
@@ -224,10 +225,18 @@ class Manager
 		// Check to see if the submodule actually does exist
 		if(!class_exists($submodule_class, true))
 		{
-			throw new \RuntimeException(sprintf('Failed to load header submodule "%1$s", submodule does not exist', $submodule_class));
+			throw new \RuntimeException(sprintf('Failed to load header management submodule "%1$s"; submodule does not exist', $submodule_class));
 		}
 
-		$this->submodules[$submodule] = new $submodule_class();
+		$submodule_object = $submodule_class::newInstance();
+		if(!($submodule_object instanceof \OpenFlame\Framework\Header\Submodule\SubmoduleInterface))
+		{
+			throw new \LogicException(sprintf('Header management submodule "%1$s" does not implement \\OpenFlame\\Framework\\Header\\Submodule\\SubmoduleInterface as required.'));
+		}
+
+		// Store the header manager in the submodule, and store the submodule.
+		$submodule_object->setManager($this);
+		$this->submodules[$submodule] = $submodule_object;
 
 		return $this->submodules[$submodule];
 	}
