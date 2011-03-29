@@ -50,7 +50,9 @@ class Core
 
 		// Merge in the application-specific settings.
 		if($properties !== NULL)
+		{
 			$config = array_merge($config, $properties);
+		}
 
 		// Yay lambdas!
 		array_walk($config, function($value, $key) {
@@ -93,7 +95,9 @@ class Core
 		{
 			// it is namespaced, we need to grab from that specific namespace.
 			if(!isset(self::$config["_{$config_name_array[0]}"][$config_name_array[1]]))
+			{
 				return NULL;
+			}
 
 			return self::$config["_{$config_name_array[0]}"][$config_name_array[1]];
 		}
@@ -101,7 +105,9 @@ class Core
 		{
 			// not namespaced, so we use the global namespace for this. :)
 			if(!isset(self::$config['global'][$config_name]))
+			{
 				return NULL;
+			}
 
 			return self::$config['global'][$config_name];
 		}
@@ -118,13 +124,17 @@ class Core
 		if($namespace === '')
 		{
 			if(!isset(self::$config['global']))
+			{
 				return NULL;
+			}
 
 			return self::$config['global'];
 		}
 
 		if(!isset(self::$config["_{$namespace}"]))
+		{
 			return NULL;
+		}
 
 		return self::$config["_{$namespace}"];
 	}
@@ -138,6 +148,7 @@ class Core
 	public static function setObject($slot, $object)
 	{
 		self::$objects[(string) $slot] = $object;
+
 		return $object;
 	}
 
@@ -149,7 +160,9 @@ class Core
 	public static function getObject($slot)
 	{
 		if(!isset(self::$objects[(string) $slot]))
+		{
 			return NULL;
+		}
 
 		return self::$objects[(string) $slot];
 	}
