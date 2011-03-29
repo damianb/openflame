@@ -24,12 +24,25 @@ if(!defined('OpenFlame\\ROOT_PATH')) exit;
  */
 class Manager
 {
+	/**
+	 * @var array - The array of header data that the header manager is storing
+	 */
 	protected $headers = array();
 
+	/**
+	 * @var boolean - Has the header manager sent its own headers?
+	 */
 	protected $headers_sent = false;
 
+	/**
+	 * @var array - Array of header management submodules, which provide extended functionality in managing specific subsets of headers (such as redirects, cookies)
+	 */
 	protected $submodules = array();
 
+	/**
+	 * Grab all the current headers defined, store them internally, and then trash them so that only the headers stored in the manager are the ones that will be sent.
+	 * @return void
+	 */
 	public function snagHeaders()
 	{
 		// grab all current headers
@@ -45,11 +58,21 @@ class Manager
 		header_remove();
 	}
 
+	/**
+	 * Has a specific header been set?
+	 * @param string $header_name - The name of the header to check existence of.
+	 * @return boolean - Will the specified header be sent?
+	 */
 	public function isHeaderSet($header_name)
 	{
 		return (bool) isset($this->headers[(string) $header_name]);
 	}
 
+	/**
+	 * Get a specific header.
+	 * @param string $header_name - The name of the header to grab.
+	 * @return mixed - An array containing the name and value of the header obtained, or NULL if it doesn't exist.
+	 */
 	public function getHeader($header_name)
 	{
 		if(isset($this->headers[(string) $header_name]))
@@ -62,20 +85,11 @@ class Manager
 		}
 	}
 
-	public function setHeader($header_name, $header_value)
-	{
-		$this->headers[(string) $header_name] = (string) $header_value;
-
-		return $this;
-	}
-
-	public function removeHeader($header_name)
-	{
-		unset($this->headers[(string) $header_name]);
-
-		return $this;
-	}
-
+	/**
+	 * Get a specific header as a string (in the format header() would expect).
+	 * @param string $header_name - The name of the header to grab.
+	 * @return mixed - The header string in the format header() would expect, or NULL if it doesn't exist.
+	 */
 	public function getHeaderAsString($header_name)
 	{
 		if(isset($this->headers[(string) $header_name]))
@@ -88,6 +102,38 @@ class Manager
 		}
 	}
 
+	/**
+	 * Set a header (or override its previous value)
+	 * @param string $header_name - The name of the header to set.
+	 * @param string $header_value - The value to set for the header.
+	 * @return \OpenFlame\Framework\Header\Manager - Provides a fluent interface.
+	 *
+	 * @todo see if allowing duplicate headers to be sent should be allowed
+	 */
+	public function setHeader($header_name, $header_value)
+	{
+		$this->headers[(string) $header_name] = (string) $header_value;
+
+		return $this;
+	}
+
+	/**
+	 * Remove/unset a specific header
+	 * @param string $header_name - The name of the header to remove.
+	 * @return \OpenFlame\Framework\Header\Manager - Provides a fluent interface.
+	 */
+	public function removeHeader($header_name)
+	{
+		unset($this->headers[(string) $header_name]);
+
+		return $this;
+	}
+
+	/**
+	 * Have the headers stored by the manager been sent?
+	 * @param boolean $internal_headers_only - Specify false to see if *any* headers have been sent at all.
+	 * @return boolean - Have the headers been sent?
+	 */
 	public function headersSent($internal_headers_only = true)
 	{
 		if($internal_headers_only === true)
@@ -100,28 +146,60 @@ class Manager
 		}
 	}
 
+	/**
+	 * Get an array of the headers that the manager is storing.
+	 * @return array - The headers currently being stored.
+	 */
 	public function getHeadersDump()
 	{
 		return $this->headers;
 	}
 
+	/**
+	 * Get the full string of headers that are being stored (individual entries joined by unix newline)
+	 * @return string - The string containing all headers (represented as strings) that are currently being stored.
+	 */
 	public function getHeadersDumpAsString()
 	{
 		foreach($this->headers as $name => $value)
 		{
-			$headers[] = sprintf('%1$s: %2$s', $name, $value);
+			$headers[] = $this->getHeaderAsString($name);
 		}
 		return implode("\n", $headers);
 	}
 
+	/**
+	 * Send all of the currently stored headers.
+	 * @return \OpenFlame\Framework\Header\Manager - Provides a fluent interface.
+	 */
 	public function sendHeaders()
 	{
 		foreach($this->headers as $name => $value)
 		{
 			header(sprintf('%1$s: %2$s', $name, $value), true);
 		}
+		$this->headers_sent = true;
+
+		return $this;
 	}
 
+	/**
+	 * Is a header management submodule loaded?
+	 * @param string $submodule - The submodule to check.
+	 * @return boolean - Is the specified submodule currently loaded?
+	 */
+	public function isSubmoduleLoaded($submodule)
+	{
+		return (bool) isset($this->submodules[$submodule]);
+	}
+
+	/**
+	 * Get a loaded header management submodule
+	 * @param string $submodule - The name of the submodule to grab.
+	 * @return \OpenFlame\Framework\Header\Submodule\SubmoduleInterface - The submodule requested.
+	 *
+	 * @throws \RuntimeException
+	 */
 	public function getSubmodule($submodule)
 	{
 		if(!isset($this->submodules[$submodule]))
@@ -132,6 +210,13 @@ class Manager
 		return $this->submodules[$submodule];
 	}
 
+	/**
+	 * Load a header management submodule
+	 * @param string $submodule - The submodule to load.
+	 * @return \OpenFlame\Framework\Header\Submodule\SubmoduleInterface - The submodule just loaded.
+	 *
+	 * @throws \RuntimeException
+	 */
 	public function loadSubmodule($submodule)
 	{
 		$submodule_class = "\\OpenFlame\Framework\\Header\\Submodule\\$submodule";
@@ -147,12 +232,24 @@ class Manager
 		return $this->submodules[$submodule];
 	}
 
-	public function __isset($name)
+	/**
+	 * Is a header management submodule loaded?
+	 * @param string $submodule - The submodule to check.
+	 * @return boolean - Is the specified submodule currently loaded?
+	 */
+	public function __isset($submodule)
 	{
 		return (bool) isset($this->submodules[$submodule]);
 	}
 
-	public function __get($name)
+	/**
+	 * Get a loaded header management submodule
+	 * @param string $submodule - The name of the submodule to grab.
+	 * @return \OpenFlame\Framework\Header\Submodule\SubmoduleInterface - The submodule requested.
+	 *
+	 * @throws \RuntimeException
+	 */
+	public function __get($submodule)
 	{
 		if(!isset($this->submodules[$submodule]))
 		{
