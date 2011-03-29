@@ -30,6 +30,21 @@ class Manager
 
 	protected $submodules = array();
 
+	public function snagHeaders()
+	{
+		// grab all current headers
+		$headers = headers_list();
+		for($i = 0, $size = sizeof($headers); $i <= $size; $i++)
+		{
+			// store the current headers
+			list($header_name, $header_value) = explode(': ', $headers[$i], 2);
+			$this->setHeader($header_name, $header_value);
+		}
+
+		// Trash all previously sent headers.  We're now in full control of headers sent.
+		header_remove();
+	}
+
 	public function setHeader($header_name, $header_value)
 	{
 		$this->headers[(string) $header_name] = (string) $header_value;
