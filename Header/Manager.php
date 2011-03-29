@@ -45,13 +45,6 @@ class Manager
 		header_remove();
 	}
 
-	public function setHeader($header_name, $header_value)
-	{
-		$this->headers[(string) $header_name] = (string) $header_value;
-
-		return $this;
-	}
-
 	public function isHeaderSet($header_name)
 	{
 		return (bool) isset($this->headers[(string) $header_name]);
@@ -67,6 +60,20 @@ class Manager
 		{
 			return NULL;
 		}
+	}
+
+	public function setHeader($header_name, $header_value)
+	{
+		$this->headers[(string) $header_name] = (string) $header_value;
+
+		return $this;
+	}
+
+	public function removeHeader($header_name)
+	{
+		unset($this->headers[(string) $header_name]);
+
+		return $this;
 	}
 
 	public function getHeaderAsString($header_name)
