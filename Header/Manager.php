@@ -32,17 +32,38 @@ class Manager
 
 	public function setHeader($header_name, $header_value)
 	{
-		// asdf
+		$this->headers[(string) $header_name] = (string) $header_value;
+
+		return $this;
 	}
 
-	public function headerSet($header_name)
+	public function isHeaderSet($header_name)
 	{
-		// asdf
+		return (bool) isset($this->headers[(string) $header_name]);
 	}
 
 	public function getHeader($header_name)
 	{
-		// asdf
+		if(isset($this->headers[(string) $header_name]))
+		{
+			return array($header_name => $this->headers[(string) $header_name]);
+		}
+		else
+		{
+			return NULL;
+		}
+	}
+
+	public function getHeaderAsString($header_name)
+	{
+		if(isset($this->headers[(string) $header_name]))
+		{
+			return sprintf('%1$s: %2$s', $header_name, $this->headers[(string) $header_name]);
+		}
+		else
+		{
+			return NULL;
+		}
 	}
 
 	public function headersSent($internal_headers_only = true)
@@ -57,14 +78,26 @@ class Manager
 		}
 	}
 
-	public function dumpHeaders()
+	public function getHeadersDump()
 	{
-		// asdf
+		return $this->headers;
+	}
+
+	public function getHeadersDumpAsString()
+	{
+		foreach($this->headers as $name => $value)
+		{
+			$headers[] = sprintf('%1$s: %2$s', $name, $value);
+		}
+		return implode("\n", $headers);
 	}
 
 	public function sendHeaders()
 	{
-		// asdf
+		foreach($this->headers as $name => $value)
+		{
+			header(sprintf('%1$s: %2$s', $name, $value), true);
+		}
 	}
 
 	public function getSubmodule($submodule)
@@ -88,6 +121,21 @@ class Manager
 		}
 
 		$this->submodules[$submodule] = new $submodule_class();
+
+		return $this->submodules[$submodule];
+	}
+
+	public function __isset($name)
+	{
+		return (bool) isset($this->submodules[$submodule]);
+	}
+
+	public function __get($name)
+	{
+		if(!isset($this->submodules[$submodule]))
+		{
+			throw new \RuntimeException(sprintf('Failed to retreive submodule, submodule not loaded'));
+		}
 
 		return $this->submodules[$submodule];
 	}
