@@ -26,6 +26,16 @@ if(!defined('OpenFlame\\ROOT_PATH')) exit;
 class Core
 {
 	/**
+	 * @var string - The version for the Framework
+	 */
+	private static $version = '1.0.0-dev';
+
+	/**
+	 * @var string - The commit ID for phar-packaged forms of the framework (considering "unstable" development builds)
+	 */
+	private static $commit;
+
+	/**
 	 * @var array - Array of settings we have loaded and stored
 	 */
 	protected static $config = array();
@@ -37,27 +47,41 @@ class Core
 
 	/**
 	 * Initiates the Framework.
-	 * @param array $settings - Array of application-specific settings to modify the default OpenFlame Framework behavior.
+	 * @param array $config - Array of application-specific settings to store in the OpenFlame Framework core.
 	 * @return void
 	 */
-	public static function init(array $settings = NULL)
+	public static function init(array $config = NULL)
 	{
-		// Set our defaults
-		$config = array(
-			'cache.engine'		=> 'JSON',
-			'cache.path'		=> OpenFlame\ROOT_PATH . '/cache/',
-		);
-
-		// Merge in the application-specific settings.
-		if($properties !== NULL)
+		if($config !== NULL)
 		{
-			$config = array_merge($config, $properties);
+			// Yay lambdas!
+			array_walk($config, function($value, $key) {
+				self::setConfig($key, $value);
+			});
+		}
+	}
+
+	/**
+	 * Get the commit ID (if there is one known) for this packaging of the framework
+	 * @return string - The commit ID of the framework package, or an empty string if no commit ID could be determined
+	 */
+	public static function getCommit()
+	{
+		if(self::$commit === NULL)
+		{
+			self::$commit = file_exists(\OpenFlame\ROOT_PATH . '/COMMIT_ID') ? file_get_contents(\OpenFlame\ROOT_PATH) : '';
 		}
 
-		// Yay lambdas!
-		array_walk($config, function($value, $key) {
-			self::setConfig($key, $value);
-		});
+		return self::$commit;
+	}
+
+	/**
+	 * Get the version string for the current instance of the OpenFlame Framework
+	 * @return string - The framework's version.
+	 */
+	public static function getVersion()
+	{
+		return self::$version;
 	}
 
 	/**
