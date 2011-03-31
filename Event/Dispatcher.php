@@ -57,10 +57,7 @@ class Dispatcher
 			$priority = (int) $priority;
 		}
 
-		$this->listeners[$event_type][$priority][] = array(
-			'listener'		=> $listener,
-			'params'		=> $listener_params,
-		);
+		$this->listeners[$event_type][$priority][] = array($listener, $listener_params);
 
 		return $this;
 	}
