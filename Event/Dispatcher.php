@@ -75,13 +75,13 @@ class Dispatcher
 	/**
 	 * Dispatch an event to registered listeners
 	 * @param \OpenFlame\Framework\Event\Instance $event - The event to dispatch.
-	 * @return array - Array of returned information from each listener.
+	 * @return \OpenFlame\Framework\Event\Instance - The event dispatched.
 	 */
 	public function trigger(\OpenFlame\Framework\Event\Instance $event)
 	{
 		if(!$this->hasListeners($event->getName()))
 		{
-			return;
+			return $event;
 		}
 
 		// Ensure the listener priorities are in order
@@ -111,7 +111,7 @@ class Dispatcher
 	{
 		if(!$this->hasListeners($event->getName()))
 		{
-			return;
+			return $event;
 		}
 
 		// Ensure the listener priorities are in order
