@@ -57,10 +57,7 @@ class Dispatcher
 			$priority = (int) $priority;
 		}
 
-		$this->listeners[$event_type][$priority][] = array(
-			'listener'		=> $listener,
-			'params'		=> $listener_params,
-		);
+		$this->listeners[$event_type][$priority][] = array($listener, $listener_params);
 
 		return $this;
 	}
@@ -78,23 +75,23 @@ class Dispatcher
 	/**
 	 * Dispatch an event to registered listeners
 	 * @param \OpenFlame\Framework\Event\Instance $event - The event to dispatch.
-	 * @return array - Array of returned information from each listener.
+	 * @return \OpenFlame\Framework\Event\Instance - The event dispatched.
 	 */
 	public function trigger(\OpenFlame\Framework\Event\Instance $event)
 	{
 		if(!$this->hasListeners($event->getName()))
 		{
-			return;
+			return $event;
 		}
 
 		// Ensure the listener priorities are in order
 		ksort($this->listeners[$event->getName()]);
 		foreach($this->listeners[$event->getName()] as $priority => $priority_thread)
 		{
-			for($i = 0, $size = sizeof($priority_thread); $i <= $size; $i++)
+			for($i = 0, $size = sizeof($priority_thread); $i <= $size - 1; $i++)
 			{
 				list($listener_callback, $listener_params) = $priority_thread[$i];
-				call_user_func_array($listener_callback, array_merge(array($event), $listener_params));
+				$return = call_user_func_array($listener_callback, array_merge(array($event), $listener_params));
 				if($return !== NULL)
 				{
 					$event->setReturn($return);
@@ -114,14 +111,14 @@ class Dispatcher
 	{
 		if(!$this->hasListeners($event->getName()))
 		{
-			return;
+			return $event;
 		}
 
 		// Ensure the listener priorities are in order
 		ksort($this->listeners[$event->getName()]);
 		foreach($this->listeners[$event->getName()] as $priority => $priority_thread)
 		{
-			for($i = 0, $size = sizeof($priority_thread); $i <= $size; $i++)
+			for($i = 0, $size = sizeof($priority_thread); $i <= $size - 1; $i++)
 			{
 				list($listener_callback, $listener_params) = $priority_thread[$i];
 				$return = call_user_func_array($listener_callback, array_merge(array($event), $listener_params));
