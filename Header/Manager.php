@@ -30,6 +30,11 @@ class Manager
 	protected $headers = array();
 
 	/**
+	 * @var integer - The HTTP status header to use for the current page.
+	 */
+	protected $http_status = 200;
+
+	/**
 	 * @var boolean - Has the header manager sent its own headers?
 	 */
 	protected $headers_sent = false;
@@ -130,6 +135,69 @@ class Manager
 	}
 
 	/**
+	 * Get the current HTTP status header code.
+	 * @return integer - The current HTTP status code.
+	 */
+	public function getHTTPStatus()
+	{
+		return $this->http_status;
+	}
+
+	/**
+	 * Get the current HTTP status header code.
+	 * @return string - The current HTTP status code in the full HTTP header format.
+	 *
+	 * @throw \LogicException
+	 */
+	public function getHTTPStatusHeader()
+	{
+		$server_errors = array(
+			200 => 'OK',
+			201 => 'Created',
+			202 => 'Accepted',
+			204 => 'No Content',
+			205 => 'Reset Content',
+			300 => 'Multiple Choices',
+			301 => 'Moved Permanently',
+			302 => 'Found', // Moved Temporarily
+			303 => 'See Other',
+			304 => 'Not Modified',
+			307 => 'Temporary Redirect',
+			400 => 'Bad Request',
+			401 => 'Unauthorized',
+			403 => 'Forbidden',
+			404 => 'Not Found',
+			406 => 'Not Acceptable',
+			409 => 'Conflict',
+			410 => 'Gone',
+			500 => 'Internal Server Error',
+			501 => 'Not Implemented',
+			502 => 'Bad Gateway',
+			503 => 'Service Unavailable',
+		);
+
+		// Make sure we know what to use for this HTTP status.
+		if(!isset($server_errors[$this->http_status]))
+		{
+			throw new \LogicException(sprintf('Unrecognized HTTP status code "%d"', $this->http_status));
+		}
+
+		return sprintf('HTTP/1.0 %1$d %2$s', $this->http_status, $server_errors[$this->http_status]);
+	}
+
+	/**
+	 * Set the current HTTP status code.
+	 * @param integer $http_status - Set the HTTP status code.
+	 * @return \OpenFlame\Framework\Header\Manager - Provides a fluent interface.
+	 */
+	public function setHTTPStatus($http_status)
+	{
+		$this->http_status = $http_status;
+
+		return $this;
+	}
+
+	/**
 	 * Have the headers stored by the manager been sent?
 	 * @param boolean $internal_headers_only - Specify false to see if *any* headers have been sent at all.
 	 * @return boolean - Have the headers been sent?
@@ -174,6 +242,7 @@ class Manager
 	 */
 	public function sendHeaders()
 	{
+		header($this->getHTTPStatusHeader());
 		foreach($this->headers as $name => $value)
 		{
 			header(sprintf('%1$s: %2$s', $name, $value), true);
