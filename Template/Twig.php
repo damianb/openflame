@@ -62,7 +62,7 @@ class Twig
 		$twig_cache_path = rtrim($twig_cache_path, '/') . '/';
 		if(!is_dir($twig_cache_path))
 		{
-			throw new \InvalidArgumentException(sprintf('The specified Twig cache directory "%1$s" is invalid and either does not exist or is not a usable directory.'), $twig_cache_path);
+			throw new \InvalidArgumentException(sprintf('The specified Twig cache directory "%1$s" is invalid and either does not exist or is not a usable directory.', $twig_cache_path));
 		}
 
 		$this->twig_cache_path = $twig_cache_path;
