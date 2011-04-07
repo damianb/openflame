@@ -26,4 +26,5 @@ interface SubmoduleInterface
 {
 	public static function newInstance();
 	public function setManager(\OpenFlame\Framework\Header\Manager $manager);
+	public function injectHeaders();
 }
