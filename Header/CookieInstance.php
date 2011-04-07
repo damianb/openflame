@@ -24,10 +24,19 @@ if(!defined('OpenFlame\\ROOT_PATH')) exit;
  */
 class CookieInstance
 {
+	/**
+	 * @var string - The name for this cookie instance
+	 */
 	protected $cookie_name = '';
 
+	/**
+	 * @var string - The value for this cookie instance
+	 */
 	protected $cookie_value = '';
 
+	/**
+	 * @var int - The time in seconds until this cookie should expire
+	 */
 	protected $expire_time = -1;
 
 	/**
@@ -35,16 +44,30 @@ class CookieInstance
 	 */
 	protected $cookie_manager;
 
+	/**
+	 * Constructor
+	 * @param \OpenFlame\Framework\Header\Submodule\Cookie $cookie_manager - The cookie manager submodule.
+	 * @return void
+	 */
 	final protected function __construct(\OpenFlame\Framework\Header\Submodule\Cookie $cookie_manager)
 	{
 		$this->cookie_manager = $cookie_manager;
 	}
 
+	/**
+	 * Get a new instance of the cookie instance object
+	 * @param \OpenFlame\Framework\Header\Submodule\Cookie $cookie_manager - The cookie manager submodule.
+	 * @return \OpenFlame\Framework\Header\CookieInstance - The newly created cookie instance
+	 */
 	final public static function newInstance(\OpenFlame\Framework\Header\Submodule\Cookie $cookie_manager)
 	{
 		return new static($cookie_manager);
 	}
 
+	/**
+	 * Get the UNIX time that this cookie instance will expire
+	 * @return integer - The UNIX timestamp of when this cookie will expire
+	 */
 	public function getExpireTime()
 	{
 		if($this->expire_time < 0)
@@ -53,12 +76,16 @@ class CookieInstance
 		}
 		else
 		{
-			$expire_time = $this->expire_time;
+			$expire_time = $this->cookie_manager->getNowTime() + $this->expire_time;
 		}
 
 		return $expire_time;
 	}
 
+	/**
+	 * Get the RFC-compliant time that this cookie instance will expire
+	 * @return string - The RFC-compliant timestamp of when this cookie will expire
+	 */
 	public function getRFCExpireTime()
 	{
 		if($this->expire_time < 0)
@@ -67,24 +94,38 @@ class CookieInstance
 		}
 		else
 		{
-			$expire_time = $this->expire_time;
+			$expire_time = $this->cookie_manager->getNowTime() + $this->expire_time;
 		}
 
 		return gmdate('D, d-M-Y H:i:s \\G\\M\\T', $expire_time);
 	}
 
+	/**
+	 * Set how many seconds into the future this cookie will expire.
+	 * @param integer $expire_time - The time, in seconds, of how far into the future this cookie will expire.
+	 * @return \OpenFlame\Framework\Header\CookieInstance - Provides a fluent interface.
+	 */
 	public function setExpireTime($expire_time = -1)
 	{
-		$this->expire_time = $expire_time;
+		$this->expire_time = (int) $expire_time;
 
 		return $this;
 	}
 
+	/**
+	 * Get the name for this cookie instance.
+	 * @return string - The name for the cookie instance.
+	 */
 	public function getCookieName()
 	{
 		return $this->cookie_name;
 	}
 
+	/**
+	 * Set the cookie name for this instance.
+	 * @param string $cookie_name - The name to set for this cookie instance.
+	 * @return \OpenFlame\Framework\Header\CookieInstance - Provides a fluent interface.
+	 */
 	public function setCookieName($cookie_name)
 	{
 		/**
@@ -92,24 +133,39 @@ class CookieInstance
 		 * It may not apply to us since we set cookies via header() instead of setcookie(), but better safe than sorry.
 		 * @see: http://www.php.net/manual/en/function.setcookie.php#99845
 		 */
-		$cookie_name = str_replace('.', '_', $cookie_name);
+		$cookie_name = str_replace('.', '_', (string) $cookie_name);
 		$this->cookie_name = $cookie_name;
 
 		return $this;
 	}
 
+	/**
+	 * Get the value attached to this cookie instance
+	 * @return string - The value attached to this cookie instance.
+	 */
 	public function getCookieValue()
 	{
 		return $this->cookie_value;
 	}
 
+	/**
+	 * Attach a value to this cookie instance.
+	 * @param string $cookie_value - The value to attach to this cookie instance.
+	 * @return \OpenFlame\Framework\Header\CookieInstance - Provides a fluent interface.
+	 */
 	public function setCookieValue($cookie_value)
 	{
-		$this->cookie_value = $cookie_value;
+		$this->cookie_value = (string) $cookie_value;
 
 		return $this;
 	}
 
+	/**
+	 * Get the full header string of this cookie's data.
+	 * @return string - The header string to send for this cookie.
+	 *
+	 * @throws \LogicException
+	 */
 	public function getFullCookieString()
 	{
 		if(empty($this->cookie_name))
