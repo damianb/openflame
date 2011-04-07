@@ -78,7 +78,7 @@ class Manager
 	 * @param string $header_name - The name of the header to grab.
 	 * @return mixed - An array containing the name and value of the header obtained, or NULL if it doesn't exist.
 	 */
-	public function getHeader($header_name)
+	public function getHeaders($header_name)
 	{
 		if(isset($this->headers[(string) $header_name]))
 		{
@@ -91,33 +91,19 @@ class Manager
 	}
 
 	/**
-	 * Get a specific header as a string (in the format header() would expect).
-	 * @param string $header_name - The name of the header to grab.
-	 * @return mixed - The header string in the format header() would expect, or NULL if it doesn't exist.
-	 */
-	public function getHeaderAsString($header_name)
-	{
-		if(isset($this->headers[(string) $header_name]))
-		{
-			return sprintf('%1$s: %2$s', $header_name, $this->headers[(string) $header_name]);
-		}
-		else
-		{
-			return NULL;
-		}
-	}
-
-	/**
 	 * Set a header (or override its previous value)
 	 * @param string $header_name - The name of the header to set.
 	 * @param string $header_value - The value to set for the header.
 	 * @return \OpenFlame\Framework\Header\Manager - Provides a fluent interface.
-	 *
-	 * @todo see if allowing duplicate headers to be sent should be allowed
 	 */
 	public function setHeader($header_name, $header_value)
 	{
-		$this->headers[(string) $header_name] = (string) $header_value;
+		if(!isset($this->headers[(string) $header_name]))
+		{
+			$this->headers[(string) $header_name] = array();
+		}
+
+		$this->headers[(string) $header_name][] = (string) $header_value;
 
 		return $this;
 	}
@@ -229,9 +215,13 @@ class Manager
 	 */
 	public function getHeadersDumpAsString()
 	{
-		foreach($this->headers as $name => $value)
+		$headers = array();
+		foreach($this->headers as $header_name => $header_array)
 		{
-			$headers[] = $this->getHeaderAsString($name);
+			foreach($header_array as $header)
+			{
+				$headers[] = sprintf('%1$s: %2$s', $header_name, $header);
+			}
 		}
 		return implode("\n", $headers);
 	}
@@ -243,9 +233,12 @@ class Manager
 	public function sendHeaders()
 	{
 		header($this->getHTTPStatusHeader());
-		foreach($this->headers as $name => $value)
+		foreach($this->headers as $header_name => $header_array)
 		{
-			header(sprintf('%1$s: %2$s', $name, $value), true);
+			foreach($header_array as $header)
+			{
+				header(sprintf('%1$s: %2$s', $header_name, $header), false);
+			}
 		}
 		$this->headers_sent = true;
 
