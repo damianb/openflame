@@ -24,25 +24,57 @@ if(!defined('OpenFlame\\ROOT_PATH')) exit;
  */
 class Twig
 {
+	/**
+	 * @var string - The path to the root directory of twig's include files.
+	 */
 	protected $twig_root_path = '';
 
+	/**
+	 * @var string - The path to the cache directory that we want to use for Twig.
+	 */
 	protected $twig_cache_path = '';
 
+	/**
+	 * @var array - The array of template paths to load from.
+	 */
 	protected $template_paths = array();
 
+	/**
+	 * @var array - The options to set when instantiating the twig environment object
+	 */
 	protected $twig_environment_options = array();
 
+	/**
+	 * @var \Twig_Environment - The twig environment object.
+	 */
 	protected $twig_loader;
 
+	/**
+	 * @var \Twig_Environment - The twig environment object.
+	 */
 	protected $twig_environment;
 
+	/**
+	 * @var boolean - Has twig been initialized?
+	 */
 	protected $twig_launched = false;
 
+	/**
+	 * Get the current twig root path
+	 * @return string - The current twig root path in use.
+	 */
 	public function getTwigRootPath()
 	{
 		return $this->twig_root_path;
 	}
 
+	/**
+	 * Set the root directory for Twig's include files.
+	 * @param string $twig_root_path - The root directory that contains Twig's include files (should directly contain the twig autoloader).
+	 * @return \OpenFlame\Framework\Template\Twig - Provides a fluent interface.
+	 *
+	 * @throws \InvalidArgumentException
+	 */
 	public function setTwigRootPath($twig_root_path)
 	{
 		$twig_root_path = rtrim($twig_root_path, '/') . '/';
@@ -56,11 +88,22 @@ class Twig
 		return $this;
 	}
 
+	/**
+	 * Get the current twig cache path.
+	 * @param string - The current twig cache path in use.
+	 */
 	public function getTwigCachePath()
 	{
 		return $this->twig_cache_path;
 	}
 
+	/**
+	 * Set the cache path to use with twig.
+	 * @param string $twig_cache_path - The directory to use as the twig cache path.
+	 * @return \OpenFlame\Framework\Template\Twig - Provides a fluent interface.
+	 *
+	 * @throws \InvalidArgumentException
+	 */
 	public function setTwigCachePath($twig_cache_path)
 	{
 		$twig_cache_path = rtrim($twig_cache_path, '/') . '/';
@@ -74,23 +117,38 @@ class Twig
 		return $this;
 	}
 
+	/**
+	 * Get the full array of currently set twig options.
+	 * @return array - The array of twig options that are currently in use.
+	 */
 	public function getTwigOptions()
 	{
 		return $this->twig_environment_options;
 	}
 
+	/**
+	 * Get a specific twig option's value.
+	 * @param string $option - The option to grab.
+	 * @return mixed - The option's value, or NULL if no such option.
+	 */
 	public function getTwigOption($option)
 	{
-		if(!isset($this->twig_environment_options[$option]))
+		if(!isset($this->twig_environment_options[(string) $option]))
 		{
 			return NULL;
 		}
 		else
 		{
-			return $this->twig_environment_options[$option];
+			return $this->twig_environment_options[(string) $option];
 		}
 	}
 
+	/**
+	 * Set a twig environment option (only use before calling initTwig())
+	 * @param string $option - The name of the option to set.
+	 * @param mixed $value - The value to set for the option.
+	 * @return \OpenFlame\Framework\Template\Twig - Provides a fluent interface.
+	 */
 	public function setTwigOption($option, $value)
 	{
 		$this->twig_environment_options[(string) $option] = $value;
@@ -98,11 +156,20 @@ class Twig
 		return $this;
 	}
 
+	/**
+	 * Get the current array of template paths that we are using.
+	 * @return array - The array of template paths that we will try to load from.
+	 */
 	public function getTemplatePaths()
 	{
 		return $this->template_paths;
 	}
 
+	/**
+	 * Set a new template path for use with Twig.
+	 * @param string $template_path - The template path to add.
+	 * @return \OpenFlame\Framework\Template\Twig - Provides a fluent interface.
+	 */
 	public function setTemplatePath($template_path)
 	{
 		$this->template_paths[] = $template_path;
@@ -113,17 +180,24 @@ class Twig
 		return $this;
 	}
 
+	/**
+	 * Update the template paths if twig's been launched.
+	 * @return \OpenFlame\Framework\Template\Twig - Provides a fluent interface.
+	 */
 	public function updateTemplatePaths()
 	{
-		if($this->hasTwigLaunched())
+		if($this->twig_launched)
 		{
-			$loader = Core::getObject('twig.loader');
-			$loader->setPaths($this->getTemplatePaths());
+			$this->twig_loader->setPaths($this->getTemplatePaths());
 		}
 
 		return $this;
 	}
 
+	/**
+	 * Check to see if we have init'd twig yet
+	 * @return boolean - Has twig been init'd?
+	 */
 	public function hasTwigLaunched()
 	{
 		return (bool) $this->twig_launched;
