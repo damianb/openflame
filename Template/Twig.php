@@ -32,6 +32,10 @@ class Twig
 
 	protected $twig_environment_options = array();
 
+	protected $twig_loader;
+
+	protected $twig_environment;
+
 	protected $twig_launched = false;
 
 	public function getTwigRootPath()
@@ -125,16 +129,38 @@ class Twig
 		return (bool) $this->twig_launched;
 	}
 
+	/**
+	 * Get the twig filesystem loader
+	 * @return mixed - NULL if twig filesystem loader isn't present, or object of class \Twig_Loader_Filesystem if twig has been init'd.
+	 */
+	public function getTwigLoader()
+	{
+		return $this->twig_loader;
+	}
+
+	/**
+	 * Get the twig environment object
+	 * @return mixed - NULL if twig environment object isn't present, or object of class \Twig_Environment if twig has been init'd.
+	 */
+	public function getTwigEnvironment()
+	{
+		return $this->twig_environment;
+	}
+
+	/**
+	 * Init twig with the provided settings.
+	 * @return \Twig_Environment - The twig environment object.
+	 */
 	public function initTwig()
 	{
 		require $this->getTwigRootPath() . 'Autoloader.php';
 		\Twig_Autoloader::register();
 
-		$loader = Core::setObject('twig.loader', new \Twig_Loader_Filesystem($this->getTemplatePaths()));
-		$twig = Core::setObject('twig.environment', new \Twig_Environment($loader, array_merge(array('cache' => $this->getTwigCachePath()), $this->getTwigOptions())));
+		$this->twig_loader = Core::setObject('twig.loader', new \Twig_Loader_Filesystem($this->getTemplatePaths()));
+		$this->twig_environment = Core::setObject('twig.environment', new \Twig_Environment($this->twig_loader, array_merge(array('cache' => $this->getTwigCachePath()), $this->getTwigOptions())));
 
 		$this->twig_launched = true;
 
-		return $twig;
+		return $this->twig_environment;
 	}
 }
