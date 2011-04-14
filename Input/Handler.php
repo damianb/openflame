@@ -61,7 +61,11 @@ class Handler
 	{
 		list($type, $field) = array_pad(explode('::', $name, 2), -2, '');
 
-		$instance = \OpenFlame\Framework\Input\Instance::newInstance()->setHandler($this)->setType($type)->setName($field);
+		$instance = \OpenFlame\Framework\Input\Instance::newInstance()
+			->setHandler($this)
+			->setType($type)
+			->setName($field);
+
 		if($this->useJuggling())
 			$instance->setJuggledName($this->buildJuggledName($field));
 
@@ -80,9 +84,9 @@ class Handler
 		if(isset($this->juggle_hash_cache[$name]))
 			return $this->juggle_hash_cache[$name];
 
-		// @note may want to do a substr or trimming of some sort on the hash to save on string length
-		$hash = $name . '_' . hash('md5', $name . $this->getSessionJuggleSalt() . $this->getGlobalJuggleSalt());
+		$hash = $name[0] . '_' . hash('md5', $name . $this->getSessionJuggleSalt() . $this->getGlobalJuggleSalt());
 		$this->juggle_hash_cache[$name] = $hash;
+
 		return $hash;
 	}
 
@@ -104,6 +108,7 @@ class Handler
 	{
 		$this->juggle_hash_cache = array(); // reset the hash cache as all juggled field names cached are no longer valid
 		$this->session_juggle_salt = $salt;
+
 		return $this;
 	}
 
@@ -125,6 +130,7 @@ class Handler
 	{
 		$this->juggle_hash_cache = array(); // reset the hash cache as all juggled field names cached are no longer valid
 		$this->global_juggle_salt = $salt;
+
 		return $this;
 	}
 
@@ -135,6 +141,7 @@ class Handler
 	public function enableFieldJuggling()
 	{
 		$this->enable_field_juggling = true;
+
 		return $this;
 	}
 
@@ -145,6 +152,7 @@ class Handler
 	public function disableFieldJuggling()
 	{
 		$this->enable_field_juggling = false;
+
 		return $this;
 	}
 
@@ -160,13 +168,20 @@ class Handler
 	/**
 	 * Grabs a validator callback to use for our input instances.
 	 * @param string $type - The type of validator to grab.
-	 * @return mixed - Returns either a callback for the validator function we want, or returns boolean false if no validator is set.
+	 * @return mixed - Returns either a callback for the validator function we want, or returns NULL if no validator is set.
 	 */
 	public function getValidator($type)
 	{
 		if(!isset($this->validators[(string) $type]))
-			return false;
-		return $this->validators[(string) $type];
+		{
+			return NULL;
+		}
+		else
+		{
+			return $this->validators[(string) $type];
+		}
+
+
 	}
 
 	/**
@@ -178,6 +193,7 @@ class Handler
 	public function registerValidator($type, $callback)
 	{
 		$this->validators[(string) $type] = $callback;
+
 		return $this;
 	}
 }
