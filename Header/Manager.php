@@ -52,7 +52,7 @@ class Manager
 	{
 		// grab all current headers
 		$headers = headers_list();
-		for($i = 0, $size = sizeof($headers); $i <= $size; $i++)
+		for($i = 0, $size = sizeof($headers); $i < $size; $i++)
 		{
 			// store the current headers
 			list($header_name, $header_value) = explode(': ', $headers[$i], 2);
