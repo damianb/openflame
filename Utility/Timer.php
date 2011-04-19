@@ -15,8 +15,8 @@ use OpenFlame\Framework\Core;
 if(!defined('OpenFlame\\ROOT_PATH')) exit;
 
 /**
- * OpenFlame Web Framework - JSON handling class,
- * 		OOP interface for use with JSON files/strings.
+ * OpenFlame Web Framework - Benchmarking class,
+ * 		Utility for tracking execution time throughout page execution.
  *
  *
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
