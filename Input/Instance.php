@@ -366,4 +366,15 @@ class Instance
 
 		return (bool) call_user_func($validator, $this->getClean());
 	}
+
+	/**
+	 * Shortcut for getting the sanitized value for this input's var
+	 * @return mixed - The cleaned value of the var.
+	 */
+	public function __toString()
+	{
+		if(!$this->processed)
+			$this->processVar();
+		return $this->clean_value;
+	}
 }
