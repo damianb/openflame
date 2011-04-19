@@ -91,10 +91,17 @@ class Dispatcher
 			for($i = 0, $size = sizeof($priority_thread); $i <= $size - 1; $i++)
 			{
 				list($listener_callback, $listener_params) = $priority_thread[$i];
-				$return = call_user_func_array($listener_callback, array_merge(array($event), $listener_params));
-				if($return !== NULL)
+				try
 				{
-					$event->setReturn($return);
+					$return = call_user_func_array($listener_callback, array_merge(array($event), $listener_params));
+					if($return !== NULL)
+					{
+						$event->setReturn($return);
+					}
+				}
+				catch(\Exception $e)
+				{
+					throw new \RuntimeException(sprintf('Exception encountered in event listener assigned to event "%1$s"', $event->getName()), 0, $e);
 				}
 			}
 		}
@@ -121,10 +128,17 @@ class Dispatcher
 			for($i = 0, $size = sizeof($priority_thread); $i <= $size - 1; $i++)
 			{
 				list($listener_callback, $listener_params) = $priority_thread[$i];
-				$return = call_user_func_array($listener_callback, array_merge(array($event), $listener_params));
-				if($return !== NULL)
+				try
 				{
-					$event->setReturn($return);
+					$return = call_user_func_array($listener_callback, array_merge(array($event), $listener_params));
+					if($return !== NULL)
+					{
+						$event->setReturn($return);
+					}
+				}
+				catch(\Exception $e)
+				{
+					throw new \RuntimeException(sprintf('Exception encountered in event listener assigned to event "%1$s"', $event->getName()), 0, $e);
 				}
 
 				if($event->wasBreakTriggered())
