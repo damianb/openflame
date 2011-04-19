@@ -55,9 +55,10 @@ class Handler
 	 *      To disable field juggling per individual instance, use $instance->disableFieldJuggling();
 	 * @param string $name - The name of the input to grab (and the type of input to get, type defaults to REQUEST)
 	 *                      Format must be "TYPE::NAME", examples: POST::username, GET::sid, COOKIE::cookiename, etc
+	 * @param mixed $default - The default value to set for this input, as a shortcut.
 	 * @return \OpenFlame\Framework\Input\Instance - An input instance to manipulate, set on fire, etc.
 	 */
-	public function getInput($name)
+	public function getInput($name, $default = NULL)
 	{
 		list($type, $field) = array_pad(explode('::', $name, 2), -2, '');
 
@@ -66,8 +67,15 @@ class Handler
 			->setType($type)
 			->setName($field);
 
+		if($default !== NULL)
+		{
+			$instance->setDefault($default);
+		}
+
 		if($this->useJuggling())
+		{
 			$instance->setJuggledName($this->buildJuggledName($field));
+		}
 
 		return $instance;
 	}
