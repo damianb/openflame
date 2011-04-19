@@ -60,7 +60,7 @@ class Timer
 		}
 		$this->time_markers['_' . (string) $mark_name][] = $time;
 
-		return round($this->start - $time, 5);
+		return round($time - $this->start, 7);
 	}
 
 	/**
@@ -79,7 +79,7 @@ class Timer
 	 */
 	public function getLastMark($mark_name)
 	{
-		return round($this->start - end($this->time_markers['_' . (string) $mark_name]), 5);
+		return round(end($this->time_markers['_' . (string) $mark_name]) - $this->start, 7);
 	}
 
 	/**
