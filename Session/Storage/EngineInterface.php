@@ -24,15 +24,44 @@ if(!defined('OpenFlame\\ROOT_PATH')) exit;
  */
 interface EngineInterface
 {
-	public function init($_sid, $_uid, $_al);
-	public function setCookieName();
-	public function setFingerprint();
-	public function setRandSeed();
-	public function getSessionExpiry();
-	public function getData();
-	public function getFingerprint();
-	public function getLastClickTime();
-	public function getRandSeed();
-	public function checkAutoLogin();
-	public function gc();
+	/*
+	 * Init
+	 *
+	 * Called when the session object is created but before the session has started
+	 * @param array - key, value pairs of config options and their values; implemented per driver. 
+	 * @return void
+	 */
+	public function init($options);
+
+	/*
+	 * Load Session
+	 *
+	 * Load the session for use by the driver
+	 * @return bool - True if a session was found, false if not
+	 */
+	public function loadSession($sid);
+
+	/*
+	 * New Session
+	 *
+	 * Called when a new session needs to be created
+	 * @param bool - Clear the session data? Useful to set true when a session does not validate
+	 * @return string - New SID
+	 */
+	public function newSession($clearData = false);
+
+	/*
+	 * Load Session Data
+	 *
+	 * Get the current session data
+	 * @return array - complex array of identical structure to one being stored
+	 */
+	public function loadData();
+
+	/*
+	 * Store Session Data
+	 *
+	 * @param array - complex array
+	 */
+	public function storeData($data);
 }
