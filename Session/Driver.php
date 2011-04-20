@@ -34,10 +34,15 @@ class Driver
 	 */
 	public $data = array();
 
-	/*
-	 * 
+	/**
+	 * Sets the session storage engine to be used
+	 * @param \OpenFlame\Framework\Session\Storage\EngineInterface - The Session engine to use.
+	 * @return \OpenFlame\Framework\Session\Driver - Provides a fluent interface.
 	 */
-	public static function getInstance()
+	public function setEngine(\OpenFlame\Framework\Session\Storage\EngineInterface $engine)
 	{
+		$this->engine = $engine;
+
+		return $this;
 	}
 }
