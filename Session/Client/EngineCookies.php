@@ -24,6 +24,19 @@ if(!defined('OpenFlame\\ROOT_PATH')) exit;
  */
 class EngineCookies implements EngineInterface
 {
+	/*
+	 * Holds all configuration options
+	 */
+	protected $options = array();
+
+	/**
+	 * Set options
+	 * @param array - Key/value pair array for all client-id level config options
+	 */
+	public function setOptions($options)
+	{
+	}
+
 	/**
 	 * Get params as they were accepted from the client
 	 * @return array - Structure: 'sid' => '', 'uid' => '', 'autologinkey' => ''
