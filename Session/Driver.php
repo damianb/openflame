@@ -35,24 +35,24 @@ class Driver
 	protected $clientEngine;
 
 	/*
-	 * @var session data
-	 */
-	public $data = array();
-
-	/*
 	 *  @var session id
 	 */
-	public $sid = '';
+	protected $sid = '';
 
 	/*
 	 *  @var user ID
 	 */
-	public $uid = '';
+	protected $uid = '';
 
 	/*
 	 *  @var autlogin key
 	 */
-	public $autologinKey = '';
+	protected $autologinKey = '';
+
+	/*
+	 * @var session data
+	 */
+	public $data = array();
 
 	/**
 	 * Sets the session storage engine to be used
@@ -97,6 +97,29 @@ class Driver
 	 */
 	public function start()
 	{
+		// Grab the data from our client id
+		$params = $this->clientEngine->getParams();
+		$this->sid			= $params['sid'];
+		$this->uid			= $params['uid'];
+		$this->autologinKey = $params['autologinkey'];
+
+		// Our flag to make the logic flow a bit nicer
+		$valid = false;
+
+		// Let's see if they have a session first
+		if ($this->storageEngine->loadSession($this->sid))
+		{
+			// Validate it / do autologin process
+		}
+
+		// If we do not have a valid session, create a new one
+		if (!$valid)
+		{
+			$this->storageEngine->newSession(true);
+
+			// @TODO event for default data
+		}
+
 		$this->clientEngine->onStart();
 	}
 
@@ -111,6 +134,8 @@ class Driver
 	 */
 	public function login($username, $password, $autologin = false, $flags = array())
 	{
+		// @TODO event for checking if un/pw/al is good
+
 		$this->clientEngine->onLogin();
 	}
 
@@ -120,6 +145,10 @@ class Driver
 	 */
 	public function kill()
 	{
+		$this->storageEngine->newSession(true);
+
+		// @TODO event for default data
+
 		$this->clientEngine->onKill();
 	}
 }
