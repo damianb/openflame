@@ -210,28 +210,17 @@ class Manager
 	}
 
 	/**
-	 * Get the full string of headers that are being stored (individual entries joined by unix newline)
-	 * @return string - The string containing all headers (represented as strings) that are currently being stored.
-	 */
-	public function getHeadersDumpAsString()
-	{
-		$headers = array();
-		foreach($this->headers as $header_name => $header_array)
-		{
-			foreach($header_array as $header)
-			{
-				$headers[] = sprintf('%1$s: %2$s', $header_name, $header);
-			}
-		}
-		return implode("\n", $headers);
-	}
-
-	/**
 	 * Send all of the currently stored headers.
 	 * @return \OpenFlame\Framework\Header\Manager - Provides a fluent interface.
 	 */
 	public function sendHeaders()
 	{
+		// Get the submodules to inject their headers
+		foreach($this->submodules as $submodule)
+		{
+			$submodule->injectHeaders();
+		}
+
 		header($this->getHTTPStatusHeader());
 		foreach($this->headers as $header_name => $header_array)
 		{
