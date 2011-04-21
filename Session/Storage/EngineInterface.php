@@ -54,14 +54,14 @@ interface EngineInterface
 	 * Load Session Data
 	 *
 	 * Get the current session data
-	 * @return array - complex array of identical structure to one being stored
+	 * @return array - arbitrary array of identical structure to one being stored
 	 */
 	public function loadData();
 
 	/*
 	 * Store Session Data
 	 *
-	 * @param array - complex array
+	 * @param array - arbitrary array
 	 */
 	public function storeData($data);
 }
