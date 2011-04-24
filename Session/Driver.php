@@ -11,6 +11,7 @@
 
 namespace OpenFlame\Framework\Session;
 use OpenFlame\Framework\Core;
+use \OpenFlame\Framework\Event\Instance as Event;
 
 if(!defined('OpenFlame\\ROOT_PATH')) exit;
 
@@ -48,6 +49,31 @@ class Driver
 	 *  @var autlogin key
 	 */
 	protected $autologinKey = '';
+
+	/*
+	 *	@var fingerprint
+	 */
+	protected $fingerprint = '';
+
+	/*
+	 *	@var expireTime
+	 */
+	protected $expireTime = 0;
+
+	/*
+	 *	@var options
+	 */
+	protected $options = array();
+
+	/*
+	 * @var IP Partial 
+	 */
+	protected $ipAddrPartial = array();
+
+	/*
+	 * @var IP Address
+	 */
+	public $ipAddr = array();
 
 	/*
 	 * @var session data
@@ -88,6 +114,9 @@ class Driver
 		$this->storageEngine->init($options);
 		$this->clientEngine->setOptions($options);
 
+		$this->options['expiretime'] = isset($options['expiretime']) ? (int) $options['expiretime'] : 3600;
+		$this->options['ipvallevel'] = ($options['ipvallevel'] > 0 && $options['ipvallevel'] < 5) ? (int) $options['ipvallevel'] : 0;
+
 		return $this;
 	}
 
@@ -97,6 +126,8 @@ class Driver
 	 */
 	public function start()
 	{
+		$now = time();
+
 		// Grab the data from our client id
 		$params = $this->clientEngine->getParams();
 		$this->sid			= $params['sid'];
@@ -109,18 +140,67 @@ class Driver
 		// Let's see if they have a session first
 		if ($this->storageEngine->loadSession($this->sid))
 		{
+			list($data, $fingerprint, $exp, $uid, $autologinKey) = $this->storageEngine->loadData();
+	
 			// Validate it / do autologin process
+			if ($now < $exp)
+			{
+				$valid = true;
+			}
+			else
+			{
+				// Session is OVER, check for autologin
+				if	($this->autologinKey == $autologinKey && $uid == $this->uid)
+				{
+					$this->storageEngine->newSession(true);
+					$valid = true;
+				}
+			}
+		}
+
+		// Valid up to this point? not for long
+		if($valid)
+		{
+			$this->fingerprint = makeFingerprint();
+
+			if($fingerprint == $this->fingerprint)
+			{
+				$dispatcher = Core::getObject('dispatcher');
+	
+				$event = $dispatcher->triggerUntilBreak(\OpenFlame\Framework\Event\Instance::newEvent('session.get')
+					->setData(array(
+						'userid'	=> $this->uid,
+					))
+				);
+
+				if($event->countReturns())
+				{
+					throw new LogicException("Too many responses to the 'session.get' event.");
+				}
+
+				$this->data = array_merge($event->getReturns(), $this->data);
+			}
+			else
+			{
+				$valid = false;
+			}
 		}
 
 		// If we do not have a valid session, create a new one
 		if (!$valid)
 		{
 			$this->storageEngine->newSession(true);
-
-			// @TODO event for default data
+			$this->defaultData();
 		}
 
-		$this->clientEngine->onStart();
+		// Make our client engine aware
+		$this->clientEngine->setParams(array(
+			'sid'			=> $this->sid,
+			'uid'			=> $this->uid,
+			'autologinkey'	=> $this->autologinKey,
+		));
+
+		$this->expireTime = $now + $options['expiretime'];
 	}
 
 	/**
@@ -134,9 +214,37 @@ class Driver
 	 */
 	public function login($username, $password, $autologin = false, $flags = array())
 	{
-		// @TODO event for checking if un/pw/al is good
+		$dispatcher = Core::getObject('dispatcher');
 
-		$this->clientEngine->onLogin();
+		$event = $dispatcher->triggerUntilBreak(\OpenFlame\Framework\Event\Instance::newEvent('session.login')
+			->setData(array(
+				'username'	=> $username,
+				'password'	=> $password,
+				'autologin'	=> (bool) $autologin,
+				'flags'		=> $flags,
+			))
+		);
+
+		if($event->countReturns())
+		{
+			throw new LogicException("Too many responses to the 'session.login' event.");
+		}
+
+		$result = $event->getReturns();
+
+		if($result['successful'])
+		{
+			$this->storageEngine->newSession(true);
+			$this->data = $result['data'];
+			$this->autologinKey = $result['autologinKey'];
+			$this->uid = $result['uid'];
+		}
+
+		$this->clientEngine->setParams(array(
+			'sid'			=> $this->sid,
+			'uid'			=> $this->uid,
+			'autologinkey'	=> $this->autologinKey,
+		));
 	}
 
 	/**
@@ -145,10 +253,59 @@ class Driver
 	 */
 	public function kill()
 	{
+		$dispatcher = Core::getObject('dispatcher');
 		$this->storageEngine->newSession(true);
 
-		// @TODO event for default data
+		$this->defaultData();
 
-		$this->clientEngine->onKill();
+		$this->clientEngine->setParams(array(
+			'sid'			=> $this->sid,
+			'uid'			=> '',
+			'autologinkey'	=> '',
+		));
+	}
+
+	/**
+	 * Destructor to write the session data where it needs to go
+	 * @return void
+	 */
+	public function __destruct()
+	{
+		$this->storageEngine->storeData(array(
+			$this->data, 
+			$this->fingerprint, 
+			$this->expireTime, 
+			$this->uid, 
+			$this->autologinKey
+		));
+	}
+
+	/**
+	 * Create fingerprint
+	 * @return string
+	 */
+	protected function makeFingerprint()
+	{
+		// MD5 is faster, not going to have a sha1 running every page load
+		hash('md5', $this->ipAddrPartial . $_SERVER['HTTP_USERAGENT']);
+	}
+
+	/*
+	 * Fill $this->data with application-specific values
+	 * @return void
+	 * @throws LogicException
+	 */
+	protected function defaultData()
+	{
+		$dispatcher = Core::getObject('dispatcher');
+
+		$event = $dispatcher->triggerUntilBreak(\OpenFlame\Framework\Event\Instance::newEvent('session.default');
+
+		if($event->countReturns())
+		{
+			throw new LogicException("Too many responses to the 'session.default' event.");
+		}
+
+		$this->data = $event->getReturns();
 	}
 }
