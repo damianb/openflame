@@ -59,7 +59,7 @@ class Handler
 	 */
 	final public static function catcher(\Exception $e)
 	{
-		self::$exception = $e;
+		self::$exception = ($e->getPrevious()) ? $e->getPrevious() : $e;
 		if(defined('OpenFlame\\Framework\\DEBUG') || self::$show_throw_info)
 		{
 			self::displayException();
