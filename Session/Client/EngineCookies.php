@@ -53,28 +53,4 @@ class EngineCookies implements EngineInterface
 	public function setParams($params)
 	{
 	}
-
-	/**
-	 * Code to run at the end of the start() method in the driver
-	 * @return void
-	 */
-	public function onStart()
-	{
-	}
-
-	/**
-	 * Code to run at the end of the login() method in the driver
-	 * @return void
-	 */
-	public function onLogin()
-	{
-	}
-
-	/**
-	 * Code to run at the end of the kill() method in the driver
-	 * @return void
-	 */
-	public function onKill()
-	{
-	}
 }
