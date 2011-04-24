@@ -291,11 +291,17 @@ class RouteInstance
 		{
 			// We need to load the matches into the request data property
 			$map = $this->getRouteMap();
-			foreach($matches as $key => $match)
+			// Dump the first entry in this.
+			array_shift($matches);
+			for($i = 0, $size = sizeof($map); $i <= $size; $i++)
 			{
+				if($map[$i]['type'] == 'static')
+				{
+					continue;
+				}
 				if(isset($map[$key]))
 				{
-					$this->setRequestDataPoint($map[$key]['entry'], $match);
+					$this->setRequestDataPoint($map[$key]['entry'], $matches[$i]);
 				}
 			}
 
