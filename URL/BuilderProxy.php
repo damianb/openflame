@@ -42,6 +42,6 @@ class BuilderProxy
 			return NULL;
 		}
 
-		return '/' . ltrim($this->builder->getBaseURL(), '/') . '/' . ltrim(vsprintf($pattern, $arguments), '/');
+		return '/' . $this->builder->getBaseURL() . '/' . vsprintf($pattern, $arguments);
 	}
 }
