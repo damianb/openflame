@@ -44,7 +44,7 @@ class Builder
 	 */
 	public function setBaseURL($base_url)
 	{
-		$this->base_url = ltrim(rtrim($base_url, '/'), '/'); // We don't want a leading or trailing slash here.
+		$this->base_url = '/' . ltrim(rtrim($base_url, '/'), '/'); // We don't want a trailing slash here, but we want to guarantee a leading slash.
 
 		return $this;
 	}
