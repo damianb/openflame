@@ -24,8 +24,14 @@ if(!defined('OpenFlame\\ROOT_PATH')) exit;
  */
 class Builder
 {
+	/**
+	 * @var array - The array of URL patterns.
+	 */
 	protected $url_patterns = array();
 
+	/**
+	 * @var string - The base URL to attach to all generated URLs.
+	 */
 	protected $base_url = '';
 
 	/**
@@ -49,21 +55,39 @@ class Builder
 		return $this;
 	}
 
+	/**
+	 * Define a new printf() compatible pattern to use for internal URL generation.
+	 * @param string $pattern_name - The name to give this pattern.
+	 * @param string $pattern - The printf() compatible pattern to use.
+	 * @return \OpenFlame\Framework\URL\Builder - Provides a fluent interface.
+	 */
 	public function newPattern($pattern_name, $pattern)
 	{
-		$this->url_patterns[(string) $pattern_name] = ltrim($pattern, '/');
+		$this->url_patterns[(string) $pattern_name] = ltrim($pattern, '/'); // Ensure no trailing spaces!
 
 		return $this;
 	}
 
+	/**
+	 * Define a set of printf() compatible patterns to use for internal URL generation.
+	 * @param array $patterns - An array of patterns to use, with the keys for each element being the pattern names for each pattern.
+	 * @return \OpenFlame\Framework\URL\Builder - Provides a fluent interface.
+	 */
 	public function newPatterns(array $patterns)
 	{
 		foreach($patterns as $pattern_name => $pattern)
 		{
 			$this->newURLPattern($pattern_name, $pattern);
 		}
+
+		return $this;
 	}
 
+	/**
+	 * Get a specific pattern by its pattern name
+	 * @param string $pattern_name - The name of the pattern to get.
+	 * @return mixed - NULL returned if no such pattern by that name, or the pattern string previously provided.
+	 */
 	public function getPattern($pattern_name)
 	{
 		if(!isset($this->url_patterns[(string) $pattern_name]))
