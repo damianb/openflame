@@ -10,6 +10,7 @@
  */
 
 namespace OpenFlame\Framework\URL;
+use OpenFlame\Framework\Core;
 
 if(!defined('OpenFlame\\ROOT_PATH')) exit;
 
@@ -29,6 +30,9 @@ class Router
 	 */
 	const EXPLODE_LIMIT = 15;
 
+	/**
+	 * @var string - The base URL that should be attached to every request.
+	 */
 	protected $base_url = '';
 
 	/**
