@@ -44,14 +44,14 @@ class Builder
 	 */
 	public function setBaseURL($base_url)
 	{
-		$this->base_url = rtrim($base_url, '/'); // We don't want a trailing slash here.
+		$this->base_url = ltrim(rtrim($base_url, '/'), '/'); // We don't want a leading or trailing slash here.
 
 		return $this;
 	}
 
 	public function newPattern($pattern_name, $pattern)
 	{
-		$this->url_patterns[(string) $pattern_name] = $pattern;
+		$this->url_patterns[(string) $pattern_name] = ltrim($pattern, '/');
 
 		return $this;
 	}
