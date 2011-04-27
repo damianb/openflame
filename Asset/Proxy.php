@@ -9,7 +9,7 @@
  * Minimum Requirement: PHP 5.3.0
  */
 
-namespace OpenFlame\Framework\Template\Asset;
+namespace OpenFlame\Framework\Asset;
 use OpenFlame\Framework\Core;
 
 if(!defined('OpenFlame\\ROOT_PATH')) exit;
@@ -25,7 +25,7 @@ if(!defined('OpenFlame\\ROOT_PATH')) exit;
 class Proxy
 {
 	/**
-	 * @var \OpenFlame\Framework\Template\Asset\Manager - The asset manager which handles all asset instances.
+	 * @var \OpenFlame\Framework\Asset\Manager - The asset manager which handles all asset instances.
 	 */
 	protected $manager;
 
@@ -36,15 +36,15 @@ class Proxy
 
 	/**
 	 * Constructor
-	 * @param \OpenFlame\Framework\Template\Asset\Manager $manager - The template asset manager.
+	 * @param \OpenFlame\Framework\Asset\Manager $manager - The template asset manager.
 	 * @return void
 	 */
-	public function __construct(\OpenFlame\Framework\Template\Asset\Manager $manager)
+	public function __construct(\OpenFlame\Framework\Asset\Manager $manager)
 	{
 		$this->manager = $manager;
 		foreach($this->manager->getAssetTypes() as $type)
 		{
-			$subproxy = \OpenFlame\Framework\Template\Asset\Subproxy::newInstance($manager)
+			$subproxy = \OpenFlame\Framework\Asset\Subproxy::newInstance($manager)
 				->setType($type)
 				->populateAssetList();
 			$this->subproxies[$type] = $subproxy;
@@ -54,7 +54,7 @@ class Proxy
 	/**
 	 * Magic method, providing seamless access to asset data in Twig templates.
 	 * @param string $name - The type of the asset to grab.
-	 * @return \OpenFlame\Framework\Template\Asset\Subproxy - The subproxy for the asset type that we want.
+	 * @return \OpenFlame\Framework\Asset\Subproxy - The subproxy for the asset type that we want.
 	 *
 	 * @throws \RuntimeException
 	 */
@@ -90,6 +90,6 @@ class Proxy
 	 */
 	public function __toString()
 	{
-		throw new \LogicException('The asset proxy cannot provide a direct value and is only for providing access to subproxies and asset instances');
+		return '';
 	}
 }

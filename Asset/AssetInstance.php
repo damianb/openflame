@@ -9,7 +9,7 @@
  * Minimum Requirement: PHP 5.3.0
  */
 
-namespace OpenFlame\Framework\Template\Asset;
+namespace OpenFlame\Framework\Asset;
 use OpenFlame\Framework\Core;
 
 if(!defined('OpenFlame\\ROOT_PATH')) exit;
@@ -22,7 +22,7 @@ if(!defined('OpenFlame\\ROOT_PATH')) exit;
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
  * @link        https://github.com/OpenFlame/OpenFlame-Framework
  */
-class AssetInstance implements \OpenFlame\Framework\Template\Asset\AssetInstanceInterface 
+class AssetInstance
 {
 	/**
 	 * @var string - The name for this instance.
@@ -45,8 +45,13 @@ class AssetInstance implements \OpenFlame\Framework\Template\Asset\AssetInstance
 	protected $base_url = '';
 
 	/**
+	 * @var array - Array of various properties belonging to this asset instance.
+	 */
+	protected $properties = array();
+
+	/**
 	 * Get a new instance of this object.
-	 * @return \OpenFlame\Framework\Template\Asset\AssetInstance - The newly created instance.
+	 * @return \OpenFlame\Framework\Asset\AssetInstance - The newly created instance.
 	 */
 	public static function newInstance()
 	{
@@ -65,7 +70,7 @@ class AssetInstance implements \OpenFlame\Framework\Template\Asset\AssetInstance
 	/**
 	 * Set the asset type for this instance
 	 * @param string $name - The asset name to set.
-	 * @return \OpenFlame\Framwork\Template\Asset\AssetInstance - Provides a fluent interface.
+	 * @return \OpenFlame\Framework\Asset\AssetInstance - Provides a fluent interface.
 	 */
 	public function setName($name)
 	{
@@ -85,7 +90,7 @@ class AssetInstance implements \OpenFlame\Framework\Template\Asset\AssetInstance
 	/**
 	 * Set the asset type for this instance
 	 * @param string $type - The asset type to set.
-	 * @return \OpenFlame\Framwork\Template\Asset\AssetInstance - Provides a fluent interface.
+	 * @return \OpenFlame\Framework\Asset\AssetInstance - Provides a fluent interface.
 	 */
 	public function setType($type)
 	{
@@ -105,11 +110,39 @@ class AssetInstance implements \OpenFlame\Framework\Template\Asset\AssetInstance
 	/**
 	 * Set the relative asset URL for this instance
 	 * @param string - The relative asset URL to set.
-	 * @return \OpenFlame\Framwork\Template\Asset\AssetInstance - Provides a fluent interface.
+	 * @return \OpenFlame\Framework\Asset\AssetInstance - Provides a fluent interface.
 	 */
 	public function setURL($url)
 	{
 		$this->url = '/' . ltrim($url, '/');
+		return $this;
+	}
+
+	/**
+	 * Get a property of this asset instance.
+	 * @param string $property - The name of the property to grab.
+	 * @return mixed - NULL if no such property set, or the value of the property.
+	 */
+	public function getProperty($property)
+	{
+		if(isset($this->properties[(string) $property]))
+		{
+			return NULL;
+		}
+
+		return $this->properties[(string) $property];
+	}
+
+	/**
+	 * Set an asset's property.
+	 * @param string $property - The name of the property to set.
+	 * @param mixed $value - The value to set for the property.
+	 * @return \OpenFlame\Framework\Asset\AssetInstance - Provides a fluent interface.
+	 */
+	public function setProperty($property, $value)
+	{
+		$this->properties[(string) $property] = $value;
+
 		return $this;
 	}
 
@@ -125,13 +158,38 @@ class AssetInstance implements \OpenFlame\Framework\Template\Asset\AssetInstance
 	/**
 	 * Set the "base URL" for this installation, which will be added to the beginning of all asset URLs.
 	 * @param string $base_url - The "base URL" which we're going to prepend.
-	 * @return \OpenFlame\Framework\Template\Asset\AssetInstance - Provides a fluent interface.
+	 * @return \OpenFlame\Framework\Asset\AssetInstance - Provides a fluent interface.
 	 */
 	public function setBaseURL($base_url)
 	{
 		$this->base_url = rtrim($base_url, '/'); // We don't want a trailing slash here.
 
 		return $this;
+	}
+
+	/**
+	 * Check to see if a specific property exists.
+	 * @param string $name - The name of the property to check.
+	 * @return bool - Has the property been set?
+	 */
+	public function __isset($name)
+	{
+		return isset($this->properties[(string) $name]);
+	}
+
+	/**
+	 * Get a property of this asset instance.
+	 * @param string $property - The name of the property to grab.
+	 * @return mixed - NULL if no such property set, or the value of the property.
+	 */
+	public function __get($name)
+	{
+		if(isset($this->properties[(string) $property]))
+		{
+			return NULL;
+		}
+
+		return $this->properties[(string) $property];
 	}
 
 	/**

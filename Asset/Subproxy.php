@@ -9,7 +9,7 @@
  * Minimum Requirement: PHP 5.3.0
  */
 
-namespace OpenFlame\Framework\Template\Asset;
+namespace OpenFlame\Framework\Asset;
 use OpenFlame\Framework\Core;
 
 if(!defined('OpenFlame\\ROOT_PATH')) exit;
@@ -25,7 +25,7 @@ if(!defined('OpenFlame\\ROOT_PATH')) exit;
 class Subproxy
 {
 	/**
-	 * @var \OpenFlame\Framework\Template\Asset\Manager - The asset manager which handles all asset instances.
+	 * @var \OpenFlame\Framework\Asset\Manager - The asset manager which handles all asset instances.
 	 */
 	protected $manager;
 
@@ -41,20 +41,20 @@ class Subproxy
 
 	/**
 	 * Constructor
-	 * @param \OpenFlame\Framework\Template\Asset\Manager $manager - The template asset manager.
+	 * @param \OpenFlame\Framework\Asset\Manager $manager - The template asset manager.
 	 * @return void
 	 */
-	public function __construct(\OpenFlame\Framework\Template\Asset\Manager $manager)
+	public function __construct(\OpenFlame\Framework\Asset\Manager $manager)
 	{
 		$this->manager = $manager;
 	}
 
 	/**
 	 * Grab a new instance of the subproxy
-	 * @param \OpenFlame\Framework\Template\Asset\Manager $manager - The template asset manager.
-	 * @return \OpenFlame\Framwork\Template\Asset\Subproxy - The newly created instance.
+	 * @param \OpenFlame\Framework\Asset\Manager $manager - The template asset manager.
+	 * @return \OpenFlame\Framwork\Asset\Subproxy - The newly created instance.
 	 */
-	public static function newInstance(\OpenFlame\Framework\Template\Asset\Manager $manager)
+	public static function newInstance(\OpenFlame\Framework\Asset\Manager $manager)
 	{
 		return new static($manager);
 	}
@@ -71,7 +71,7 @@ class Subproxy
 	/**
 	 * Set the asset type for this subproxy
 	 * @param string $type - The asset type to set.
-	 * @return \OpenFlame\Framwork\Template\Asset\Subproxy - Provides a fluent interface.
+	 * @return \OpenFlame\Framwork\Asset\Subproxy - Provides a fluent interface.
 	 */
 	public function setType($type)
 	{
@@ -81,7 +81,7 @@ class Subproxy
 
 	/**
 	 * Populate the internal cache list of asset instances that this subproxy can access.
-	 * @return \OpenFlame\Framwork\Template\Asset\Subproxy - Provides a fluent interface.
+	 * @return \OpenFlame\Framwork\Asset\Subproxy - Provides a fluent interface.
 	 */
 	public function populateAssetList()
 	{
@@ -92,7 +92,7 @@ class Subproxy
 	/**
 	 * Magic method, providing seamless access to asset data in Twig templates.
 	 * @param string $name - The name of the asset to grab.
-	 * @return \OpenFlame\Framework\Template\Asset\AssetInstanceInterface - The asset instance for the asset that we want.
+	 * @return \OpenFlame\Framework\Asset\AssetInstance - The asset instance for the asset that we want.
 	 *
 	 * @throws \RuntimeException
 	 */
@@ -128,6 +128,6 @@ class Subproxy
 	 */
 	public function __toString()
 	{
-		throw new \LogicException('The asset subproxy cannot provide a direct value and is only for providing access to subproxies and asset instances');
+		return '';
 	}
 }

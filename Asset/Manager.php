@@ -9,7 +9,7 @@
  * Minimum Requirement: PHP 5.3.0
  */
 
-namespace OpenFlame\Framework\Template\Asset;
+namespace OpenFlame\Framework\Asset;
 use OpenFlame\Framework\Core;
 
 if(!defined('OpenFlame\\ROOT_PATH')) exit;
@@ -51,7 +51,7 @@ class Manager
 	/**
 	 * Set the "base URL" for this installation, which will be added to the beginning of all asset URLs.
 	 * @param string $base_url - The "base URL" which we're going to prepend.
-	 * @return \OpenFlame\Framework\Template\Asset\Manager - Provides a fluent interface.
+	 * @return \OpenFlame\Framework\Asset\Manager - Provides a fluent interface.
 	 */
 	public function setBaseURL($base_url)
 	{
@@ -80,7 +80,7 @@ class Manager
 
 	/**
 	 * Set the asset manager to throw exceptions when an invalid asset is accessed, instead of returning NULL.
-	 * @return \OpenFlame\Framework\Template\Asset\Manager - Provides a fluent interface.
+	 * @return \OpenFlame\Framework\Asset\Manager - Provides a fluent interface.
 	 */
 	public function enableInvalidAssetExceptions()
 	{
@@ -90,7 +90,7 @@ class Manager
 
 	/**
 	 * Set the asset manager to return NULL when an invalid asset is accessed, instead of throwing exceptions.
-	 * @return \OpenFlame\Framework\Template\Asset\Manager - Provides a fluent interface.
+	 * @return \OpenFlame\Framework\Asset\Manager - Provides a fluent interface.
 	 */
 	public function disableInvalidAssetExceptions()
 	{
@@ -101,25 +101,12 @@ class Manager
 	/**
 	 * Create a new asset instance.
 	 * @param string $asset_class - The class to instantiate for the AssetInstance object
-	 * @return \OpenFlame\Framework\Template\Asset\AssetInstance - The newly created AssetInstance object.
-	 *
-	 * @throws \InvalidArgumentException
-	 * @throws \LogicException
+	 * @return \OpenFlame\Framework\Asset\AssetInstance - The newly created AssetInstance object.
 	 */
-	public function registerAsset($asset_class = '\\OpenFlame\\Framework\\Template\\Asset\\AssetInstance')
+	public function registerAsset()
 	{
-		// We want to make sure the class exists, even with autoloading -- if we can't load it, we need to asplode.
-		if(!class_exists($asset_class, true))
-		{
-			throw new \InvalidArgumentException(sprintf('The class "%1$s" does not exist and cannot be instantiated in \\OpenFlame\\Framework\\Template\\Asset\\Manager->registerAsset()'));
-		}
-
 		// Require the use of the AssetInstanceInterface for the provided class
-		$asset = $asset_class::newInstance();
-		if(!($asset instanceof \OpenFlame\Framework\Template\Asset\AssetInstanceInterface))
-		{
-			throw new \LogicException(sprintf('The class "%1$s" does not implement the interface \\OpenFlame\\Framework\\Template\\Asset\\AssetInstanceInterface as required', $asset_class));
-		}
+		$asset = \OpenFlame\Framework\Asset\AssetInstance::newInstance();
 		$asset->setBaseURL($this->getBaseURL());
 
 		return $asset;
@@ -127,10 +114,10 @@ class Manager
 
 	/**
 	 * Store the provided asset inside the manager.
-	 * @param \OpenFlame\Framework\Template\Asset\AssetInstanceInterface $asset - The asset instance to store.
-	 * @return \OpenFlame\Framework\Template\Asset\AssetInstanceInterface - The asset just stored.
+	 * @param \OpenFlame\Framework\Asset\AssetInstance $asset - The asset instance to store.
+	 * @return \OpenFlame\Framework\Asset\AssetInstance - The asset just stored.
 	 */
-	protected function storeAsset(\OpenFlame\Framework\Template\Asset\AssetInstanceInterface $asset)
+	protected function storeAsset(\OpenFlame\Framework\Asset\AssetInstance $asset)
 	{
 		$this->assets[$asset->getType()][$asset->getName()] = $asset;
 
@@ -141,7 +128,7 @@ class Manager
 	 * Create a custom-type asset instance and store it in the manager.
 	 * @param string $type - The asset type (java, flash, etc.).
 	 * @param string $name - A unique name to refer to the asset.
-	 * @return \OpenFlame\Framework\Template\Asset\AssetInstanceInterface - The newly created asset instance.
+	 * @return \OpenFlame\Framework\Asset\AssetInstance - The newly created asset instance.
 	 */
 	public function registerCustomAsset($type, $name)
 	{
@@ -151,7 +138,7 @@ class Manager
 	/**
 	 * Create a new javascript asset instance and store it in the manager.
 	 * @param string $name - A unique name to refer to the asset.
-	 * @return \OpenFlame\Framework\Template\Asset\AssetInstanceInterface - The newly created asset instance.
+	 * @return \OpenFlame\Framework\Asset\AssetInstance - The newly created asset instance.
 	 */
 	public function registerJSAsset($name)
 	{
@@ -161,7 +148,7 @@ class Manager
 	/**
 	 * Create a new cascading-stylesheet asset instance and store it in the manager.
 	 * @param string $name - A unique name to refer to the asset.
-	 * @return \OpenFlame\Framework\Template\Asset\AssetInstanceInterface - The newly created asset instance.
+	 * @return \OpenFlame\Framework\Asset\AssetInstance - The newly created asset instance.
 	 */
 	public function registerCSSAsset($name)
 	{
@@ -171,7 +158,7 @@ class Manager
 	/**
 	 * Create a new XML asset instance and store it in the manager.
 	 * @param string $name - A unique name to refer to the asset.
-	 * @return \OpenFlame\Framework\Template\Asset\AssetInstanceInterface - The newly created asset instance.
+	 * @return \OpenFlame\Framework\Asset\AssetInstance - The newly created asset instance.
 	 */
 	public function registerXMLAsset($name)
 	{
@@ -181,7 +168,7 @@ class Manager
 	/**
 	 * Create a new image asset instance and store it in the manager.
 	 * @param string $name - A unique name to refer to the asset.
-	 * @return \OpenFlame\Framework\Template\Asset\AssetInstanceInterface - The newly created asset instance.
+	 * @return \OpenFlame\Framework\Asset\AssetInstance - The newly created asset instance.
 	 */
 	public function registerImageAsset($name)
 	{
@@ -216,7 +203,7 @@ class Manager
 	 * Get a stored asset instance object
 	 * @param string $type - The asset type.
 	 * @param string $name - The asset name.
-	 * @return \OpenFlame\Framework\Template\Asset\AssetInstanceInterface - The asset instance to grab.
+	 * @return \OpenFlame\Framework\Asset\AssetInstance - The asset instance to grab.
 	 *
 	 * @throws \RuntimeException
 	 */
