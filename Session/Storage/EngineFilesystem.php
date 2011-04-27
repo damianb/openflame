@@ -50,6 +50,11 @@ class EngineFilesystem implements EngineInterface
 		$this->options['savepath'] = isset($options['savepath']) ? $options['savepath'] : ini_get('upload_tmp_dir');
 		$this->options['fileprefix'] = isset($options['fileprefix']) ? $options['fileprefix'] : 'sess_';
 		$this->options['randseed'] = isset($options['randseed']) ? $options['randseed'] : chr(64 + mt_rand(1,26));
+		
+		if(substr($this->options['savepath'], -1) != '/' || substr($this->options['savepath'], -1) != '\\')
+		{
+			$this->options['savepath'] .= '/';
+		}
 	}
 
 	/*
@@ -71,7 +76,7 @@ class EngineFilesystem implements EngineInterface
 			unlink($this->filename);
 		}
 
-		$this->sid = hash('sha1', $this->filename . $options['randseed']);
+		$this->sid = hash('sha1', $this->filename . $this->options['randseed']);
 		$this->filename = $this->options['savepath'] . $this->options['fileprefix'] . $this->sid;
 
 		if($clearData)
@@ -92,10 +97,10 @@ class EngineFilesystem implements EngineInterface
 	{
 		$this->sid = $sid;
 		$this->filename = $this->options['savepath'] . $this->options['fileprefix'] . $this->sid;
-
-		if(file_exists($filename))
+//echo $this->filename;
+		if(file_exists($this->filename))
 		{
-			$this->data = unserialize(file_get_contents($filename));
+			$this->data = unserialize(file_get_contents($this->filename));
 			return true;
 		}
 		else

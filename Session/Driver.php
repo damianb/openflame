@@ -36,11 +36,6 @@ class Driver
 	protected $clientEngine;
 
 	/*
-	 *  @var session id
-	 */
-	protected $sid = '';
-
-	/*
 	 *  @var user ID
 	 */
 	protected $uid = '';
@@ -80,6 +75,11 @@ class Driver
 	 */
 	public $data = array();
 
+	/*
+	 *  @var session id
+	 */
+	public $sid = '';
+
 	/**
 	 * Sets the session storage engine to be used
 	 * @param \OpenFlame\Framework\Session\Storage\EngineInterface - The Session engine to use.
@@ -97,7 +97,7 @@ class Driver
 	 * @param \OpenFlame\Framework\Session\Client\EngineInterface - The Session engine to use.
 	 * @return \OpenFlame\Framework\Session\Driver - Provides a fluent interface.
 	 */
-	public function setStorageEngine(\OpenFlame\Framework\Session\Client\EngineInterface $engine)
+	public function setClientIdEngine(\OpenFlame\Framework\Session\Client\EngineInterface $engine)
 	{
 		$this->clientEngine = $engine;
 
@@ -109,13 +109,17 @@ class Driver
 	 * @param array - Options to feed the engine
 	 * @return \OpenFlame\Framework\Session\Driver - Provides a fluent interface.
 	 */
-	public function setEngineOptions($options)
+	public function setOptions($options)
 	{
 		$this->storageEngine->init($options);
 		$this->clientEngine->setOptions($options);
 
-		$this->options['expiretime'] = isset($options['expiretime']) ? (int) $options['expiretime'] : 3600;
-		$this->options['ipvallevel'] = ($options['ipvallevel'] > 0 && $options['ipvallevel'] < 5) ? (int) $options['ipvallevel'] : 0;
+		$this->options['expiretime'] = isset($options['expiretime']) ? 
+			(int) $options['expiretime'] : 3600;
+	
+		$this->options['ipvallevel'] = (isset($options['ipvallevel']) && 
+			$options['ipvallevel'] > 0 && $options['ipvallevel'] < 5) ? 
+			(int) $options['ipvallevel'] : 0;
 
 		return $this;
 	}
@@ -152,7 +156,7 @@ class Driver
 				// Session is OVER, check for autologin
 				if	($this->autologinKey == $autologinKey && $uid == $this->uid)
 				{
-					$this->storageEngine->newSession(true);
+					$this->sid = $this->storageEngine->newSession(true);
 					$valid = true;
 				}
 			}
@@ -161,7 +165,7 @@ class Driver
 		// Valid up to this point? not for long
 		if($valid)
 		{
-			$this->fingerprint = makeFingerprint();
+			$this->fingerprint = $this->makeFingerprint();
 
 			if($fingerprint == $this->fingerprint)
 			{
@@ -173,12 +177,19 @@ class Driver
 					))
 				);
 
-				if($event->countReturns())
+				if($event->countReturns() > 1)
 				{
-					throw new LogicException("Too many responses to the 'session.get' event.");
+					throw new \LogicException("Too many responses to the 'session.get' event.");
 				}
 
-				$this->data = array_merge($event->getReturns(), $this->data);
+				// If it's not an array, something is not right here.
+				$returns = $event->getReturns();
+				if(!is_array($returns))
+				{
+					$returns = array();
+				}
+
+				$this->data = array_merge($returns, $this->data);
 			}
 			else
 			{
@@ -189,7 +200,7 @@ class Driver
 		// If we do not have a valid session, create a new one
 		if (!$valid)
 		{
-			$this->storageEngine->newSession(true);
+			$this->sid = $this->storageEngine->newSession(true);
 			$this->defaultData();
 		}
 
@@ -200,7 +211,7 @@ class Driver
 			'autologinkey'	=> $this->autologinKey,
 		));
 
-		$this->expireTime = $now + $options['expiretime'];
+		$this->expireTime = $now + $this->options['expiretime'];
 	}
 
 	/**
@@ -234,7 +245,7 @@ class Driver
 
 		if($result['successful'])
 		{
-			$this->storageEngine->newSession(true);
+			$this->sid = $this->storageEngine->newSession(true);
 			$this->data = $result['data'];
 			$this->autologinKey = $result['autologinKey'];
 			$this->uid = $result['uid'];
@@ -254,7 +265,7 @@ class Driver
 	public function kill()
 	{
 		$dispatcher = Core::getObject('dispatcher');
-		$this->storageEngine->newSession(true);
+		$this->sid = $this->storageEngine->newSession(true);
 
 		$this->defaultData();
 
@@ -266,10 +277,10 @@ class Driver
 	}
 
 	/**
-	 * Destructor to write the session data where it needs to go
+	 * Commit the session data, should be called at the end of execution 
 	 * @return void
 	 */
-	public function __destruct()
+	public function commit()
 	{
 		$this->storageEngine->storeData(array(
 			$this->data, 
@@ -287,7 +298,7 @@ class Driver
 	protected function makeFingerprint()
 	{
 		// MD5 is faster, not going to have a sha1 running every page load
-		hash('md5', $this->ipAddrPartial . $_SERVER['HTTP_USERAGENT']);
+		hash('md5', $this->ipAddrPartial . $_SERVER['HTTP_USER_AGENT']);
 	}
 
 	/*
@@ -299,11 +310,11 @@ class Driver
 	{
 		$dispatcher = Core::getObject('dispatcher');
 
-		$event = $dispatcher->triggerUntilBreak(\OpenFlame\Framework\Event\Instance::newEvent('session.default');
+		$event = $dispatcher->triggerUntilBreak(\OpenFlame\Framework\Event\Instance::newEvent('session.default'));
 
 		if($event->countReturns())
 		{
-			throw new LogicException("Too many responses to the 'session.default' event.");
+			throw new \LogicException("Too many responses to the 'session.default' event.");
 		}
 
 		$this->data = $event->getReturns();
