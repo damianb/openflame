@@ -67,7 +67,7 @@ class RouteInstance
 
 	/**
 	 * Create a new instance of this class.
-	 * @return \OpenFlame\Framework\URL\RouteInstance - The newly created instance.
+	 * @return \OpenFlame\Framework\Router\RouteInstance - The newly created instance.
 	 */
 	public static function newInstance()
 	{
@@ -86,7 +86,7 @@ class RouteInstance
 	/**
 	 * Set the route base for this instance.
 	 * @param string $base - The route base string.
-	 * @return \OpenFlame\Framework\URL\RouteInstance - Provides a fluent interface.
+	 * @return \OpenFlame\Framework\Router\RouteInstance - Provides a fluent interface.
 	 */
 	protected function setRouteBase($base)
 	{
@@ -108,7 +108,7 @@ class RouteInstance
 	/**
 	 * Set the route component map for this instance.
 	 * @param array $map - An array containing the full route component map.
-	 * @return \OpenFlame\Framework\URL\RouteInstance - Provides a fluent interface.
+	 * @return \OpenFlame\Framework\Router\RouteInstance - Provides a fluent interface.
 	 */
 	protected function setRouteMap(array $map)
 	{
@@ -130,7 +130,7 @@ class RouteInstance
 	/**
 	 * Set the regular expression for this route instance.
 	 * @param string $regexp - The regular expression for this route instance.
-	 * @return \OpenFlame\Framework\URL\RouteInstance - Provides a fluent interface.
+	 * @return \OpenFlame\Framework\Router\RouteInstance - Provides a fluent interface.
 	 */
 	protected function setRouteRegexp($regexp)
 	{
@@ -152,7 +152,7 @@ class RouteInstance
 	/**
 	 * Assign a callback to this route instance.
 	 * @param callable $callback - The callback to assign to this route instance.
-	 * @return \OpenFlame\Framework\URL\RouteInstance - Provides a fluent interface.
+	 * @return \OpenFlame\Framework\Router\RouteInstance - Provides a fluent interface.
 	 */
 	public function setRouteCallback($callback)
 	{
@@ -214,7 +214,7 @@ class RouteInstance
 	/**
 	 * Set the serialized representation of this route instance.
 	 * @param string $route_string - The serialized representation of the route instance.
-	 * @return \OpenFlame\Framework\URL\RouteInstance - Provides a fluent interface.
+	 * @return \OpenFlame\Framework\Router\RouteInstance - Provides a fluent interface.
 	 */
 	protected function setSerializedRoute($route_string)
 	{
@@ -235,11 +235,11 @@ class RouteInstance
 	/**
 	 * Load up the route data from the raw route path provided.
 	 * @param string $route - The raw route path string to interpret and parse.
-	 * @return \OpenFlame\Framework\URL\RouteInstance - Provides a fluent interface.
+	 * @return \OpenFlame\Framework\Router\RouteInstance - Provides a fluent interface.
 	 */
 	public function loadRawRoute($route)
 	{
-		$route_data = explode('/', trim($route, '/'), \OpenFlame\Framework\URL\Router::EXPLODE_LIMIT);
+		$route_data = explode('/', trim($route, '/'), \OpenFlame\Framework\Router\Router::EXPLODE_LIMIT);
 
 		$this->setRouteBase($route_data[0])
 			->setRouteMap($this->buildRouteMap($route_data))
@@ -251,7 +251,7 @@ class RouteInstance
 	/**
 	 * Load up a previously serialized (cached) route instance's data and restore it to like-new condition.
 	 * @param string $route_string - The serialized route instance data to restore.
-	 * @return \OpenFlame\Framework\URL\RouteInstance - Provides a fluent interface.
+	 * @return \OpenFlame\Framework\Router\RouteInstance - Provides a fluent interface.
 	 *
 	 * @throws \RuntimeException
 	 */
@@ -333,7 +333,7 @@ class RouteInstance
 	 * Set a request URL variable extracted from the current request.
 	 * @param string $point - The name of the variable to store this as.
 	 * @param mixed $data - The data to store.
-	 * @return \OpenFlame\Framework\URL\RouteInstance - Provides a fluent interface.
+	 * @return \OpenFlame\Framework\Router\RouteInstance - Provides a fluent interface.
 	 */
 	public function setRequestDataPoint($point, $data)
 	{
