@@ -32,18 +32,18 @@ class Dispatcher
 	/**
 	 * Register a new listener with the dispatcher
 	 * @param string $event_type - The type of event type to attach the listener to.
-	 * @param callable $listener - The callable reference for the listener.
-	 * @param array $listener_params - Any extra parameters to pass to the listener.
 	 * @param integer $priority - The priority for the listener to be registered as, similar to *nix "nice" values for CPU processes (-20 top priority, 20 bottom priority)
+	 * @param callable $listener - The callable reference for the listener.
 	 * @return \OpenFlame\Framework\Event\Dispatcher - Provides a fluent interface.
 	 */
-	public function register($event_type, $listener, array $listener_params = array(), $priority = 0)
+	public function register($event_type, $priority, $listener)
 	{
 		if(!isset($this->listeners[$event_type]) || !is_array($this->listeners[$event_type]))
 		{
 			$this->listeners[$event_type] = array();
 		}
 
+		$priority = (int) $priority;
 		if($priority > 20)
 		{
 			$priority = 20;
@@ -52,12 +52,8 @@ class Dispatcher
 		{
 			$priority = -20;
 		}
-		else
-		{
-			$priority = (int) $priority;
-		}
 
-		$this->listeners[$event_type][$priority][] = array($listener, $listener_params);
+		$this->listeners[$event_type][$priority][] = $listener;
 
 		return $this;
 	}
@@ -90,10 +86,10 @@ class Dispatcher
 		{
 			for($i = 0, $size = sizeof($priority_thread); $i <= $size - 1; $i++)
 			{
-				list($listener_callback, $listener_params) = $priority_thread[$i];
+				$listener_callback = $priority_thread[$i];
 				try
 				{
-					$return = call_user_func_array($listener_callback, array_merge(array($event), $listener_params));
+					$return = call_user_func($listener_callback, $event);
 					if($return !== NULL)
 					{
 						$event->setReturn($return);
@@ -127,10 +123,10 @@ class Dispatcher
 		{
 			for($i = 0, $size = sizeof($priority_thread); $i <= $size - 1; $i++)
 			{
-				list($listener_callback, $listener_params) = $priority_thread[$i];
+				$listener_callback = $priority_thread[$i];
 				try
 				{
-					$return = call_user_func_array($listener_callback, array_merge(array($event), $listener_params));
+					$return = call_user_func($listener_callback, $event);
 					if($return !== NULL)
 					{
 						$event->setReturn($return);
