@@ -43,7 +43,7 @@ class Driver
 	/*
 	 *  @var autlogin key
 	 */
-	protected $autologinKey = '';
+	protected $alk = '';
 
 	/*
 	 *	@var fingerprint
@@ -111,15 +111,15 @@ class Driver
 	 */
 	public function setOptions($options)
 	{
-		$this->storageEngine->init($options);
-		$this->clientEngine->setOptions($options);
-
 		$this->options['expiretime'] = isset($options['expiretime']) ? 
 			(int) $options['expiretime'] : 3600;
 	
 		$this->options['ipvallevel'] = (isset($options['ipvallevel']) && 
 			$options['ipvallevel'] > 0 && $options['ipvallevel'] < 5) ? 
 			(int) $options['ipvallevel'] : 0;
+
+		$this->storageEngine->init(array_merge($options, $this->options));
+		$this->clientEngine->setOptions(array_merge($options, $this->options));
 
 		return $this;
 	}
@@ -131,21 +131,20 @@ class Driver
 	public function start()
 	{
 		$now = time();
-
 		// Grab the data from our client id
 		$params = $this->clientEngine->getParams();
-		$this->sid			= $params['sid'];
-		$this->uid			= $params['uid'];
-		$this->autologinKey = $params['autologinkey'];
+		$sid = $params['sid'];
+		$uid = $params['uid'];
+		$alk = $params['alk'];
 
 		// Our flag to make the logic flow a bit nicer
 		$valid = false;
 
 		// Let's see if they have a session first
-		if ($this->storageEngine->loadSession($this->sid))
+		if ($this->storageEngine->loadSession($sid))
 		{
-			list($data, $fingerprint, $exp, $uid, $autologinKey) = $this->storageEngine->loadData();
-	
+			list($this->data, $fingerprint, $exp, $this->uid, $this->alk) = $this->storageEngine->loadData();
+
 			// Validate it / do autologin process
 			if ($now < $exp)
 			{
@@ -154,7 +153,7 @@ class Driver
 			else
 			{
 				// Session is OVER, check for autologin
-				if	($this->autologinKey == $autologinKey && $uid == $this->uid)
+				if	($this->alk === $alk && $this->uid === $uid)
 				{
 					$this->sid = $this->storageEngine->newSession(true);
 					$valid = true;
@@ -189,7 +188,17 @@ class Driver
 					$returns = array();
 				}
 
+				if(!is_array($this->data))
+				{
+					$this->data = array();
+				}
+
 				$this->data = array_merge($returns, $this->data);
+
+				if(empty($this->sid))
+				{
+					$this->sid = $sid;
+				}
 			}
 			else
 			{
@@ -206,9 +215,9 @@ class Driver
 
 		// Make our client engine aware
 		$this->clientEngine->setParams(array(
-			'sid'			=> $this->sid,
-			'uid'			=> $this->uid,
-			'autologinkey'	=> $this->autologinKey,
+			'sid' => $this->sid,
+			'uid' => $this->uid,
+			'alk' => $this->alk,
 		));
 
 		$this->expireTime = $now + $this->options['expiretime'];
@@ -236,7 +245,7 @@ class Driver
 			))
 		);
 
-		if($event->countReturns())
+		if($event->countReturns() > 1)
 		{
 			throw new LogicException("Too many responses to the 'session.login' event.");
 		}
@@ -247,14 +256,14 @@ class Driver
 		{
 			$this->sid = $this->storageEngine->newSession(true);
 			$this->data = $result['data'];
-			$this->autologinKey = $result['autologinKey'];
+			$this->alk = $result['alk'];
 			$this->uid = $result['uid'];
 		}
 
 		$this->clientEngine->setParams(array(
-			'sid'			=> $this->sid,
-			'uid'			=> $this->uid,
-			'autologinkey'	=> $this->autologinKey,
+			'sid'	=> $this->sid,
+			'uid'	=> $this->uid,
+			'alk'	=> $this->alk,
 		));
 	}
 
@@ -270,9 +279,9 @@ class Driver
 		$this->defaultData();
 
 		$this->clientEngine->setParams(array(
-			'sid'			=> $this->sid,
-			'uid'			=> '',
-			'autologinkey'	=> '',
+			'sid' => $this->sid,
+			'uid' => '',
+			'alk' => NULL,
 		));
 	}
 
@@ -287,7 +296,7 @@ class Driver
 			$this->fingerprint, 
 			$this->expireTime, 
 			$this->uid, 
-			$this->autologinKey
+			$this->alk,
 		));
 	}
 
@@ -312,11 +321,23 @@ class Driver
 
 		$event = $dispatcher->triggerUntilBreak(\OpenFlame\Framework\Event\Instance::newEvent('session.default'));
 
-		if($event->countReturns())
+		if($event->countReturns() > 1)
 		{
 			throw new \LogicException("Too many responses to the 'session.default' event.");
 		}
+		
+		$this->uid = '';
+		$this->alk = NULL;
 
 		$this->data = $event->getReturns();
+	}
+
+	/*
+	 * Garbage Collection
+	 * Should be called periodically
+	 */
+	public function gc() 
+	{ 
+		$this->storageEngine->gc(); 
 	}
 }

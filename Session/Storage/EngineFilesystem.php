@@ -98,7 +98,7 @@ class EngineFilesystem implements EngineInterface
 	{
 		$this->sid = $sid;
 		$this->filename = $this->options['savepath'] . $this->options['fileprefix'] . $this->sid;
-//echo $this->filename;
+
 		if(file_exists($this->filename))
 		{
 			$this->data = unserialize(file_get_contents($this->filename));
