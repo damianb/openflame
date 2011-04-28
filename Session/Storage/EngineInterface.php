@@ -64,4 +64,10 @@ interface EngineInterface
 	 * @param array - arbitrary array
 	 */
 	public function storeData($data);
+
+	/*
+	 * Garbage collection
+	 * Should be called periodically
+	 */
+	public function gc();
 }

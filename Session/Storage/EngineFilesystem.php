@@ -50,6 +50,7 @@ class EngineFilesystem implements EngineInterface
 		$this->options['savepath'] = isset($options['savepath']) ? $options['savepath'] : ini_get('upload_tmp_dir');
 		$this->options['fileprefix'] = isset($options['fileprefix']) ? $options['fileprefix'] : 'sess_';
 		$this->options['randseed'] = isset($options['randseed']) ? $options['randseed'] : chr(64 + mt_rand(1,26));
+		$this->options['gctime'] = isset($options['gctime']) ? (int) $options['gctime'] : $options['expiretime'];
 		
 		if(substr($this->options['savepath'], -1) != '/' || substr($this->options['savepath'], -1) != '\\')
 		{
@@ -131,5 +132,26 @@ class EngineFilesystem implements EngineInterface
 		$this->data = $data;
 
 		file_put_contents($this->options['savepath'] . $this->options['fileprefix'] . $this->sid, serialize($this->data));
+	}
+
+	/*
+	 * Garbage collection
+	 * Should be called periodically
+	 */
+	public function gc()
+	{
+		$files = scandir($this->options['savepath']);
+		$cutoff = time() - $this->options['gctime'];
+
+		foreach($files as $file)
+		{
+			$fullpath = $this->options['savepath'] . $file;
+
+			if (substr($file, 0, strlen($this->options['fileprefix'])) == $this->options['fileprefix'] &&
+				filemtime($fullpath) < $cutoff)
+			{
+				unlink($fullpath);
+			}
+		}
 	}
 }
