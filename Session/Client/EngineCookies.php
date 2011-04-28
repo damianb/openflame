@@ -29,20 +29,36 @@ class EngineCookies implements EngineInterface
 	 */
 	protected $options = array();
 
+	const SID = 'sid';
+	const UID = 'uid';
+	const ALK = 'alk';
+	
 	/**
 	 * Set options
 	 * @param array - Key/value pair array for all client-id level config options
 	 */
 	public function setOptions($options)
 	{
+		$this->options['cookie.path'] = isset($options['cookie.path']) ? (string) $options['cookie.path'] : '/';
+		$this->options['cookie.domain'] = isset($options['cookie.domain']) ? (string) $options['cookie.domain'] : $_SERVER['HTTP_HOST'];
+		$this->options['cookie.secure'] = isset($options['cookie.secure']) ? true : false;
+		$this->options['cookie.expire'] = isset($options['cookie.expire']) ? (int) $options['cookie.expire'] : 0;
+		$this->options['cookie.prefix'] = isset($options['cookie.prefix']) ? (string) $options['cookie.prefix'] : '';
 	}
 
 	/**
 	 * Get params as they were accepted from the client
-	 * @return array - Structure: 'sid' => '', 'uid' => '', 'autologinkey' => ''
+	 * @return array - Structure: 'sid' => '', 'uid' => '', 'alk' => '' 
 	 */
 	public function getParams()
 	{
+		$input = Core::getObject('input');
+
+		return array(
+			'sid' 	=> (string) $input->getInput('COOKIE::' . $this->options['cookie.prefix'] . '_' . self::SID, ''),
+			'uid' 	=> (string) $input->getInput('COOKIE::' . $this->options['cookie.prefix'] . '_' . self::UID, ''),
+			'alk'	=> (string) $input->getInput('COOKIE::' . $this->options['cookie.prefix'] . '_' . self::ALK, ''),
+		);
 	}
 
 	/**
@@ -52,5 +68,31 @@ class EngineCookies implements EngineInterface
 	 */
 	public function setParams($params)
 	{
+		if(isset($params['sid']) || isset($params['uid']) || isset($params['autologinkey']))
+		{
+			$header = Core::getObject('header');
+			$cookie = $header->loadSubmodule('Cookie');
+			$expire = ($this->options['cookie.expire'] != 0) ?  time() + $this->options['cookie.expire'] : 0;
+
+			$cookie->setCookieDomain($this->options['cookie.domain'])
+				->setCookiePath($this->options['cookie.path'])
+				->setCookiePrefix($this->options['cookie.prefix'])
+				->setCookieSecure($this->options['cookie.secure']);
+		}
+
+		if(isset($params['sid']))
+		{
+			$cookie->setCookie(self::SID)->setCookieValue($params['sid']);
+		}
+
+		if(isset($params['uid']))
+		{
+			$cookie->setCookie('uid')->setCookieValue($params['uid']);
+		}
+
+		if(isset($params['autologinkey']))
+		{
+			$cookie->setCookie('al')->setCookieValue($params['autologinkey']);
+		}
 	}
 }
