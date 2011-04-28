@@ -178,7 +178,7 @@ class CookieInstance
 		$use_secure = $this->cookie_manager->getCookieSecure();
 
 		$cookie_data = array();
-		$cookie_data[] = rawurlencode($this->cookie_manager->getCookiePrefix() . '_' . $this->cookie_name) . '=' . rawurlencode($this->cookie_value);
+		$cookie_data[] = rawurlencode($this->cookie_manager->getCookiePrefix() . $this->cookie_name) . '=' . rawurlencode($this->cookie_value);
 		if($this->expire_time !== 0)
 		{
 			$cookie_data[] = 'expires=' . $this->getRFCExpireTime();
