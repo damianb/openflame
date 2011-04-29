@@ -257,17 +257,10 @@ class Driver
 
 		if($result['successful'])
 		{
-			$this->sid = $this->storageEngine->newSession(true);
 			$this->data = $result['data'];
 			$this->alk = $result['alk'];
 			$this->uid = $result['uid'];
 		}
-
-		$this->clientEngine->setParams(array(
-			'sid'	=> $this->sid,
-			'uid'	=> $this->uid,
-			'alk'	=> $this->alk,
-		));
 	}
 
 	/**
