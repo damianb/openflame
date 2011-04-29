@@ -55,9 +55,9 @@ class EngineCookies implements EngineInterface
 		$input = Core::getObject('input');
 
 		return array(
-			'sid' 	=> (string) $input->getInput('COOKIE::' . $this->options['cookie.prefix'] . self::SID, ''),
-			'uid' 	=> (string) $input->getInput('COOKIE::' . $this->options['cookie.prefix'] . self::UID, ''),
-			'alk'	=> (string) $input->getInput('COOKIE::' . $this->options['cookie.prefix'] . self::ALK, ''),
+			'sid' 	=> (string) $input->getInput('COOKIE::' . $this->options['cookie.prefix'] . static::SID, ''),
+			'uid' 	=> (string) $input->getInput('COOKIE::' . $this->options['cookie.prefix'] . static::UID, ''),
+			'alk'	=> (string) $input->getInput('COOKIE::' . $this->options['cookie.prefix'] . static::ALK, ''),
 		);
 	}
 
@@ -87,17 +87,17 @@ class EngineCookies implements EngineInterface
 
 		if(isset($params['sid']))
 		{
-			$cookie->setCookie(self::SID)->setCookieValue($params['sid']);
+			$cookie->setCookie(static::SID)->setCookieValue($params['sid']);
 		}
 
 		if(isset($params['uid']))
 		{
-			$cookie->setCookie(self::UID)->setCookieValue($params['uid']);
+			$cookie->setCookie(static::UID)->setCookieValue($params['uid']);
 		}
 
 		if(isset($params['autologinkey']))
 		{
-			$cookie->setCookie(self::ALK)->setCookieValue($params['autologinkey']);
+			$cookie->setCookie(static::ALK)->setCookieValue($params['autologinkey']);
 		}
 	}
 }
