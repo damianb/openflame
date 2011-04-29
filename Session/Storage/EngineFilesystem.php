@@ -47,14 +47,14 @@ class EngineFilesystem implements EngineInterface
 	 */
 	public function init($options)
 	{
-		$this->options['savepath'] = isset($options['savepath']) ? $options['savepath'] : ini_get('upload_tmp_dir');
-		$this->options['fileprefix'] = isset($options['fileprefix']) ? $options['fileprefix'] : 'sess_';
-		$this->options['randseed'] = isset($options['randseed']) ? $options['randseed'] : chr(64 + mt_rand(1,26));
-		$this->options['gctime'] = isset($options['gctime']) ? (int) $options['gctime'] : $options['expiretime'];
+		$this->options['file.savepath'] = isset($options['file.savepath']) ? $options['file.savepath'] : ini_get('upload_tmp_dir');
+		$this->options['file.prefix'] = isset($options['file.prefix']) ? $options['file.prefix'] : 'sess_';
+		$this->options['file.randseed'] = isset($options['file.randseed']) ? $options['file.randseed'] : chr(64 + mt_rand(1,26));
+		$this->options['file.gctime'] = isset($options['file.gctime']) ? (int) $options['file.gctime'] : $options['session.expiretime'];
 		
-		if(substr($this->options['savepath'], -1) != '/' || substr($this->options['savepath'], -1) != '\\')
+		if(substr($this->options['file.savepath'], -1) != '/' || substr($this->options['file.savepath'], -1) != '\\')
 		{
-			$this->options['savepath'] .= '/';
+			$this->options['file.savepath'] .= '/';
 		}
 	}
 
@@ -69,7 +69,7 @@ class EngineFilesystem implements EngineInterface
 	{
 		if(empty($this->filename))
 		{
-			$this->filename = $this->options['savepath'] . $this->options['fileprefix'] . $this->sid;
+			$this->filename = $this->options['file.savepath'] . $this->options['file.prefix'] . $this->sid;
 		}
 
 		if(file_exists($this->filename))
@@ -77,8 +77,8 @@ class EngineFilesystem implements EngineInterface
 			unlink($this->filename);
 		}
 
-		$this->sid = hash('sha1', $this->filename . $this->options['randseed']);
-		$this->filename = $this->options['savepath'] . $this->options['fileprefix'] . $this->sid;
+		$this->sid = hash('sha1', $this->filename . $this->options['file.randseed']);
+		$this->filename = $this->options['file.savepath'] . $this->options['file.prefix'] . $this->sid;
 
 		if($clearData)
 		{
@@ -97,7 +97,7 @@ class EngineFilesystem implements EngineInterface
 	public function loadSession($sid)
 	{
 		$this->sid = $sid;
-		$this->filename = $this->options['savepath'] . $this->options['fileprefix'] . $this->sid;
+		$this->filename = $this->options['file.savepath'] . $this->options['file.prefix'] . $this->sid;
 
 		if(file_exists($this->filename))
 		{
@@ -131,7 +131,7 @@ class EngineFilesystem implements EngineInterface
 	{
 		$this->data = $data;
 
-		file_put_contents($this->options['savepath'] . $this->options['fileprefix'] . $this->sid, serialize($this->data));
+		file_put_contents($this->options['file.savepath'] . $this->options['file.prefix'] . $this->sid, serialize($this->data));
 	}
 
 	/*
@@ -140,14 +140,14 @@ class EngineFilesystem implements EngineInterface
 	 */
 	public function gc()
 	{
-		$files = scandir($this->options['savepath']);
-		$cutoff = time() - $this->options['gctime'];
+		$files = scandir($this->options['file.savepath']);
+		$cutoff = time() - $this->options['file.gctime'];
 
 		foreach($files as $file)
 		{
-			$fullpath = $this->options['savepath'] . $file;
+			$fullpath = $this->options['file.savepath'] . $file;
 
-			if (substr($file, 0, strlen($this->options['fileprefix'])) == $this->options['fileprefix'] &&
+			if (substr($file, 0, strlen($this->options['file.prefix'])) == $this->options['file.prefix'] &&
 				filemtime($fullpath) < $cutoff)
 			{
 				unlink($fullpath);
