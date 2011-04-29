@@ -227,7 +227,7 @@ class Driver
 		if(!$valid)
 		{
 			$this->authenticated = false;
-			$this->defaultData();
+			$this->getDefaultData();
 		}
 
 		// Depending on if we are tracking guests or not, we must either delete
@@ -321,7 +321,7 @@ class Driver
 		$dispatcher = Core::getObject('dispatcher');
 		$this->sid = ($this->options['session.trackguest']) ? $this->storageEngine->newSession(true) : '';
 
-		$this->defaultData();
+		$this->getDefaultData();
 
 		if($this->options['session.trackguest'])
 		{
@@ -367,7 +367,7 @@ class Driver
 	 * @return void
 	 * @throws LogicException
 	 */
-	protected function defaultData()
+	protected function getDefaultData()
 	{
 		$dispatcher = Core::getObject('dispatcher');
 
