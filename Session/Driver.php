@@ -117,6 +117,8 @@ class Driver
 		$this->options['session.ipvallevel'] = (isset($options['session.ipvallevel']) && 
 			$options['session.ipvallevel'] > 0 && $options['session.ipvallevel'] < 5) ? 
 			(int) $options['session.ipvallevel'] : 0;
+			
+		$this->options['session.loginnewsid'] = (isset($options['session.loginnewsid'])) ? true : false;
 
 		$this->storageEngine->init(array_merge($options, $this->options));
 		$this->clientEngine->setOptions(array_merge($options, $this->options));
@@ -260,6 +262,17 @@ class Driver
 			$this->data = $result['data'];
 			$this->alk = $result['alk'];
 			$this->uid = $result['uid'];
+		}
+		
+		if($this->options['session.loginnewsid'])
+		{
+			$this->sid = $this->sid = $this->storageEngine->newSession(true);
+
+			$this->clientEngine->setParams(array(
+				'sid' => $this->sid,
+				'uid' => $this->uid,
+				'alk' => $this->alk,
+			));
 		}
 	}
 
