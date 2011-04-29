@@ -117,8 +117,12 @@ class Driver
 		$this->options['session.ipvallevel'] = (isset($options['session.ipvallevel']) && 
 			$options['session.ipvallevel'] > 0 && $options['session.ipvallevel'] < 5) ? 
 			(int) $options['session.ipvallevel'] : 0;
-			
-		$this->options['session.loginsid'] = (isset($options['session.loginsid'])) ? true : false;
+
+		$this->options['session.loginsid'] = (isset($options['session.loginsid'])) ? 
+			(bool) $options['session.loginsid'] : true;
+
+		$this->options['session.trackguest'] = (isset($options['session.trackguest'])) ?
+			(bool) $options['session.trackguest'] : true;
 
 		// These come after the validations above in case the drivers want to use them. 
 		$this->storageEngine->init(array_merge($options, $this->options));
