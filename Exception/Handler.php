@@ -24,24 +24,29 @@ if(!defined('OpenFlame\\ROOT_PATH')) exit;
 class Handler
 {
 	/**
-	 * @var Exception - The exception to store
+	 * @var \Exception - The exception to store
 	 */
-	public static $exception;
-
-	/**
-	 * @var string - The contents of the page to display
-	 */
-	public static $page = '';
+	protected $exception;
 
 	/**
 	 * @var string - The HTML to use for the error page.
 	 */
-	public static $page_format = '';
+	protected static $page_format = '';
 
 	/**
-	 * @var boolean - Do we want to show debug info to _everyone_?
+	 * @var boolean - Do we want to show debug info to everyone?
 	 */
-	public static $show_throw_info = false;
+	protected static $use_debug = false;
+
+	/**
+	 * @var integer - The maximum number of exception layers to unwrap.
+	 */
+	protected static $unwrap_count = 0;
+
+	/**
+	 * @var \Closure - The closure to execute after displaying the exception message.
+	 */
+	protected static $closure;
 
 	/**
 	 * Register the exception handler.
@@ -59,14 +64,52 @@ class Handler
 	 */
 	final public static function catcher(\Exception $e)
 	{
-		self::$exception = ($e->getPrevious()) ? $e->getPrevious() : $e;
-		if(defined('OpenFlame\\Framework\\DEBUG') || self::$show_throw_info)
+		$self = new static($e, static::getPageFormat(), static::getDebugState(), static::getUnwrapCount(), static::getTerminalFunction());
+	}
+
+	/**
+	 * Create the exception handler instance and prepare to handle the page
+	 * @param \Exception $e - The exception we're handling.
+	 * @param string $page_format - The format to use for the exception message.
+	 * @param boolean $use_debug - Should we display all exception information.
+	 * @param integer $unwrap_count - The number of layers to unwrap for our exceptions.
+	 * @param mixed $closure - Either an object of instance \Closure to run after displaying the exception message, or NULL if no closure provided.
+	 * @return void
+	 *
+	 * @note: Script execution terminates at the end of the constructor.
+	 */
+	final protected function __construct(\Exception $e, $page_format, $use_debug, $unwrap_count, $closure)
+	{
+		$exception = $e;
+		if((int) $unwrap_count > 0)
 		{
-			self::displayException();
+			for($i = 0; $i < (int) $unwrap_count; $i++)
+			{
+				$previous = $e->getPrevious();
+				if($previous === NULL)
+				{
+					break;
+				}
+				$e = $previous;
+			}
+		}
+		$this->exception = $e;
+
+		if((bool) $use_debug)
+		{
+			$page = $this->displayException($page_format);
 		}
 		else
 		{
-			self::badassError();
+			$page = $this->badassError($page_format);
+		}
+
+		// Dump the page back to the user.
+		echo $page;
+
+		if($closure !== NULL)
+		{
+			$closure($exception);
 		}
 
 		// Flush all output buffers before exit.
@@ -75,95 +118,65 @@ class Handler
 	}
 
 	/**
-	 * Displays a debug page showing full info on the exception thrown
-	 * @return void
+	 * Get the debug state.
+	 * @return boolean - Is debug in use?
 	 */
-	final protected static function displayException()
+	final public static function getDebugState()
 	{
-		$e = array(
-			'e_type'		=> get_class(self::$exception),
-			'message'		=> self::$exception->getMessage(),
-			'code'			=> self::$exception->getCode(),
-			'trace'			=> self::highlightTrace(implode(self::traceException(self::$exception->getFile(), self::$exception->getLine(), 7))),
-			'file'			=> self::$exception->getFile(),
-			'line'			=> self::$exception->getLine(),
-			'stack'			=> self::formatStackTrace(),
-		);
-
-		if(!$e['stack'])
-			$e['stack'] = 'No stack trace available.';
-
-		$message = <<<EOD
-						<div>
-							<h3 style="padding: 0 0 20px 0;">Exception information</h3>
-
-							<div>Exception thrown, error code <span style="font-weight: bold; font-family: monospace; background: #ffffff; color: #007700; padding: 0 2px; border: solid 1px #007700;">{$e['e_type']}::{$e['code']}</span> with message &quot;<span style="font-family: monospace; font-weight: bold;">{$e['message']}</span>&quot;<br /><br />
-								on line <span style="font-weight: bold;">{$e['line']}</span> in file: <span style="font-weight: bold; font-family: monospace; background: #ffffff; color: #007700; padding: 0 3px; border: solid 1px #007700;">{$e['file']}</span>
-							</div>
-
-							<h3 style="padding: 20px 0;">Trace context</h3>
-							<div style="font-family: monospace; background: #ffffff; color: #007700; padding: 8px; border: solid 1px #007700; font-size: 1.2em; overflow:auto;">
-								{$e['trace']}
-							</div>
-
-							<h3 style="padding: 20px 0;">Stack trace</h3>
-							<div>
-								{$e['stack']}
-							</div>
-						</div>
-EOD;
-		self::buildHTML('Unexpected Exception', $message);
-		echo self::$page;
+		return static::$use_debug;
 	}
 
 	/**
-	 * Display a user-friendly (and obscure) error message.
+	 * Enable debug mode for exception information output.
 	 * @return void
 	 */
-	final public static function badassError()
+	final public static function enableDebug()
 	{
-		$e = array(
-			'e_type'		=> get_class(self::$exception),
-			'code'			=> self::$exception->getCode(),
-		);
-
-		$message = <<<EOD
-						<div>
-							Looks like something blew up on our end.  If you would be so kind as to report the error below to a site administrator or site technician, we'll get right on fixing it.<br /><br />
-							Error code: <span style="font-weight: bold; font-family: monospace; background: #ffffff; color: #007700; padding: 0 3px; border: solid 1px #007700;">{$e['e_type']}::{$e['code']}</span>
-						</div>
-EOD;
-		self::buildHTML('Unexpected Exception', $message);
-
-		echo self::$page;
+		static::$use_debug = true;
 	}
 
 	/**
-	 * Manually throw an error (useful for server errors and such)
-	 * @param string $title - The title to use for the page.
-	 * @param string $message - The message to display on the page.
+	 * Disable debug mode for exception information output.
 	 * @return void
 	 */
-	final public static function asplode($title, $message)
+	final public static function disableDebug()
 	{
-		self::buildHTML($title, '<div><p>' . $message . '</p></div>');
-		echo self::$page;
+		static::$use_debug = false;
 	}
 
 	/**
-	 * Builds the rough HTML page for the exception handler.
-	 * @param string $title - The title to use for the page.
-	 * @param string $page - The page content to display within the HTML layout.
+	 * Get the maximum number of layers to unwrap.
+	 * @return integer - The maximum number of layers to unwrap.
 	 */
-	final public static function buildHTML($title, $page)
+	final public static function getUnwrapCount()
 	{
-		if(!empty(static::$page_format))
+		return static::$unwrap_count;
+	}
+
+	/**
+	 * Set the maximum number of layers to unwrap from the provided exception.
+	 * @param integer $unwrap_count - The maximum number of layers to unwrap.
+	 * @return void
+	 */
+	final public static function setUnwrapCount($unwrap_count)
+	{
+		if((int) $unwrap_count < 0)
 		{
-			$page_format = static::$page_format;
+			$unwrap_count = 0;
 		}
-		else
+
+		static::$unwrap_count = (int) $unwrap_count;
+	}
+
+	/**
+	 * Get the sprintf-safe format to use for the page.
+	 * @return string - The format to use for the exception page.
+	 */
+	final public static function getPageFormat()
+	{
+		if(static::$page_format === NULL)
 		{
-			$page_format = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+			static::$page_format = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 	<head>
 		<title>OpenFlame: Community Content Management</title>
@@ -212,7 +225,7 @@ EOD;
 			</div>
 			<div id="footer">
 				<div class="retainer">
-					<p class="copyright hang-right"><a href="http://www.openflamecms.com/" target="_blank" title="OpenFlame: Community Content Management">OpenFlame</a></p>
+					Powered by the <p class="copyright hang-right"><a href="http://www.openflamecms.com/" target="_blank" title="OpenFlame: Community Content Management">OpenFlame Framework</a></p>
 					<div class="hang-clear"><!-- // --></div>
 				</div>
 			</div>
@@ -221,7 +234,113 @@ EOD;
 </html>';
 		}
 
-		self::$page = sprintf($page_format, $title, $page);
+		return static::$page_format;
+	}
+
+	/**
+	 * Set a sprintf-compatible format for the page output.
+	 * @param string $page_format - The format to use for the exception page (must handle two sprintf parameters, first is title, second is page content).
+	 * @return void
+	 */
+	final public static function setPageFormat($page_format)
+	{
+		static::$page_format = $page_format;
+	}
+
+	/**
+	 * Set the closure to execute on page output being generated (useful if you want to integrate with some sort of logger such as monolog)
+	 * @param \Closure $closure - The closure to execute (must have one parameter that expects an object of type \Exception)
+	 * @return void
+	 */
+	final public static function setTerminalFunction(\Closure $closure)
+	{
+		static::$closure = $closure;
+	}
+
+	/**
+	 * Get the closure to execute on exception page output.
+	 * @return mixed - Object of type \Closure if a closure has been set, or NULL if no closure set.
+	 */
+	final public static function getTerminalFunction()
+	{
+		return static::$closure;
+	}
+
+	/**
+	 * Displays a debug page showing full info on the exception thrown.
+	 * @param string $page_format - The page format to use for this page.
+	 * @return void
+	 */
+	final protected function displayException($page_format)
+	{
+		$e = array(
+			'e_type'		=> get_class($this->exception),
+			'message'		=> $this->exception->getMessage(),
+			'code'			=> $this->exception->getCode(),
+			'trace'			=> $this->highlightTrace(implode('', $this->traceException($this->exception->getFile(), $this->exception->getLine(), 7))),
+			'file'			=> $this->exception->getFile(),
+			'line'			=> $this->exception->getLine(),
+			'stack'			=> $this->formatStackTrace(),
+		);
+
+		if(!$e['stack'])
+		{
+			$e['stack'] = 'No stack trace available.';
+		}
+
+		$message = <<<EOD
+						<div>
+							<h3 style="padding: 0 0 20px 0;">Exception information</h3>
+
+							<div>Exception thrown, error code <span style="font-weight: bold; font-family: monospace; background: #ffffff; color: #007700; padding: 0 2px; border: solid 1px #007700;">{$e['e_type']}::{$e['code']}</span> with message &quot;<span style="font-family: monospace; font-weight: bold;">{$e['message']}</span>&quot;<br /><br />
+								on line <span style="font-weight: bold;">{$e['line']}</span> in file: <span style="font-weight: bold; font-family: monospace; background: #ffffff; color: #007700; padding: 0 3px; border: solid 1px #007700;">{$e['file']}</span>
+							</div>
+
+							<h3 style="padding: 20px 0;">Trace context</h3>
+							<div style="font-family: monospace; background: #ffffff; color: #007700; padding: 8px; border: solid 1px #007700; font-size: 1.2em; overflow:auto;">
+								{$e['trace']}
+							</div>
+
+							<h3 style="padding: 20px 0;">Stack trace</h3>
+							<div>
+								{$e['stack']}
+							</div>
+						</div>
+EOD;
+
+		return $this->buildHTML($page_format, 'Unexpected Exception', $message);
+	}
+
+	/**
+	 * Display a non-technical and obscure error message.
+	 * @param string $page_format - The page format to use for this page.
+	 * @return void
+	 */
+	final protected function badassError($page_format)
+	{
+		$e = array(
+			'e_type'		=> get_class($this->exception),
+			'code'			=> $this->exception->getCode(),
+		);
+
+		$message = <<<EOD
+						<div>
+							Uh oh!  We appear to have encountered an error during your request.  If you encounter this error again, please report the error below to a site administrator.<br /><br />
+							Error code: <span style="font-weight: bold; font-family: monospace; background: #ffffff; color: #007700; padding: 0 3px; border: solid 1px #007700;">{$e['e_type']}::{$e['code']}</span>
+						</div>
+EOD;
+		return $this->buildHTML($page_format, 'Unexpected Exception', $message);
+	}
+
+	/**
+	 * Builds the rough HTML page for the exception handler.
+	 * @param string $title - The title to use for the page.
+	 * @param string $page - The page content to display within the HTML layout.
+	 * @return string - The assembled HTML.
+	 */
+	final protected function buildHTML($page_format, $title, $page)
+	{
+		return sprintf($page_format, $title, $page);
 	}
 
 	/**
@@ -231,7 +350,7 @@ EOD;
 	 * @param integer $context - How many lines of context (above AND below) the troublemaker should we grab?
 	 * @return string - String containing the perpetrator + context lines for where the error/exception was thrown.
 	 */
-	final protected static function traceException($file, $line, $context = 3)
+	final protected function traceException($file, $line, $context = 3)
 	{
 		$return = array();
 		foreach (file($file) as $i => $str)
@@ -239,7 +358,9 @@ EOD;
 			if (($i + 1) > ($line - $context))
 			{
 				if(($i + 1) > ($line + $context))
+				{
 					break;
+				}
 				$return[] = $str;
 			}
 		}
@@ -252,10 +373,10 @@ EOD;
 	 * @param string $code - The code to highlight.
 	 * @return string - The HTML highlighted trace context code.
 	 */
-	final protected static function highlightTrace($code)
+	final protected function highlightTrace($code)
 	{
 		$remove_tags = false;
-		if (!preg_match('/\<\?.*?\?\>/is', $code))
+		if (!preg_match('#\<\?.*?\?\>#is', $code))
 		{
 			$remove_tags = true;
 			$code = "<?php $code";
@@ -287,10 +408,7 @@ EOD;
 		$code = preg_replace('#(?:\s++|&nbsp;)*+</span>$#u', '</span>', $code);
 
 		// remove newline at the end
-		if (!empty($code) && substr($code, -1) == "\n")
-		{
-			$code = substr($code, 0, -1);
-		}
+		$code = rtrim($code, "\n");
 
 		return $code;
 	}
@@ -299,13 +417,15 @@ EOD;
 	 * Format the stack trace for the currently loaded exception
 	 * @return string - The string containing the formatted HTML stack trace
 	 */
-	final protected static function formatStackTrace()
+	final protected function formatStackTrace()
 	{
 		$return = array();
-		$stack = self::$exception->getTrace();
+		$stack = $this->exception->getTrace();
 
 		if(!$stack)
+		{
 			return array();
+		}
 
 		$return[] = '<ol style="list-style-type: none;">' . "\n";
 		foreach($stack as $id => $trace)
