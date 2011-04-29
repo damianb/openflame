@@ -87,12 +87,12 @@ class EngineCookies implements EngineInterface
 
 		if(isset($params['uid']))
 		{
-			$cookie->setCookie('uid')->setCookieValue($params['uid']);
+			$cookie->setCookie(self::UID)->setCookieValue($params['uid']);
 		}
 
 		if(isset($params['autologinkey']))
 		{
-			$cookie->setCookie('al')->setCookieValue($params['autologinkey']);
+			$cookie->setCookie(self::ALK)->setCookieValue($params['autologinkey']);
 		}
 	}
 }
