@@ -118,8 +118,9 @@ class Driver
 			$options['session.ipvallevel'] > 0 && $options['session.ipvallevel'] < 5) ? 
 			(int) $options['session.ipvallevel'] : 0;
 			
-		$this->options['session.loginnewsid'] = (isset($options['session.loginnewsid'])) ? true : false;
+		$this->options['session.loginsid'] = (isset($options['session.loginsid'])) ? true : false;
 
+		// These come after the validations above in case the drivers want to use them. 
 		$this->storageEngine->init(array_merge($options, $this->options));
 		$this->clientEngine->setOptions(array_merge($options, $this->options));
 
@@ -193,6 +194,7 @@ class Driver
 					$returns = array();
 				}
 
+				// Just in case
 				if(!is_array($this->data))
 				{
 					$this->data = array();
@@ -257,14 +259,16 @@ class Driver
 
 		$result = $event->getReturns();
 
+		// Fill the data upon successful login
 		if($result['successful'])
 		{
 			$this->data = $result['data'];
 			$this->alk = $result['alk'];
 			$this->uid = $result['uid'];
 		}
-		
-		if($this->options['session.loginnewsid'])
+
+		// If we set for the SID to change when we log in, do so here.
+		if($this->options['session.loginsid'])
 		{
 			$this->sid = $this->sid = $this->storageEngine->newSession(true);
 
@@ -401,7 +405,7 @@ class Driver
 	 * Should be called periodically
 	 */
 	public function gc() 
-	{ 
+	{
 		$this->storageEngine->gc(); 
 	}
 }
