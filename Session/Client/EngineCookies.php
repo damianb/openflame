@@ -32,7 +32,7 @@ class EngineCookies implements EngineInterface
 	const SID = 'sid';
 	const UID = 'uid';
 	const ALK = 'alk';
-	
+
 	/**
 	 * Set options
 	 * @param array - Key/value pair array for all client-id level config options
@@ -55,9 +55,9 @@ class EngineCookies implements EngineInterface
 		$input = Core::getObject('input');
 
 		return array(
-			'sid' 	=> (string) $input->getInput('COOKIE::' . $this->options['cookie.prefix'] . '_' . self::SID, ''),
-			'uid' 	=> (string) $input->getInput('COOKIE::' . $this->options['cookie.prefix'] . '_' . self::UID, ''),
-			'alk'	=> (string) $input->getInput('COOKIE::' . $this->options['cookie.prefix'] . '_' . self::ALK, ''),
+			'sid' 	=> (string) $input->getInput('COOKIE::' . $this->options['cookie.prefix'] . self::SID, ''),
+			'uid' 	=> (string) $input->getInput('COOKIE::' . $this->options['cookie.prefix'] . self::UID, ''),
+			'alk'	=> (string) $input->getInput('COOKIE::' . $this->options['cookie.prefix'] . self::ALK, ''),
 		);
 	}
 
