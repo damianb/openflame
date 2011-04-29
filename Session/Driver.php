@@ -111,12 +111,12 @@ class Driver
 	 */
 	public function setOptions($options)
 	{
-		$this->options['expiretime'] = isset($options['expiretime']) ? 
-			(int) $options['expiretime'] : 3600;
+		$this->options['session.expiretime'] = isset($options['session.expiretime']) ? 
+			(int) $options['session.expiretime'] : 3600;
 	
-		$this->options['ipvallevel'] = (isset($options['ipvallevel']) && 
-			$options['ipvallevel'] > 0 && $options['ipvallevel'] < 5) ? 
-			(int) $options['ipvallevel'] : 0;
+		$this->options['session.ipvallevel'] = (isset($options['session.ipvallevel']) && 
+			$options['session.ipvallevel'] > 0 && $options['session.ipvallevel'] < 5) ? 
+			(int) $options['session.ipvallevel'] : 0;
 
 		$this->storageEngine->init(array_merge($options, $this->options));
 		$this->clientEngine->setOptions(array_merge($options, $this->options));
@@ -223,7 +223,7 @@ class Driver
 			'alk' => $this->alk,
 		));
 
-		$this->expireTime = $now + $this->options['expiretime'];
+		$this->expireTime = $now + $this->options['session.expiretime'];
 	}
 
 	/**
@@ -386,7 +386,7 @@ class Driver
 		else
 		{
 			// IPv4
-			$this->ipAddrPartial = implode('.', array_slice(explode('.', $this->ipAddr), 0, $this->options['ipvallevel']));
+			$this->ipAddrPartial = implode('.', array_slice(explode('.', $this->ipAddr), 0, $this->options['session.ipvallevel']));
 		}
 	}
 
