@@ -78,6 +78,11 @@ class EngineCookies implements EngineInterface
 				->setCookiePath($this->options['cookie.path'])
 				->setCookiePrefix($this->options['cookie.prefix'])
 				->setCookieSecure($this->options['cookie.secure']);
+
+			if($this->options['cookie.expire'] > 0)
+			{
+				$cookie->setDefaultCookieExpire($this->options['cookie.expire']);
+			}
 		}
 
 		if(isset($params['sid']))
