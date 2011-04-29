@@ -63,12 +63,12 @@ class Driver
 	/*
 	 * @var IP Partial 
 	 */
-	protected $ipAddrPartial = array();
+	protected $ipAddrPartial = '';
 
 	/*
 	 * @var IP Address
 	 */
-	public $ipAddr = array();
+	public $ipAddr = '';
 
 	/*
 	 * @var session data
@@ -137,13 +137,16 @@ class Driver
 		$uid = $params['uid'];
 		$alk = $params['alk'];
 
+		$this->pullIPAddress();
+		$this->pullIPPartial();
+
 		// Our flag to make the logic flow a bit nicer
 		$valid = false;
 
 		// Let's see if they have a session first
 		if ($this->storageEngine->loadSession($sid))
 		{
-			list($this->data, $fingerprint, $exp, $this->uid, $this->alk) = $this->storageEngine->loadData();
+			list($this->data, $this->fingerprint, $exp, $this->uid, $this->alk) = $this->storageEngine->loadData();
 
 			// Validate it / do autologin process
 			if ($now < $exp)
@@ -164,7 +167,7 @@ class Driver
 		// Valid up to this point? not for long
 		if($valid)
 		{
-			$this->fingerprint = $this->makeFingerprint();
+			$fingerprint = $this->makeFingerprint();
 
 			if($fingerprint == $this->fingerprint)
 			{
@@ -307,7 +310,7 @@ class Driver
 	protected function makeFingerprint()
 	{
 		// MD5 is faster, not going to have a sha1 running every page load
-		hash('md5', $this->ipAddrPartial . $_SERVER['HTTP_USER_AGENT']);
+		return hash('md5', $this->ipAddrPartial . $_SERVER['HTTP_USER_AGENT']);
 	}
 
 	/*
@@ -325,11 +328,66 @@ class Driver
 		{
 			throw new \LogicException("Too many responses to the 'session.default' event.");
 		}
-		
+
 		$this->uid = '';
 		$this->alk = NULL;
+		$this->fingerprint = $this->makeFingerprint();
 
 		$this->data = $event->getReturns();
+	}
+
+	/*
+	 * Pull IP address
+	 * Ported from legacy OfSession
+	 * @return bool
+	 */
+	protected function pullIPAddress()
+	{
+		$input = Core::getObject('input');
+		$ip		= $input->getInput('SERVER::REMOTE_ADDR', '127.0.0.1');
+		$xip	= $input->getInput('SERVER::HTTP_X_REMOTE_ADDR', '127.0.0.1');
+
+		if(!$ip->getWasSet() || !filter_var($ip, FILTER_VALIDATE_IP))
+		{
+			if(!$xip->getWasSet() || !filter_var($xip, FILTER_VALIDATE_IP))
+			{
+				$this->ipAddr = '0.0.0.0'; 
+			}
+			else
+			{
+				$this->ipAddr = $xip->getClean();
+			}
+		}
+		else
+		{
+			$this->ipAddr = $ip->getClean();
+		}
+	}
+
+	/*
+	 * Pull a partial IP address
+	 * @return bool
+	 */
+	protected function pullIPPartial()
+	{
+		if(empty($this->ipAddr))
+		{
+			$this->pullIPAddress();
+		}
+
+		if(strpos($this->ipAddr, ':'))
+		{
+			// IPv6
+			// @TODO - Get partial validation working or continue to assume
+			// everyone using IPv6 will have thier own IP for the duration of
+			// the session
+			$this->ipAddrPartial = $this->ipAddr;
+		}
+		else
+		{
+			// IPv4
+			$this->ipAddrPartial = implode('.', array_slice(explode('.', $this->ipAddr), 0, $this->options['ipvallevel']));
+		}
 	}
 
 	/*
