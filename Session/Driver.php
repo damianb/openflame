@@ -80,6 +80,11 @@ class Driver
 	 */
 	public $sid = '';
 
+	/*
+	 * @var Is the session authenticated (i.e. logged in)
+	 */
+	public $authenticated = false;
+
 	/**
 	 * Sets the session storage engine to be used
 	 * @param \OpenFlame\Framework\Session\Storage\EngineInterface - The Session engine to use.
@@ -153,7 +158,8 @@ class Driver
 		// Let's see if they have a session first
 		if ($this->storageEngine->loadSession($sid))
 		{
-			list($this->data, $this->fingerprint, $exp, $this->uid, $this->alk) = $this->storageEngine->loadData();
+			list($this->data, $this->fingerprint, $exp, $this->uid, $this->alk, $this->authenticated) = 
+				$this->storageEngine->loadData();
 
 			// Validate it / do autologin process
 			if ($now < $exp)
@@ -165,7 +171,8 @@ class Driver
 				// Session is OVER, check for autologin
 				if	($this->alk === $alk && $this->uid === $uid)
 				{
-					$this->sid = $this->storageEngine->newSession(true);
+					// New session, same data
+					$this->sid = $this->storageEngine->newSession();
 					$valid = true;
 				}
 			}
@@ -217,21 +224,35 @@ class Driver
 			}
 		}
 
-		// If we do not have a valid session, create a new one
-		if (!$valid)
+		if(!$valid)
 		{
-			$this->sid = $this->storageEngine->newSession(true);
+			$this->authenticated = false;
 			$this->defaultData();
 		}
 
-		// Make our client engine aware
-		$this->clientEngine->setParams(array(
-			'sid' => $this->sid,
-			'uid' => $this->uid,
-			'alk' => $this->alk,
-		));
+		// Depending on if we are tracking guests or not, we must either delete
+		// the session or createa  new one.
+		if (!$valid && !$this->authenticated && !$this->options['session.trackguest'])
+		{
+			$this->storageEngine->deleteSession();
+			$this->sid = '';
+		}
+		else if(!$valid && !$this->authenticated && $this->options['session.trackguest'])
+		{
+			$this->sid = $this->storageEngine->newSession(true);
+		}
 
-		$this->expireTime = $now + $this->options['session.expiretime'];
+		if($this->options['session.trackguest'] || $this->authenticated)
+		{
+			// Make our client engine aware
+			$this->clientEngine->setParams(array(
+				'sid' => $this->sid,
+				'uid' => $this->uid,
+				'alk' => $this->alk,
+			));
+
+			$this->expireTime = $now + $this->options['session.expiretime'];
+		}
 	}
 
 	/**
@@ -269,12 +290,19 @@ class Driver
 			$this->data = $result['data'];
 			$this->alk = $result['alk'];
 			$this->uid = $result['uid'];
+			
+			if ($this->options['session.loginsid'])
+			{
+				$this->sid = $this->storageEngine->newSession(true);
+			}
+			
+			$this->authenticated = true;
 		}
 
 		// If we set for the SID to change when we log in, do so here.
-		if($this->options['session.loginsid'])
+		if($this->options['session.trackguest'] || $result['successful'])
 		{
-			$this->sid = $this->sid = $this->storageEngine->newSession(true);
+			$this->expireTime = time() + $this->options['session.expiretime'];
 
 			$this->clientEngine->setParams(array(
 				'sid' => $this->sid,
@@ -285,21 +313,24 @@ class Driver
 	}
 
 	/**
-	 * Start the session 
+	 * Kill the session
 	 * @return void
 	 */
 	public function kill()
 	{
 		$dispatcher = Core::getObject('dispatcher');
-		$this->sid = $this->storageEngine->newSession(true);
+		$this->sid = ($this->options['session.trackguest']) ? $this->storageEngine->newSession(true) : '';
 
 		$this->defaultData();
 
-		$this->clientEngine->setParams(array(
-			'sid' => $this->sid,
-			'uid' => '',
-			'alk' => NULL,
-		));
+		if($this->options['session.trackguest'])
+		{
+			$this->clientEngine->setParams(array(
+				'sid' => $this->sid,
+				'uid' => '',
+				'alk' => NULL,
+			));
+		}
 	}
 
 	/**
@@ -308,13 +339,17 @@ class Driver
 	 */
 	public function commit()
 	{
-		$this->storageEngine->storeData(array(
-			$this->data, 
-			$this->fingerprint, 
-			$this->expireTime, 
-			$this->uid, 
-			$this->alk,
-		));
+		if(!empty($this->sid))
+		{
+			$this->storageEngine->storeData(array(
+				$this->data, 
+				$this->fingerprint, 
+				$this->expireTime, 
+				$this->uid, 
+				$this->alk,
+				$this->authenticated,
+			));
+		}
 	}
 
 	/**

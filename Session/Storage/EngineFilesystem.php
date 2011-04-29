@@ -72,10 +72,7 @@ class EngineFilesystem implements EngineInterface
 			$this->filename = $this->options['file.savepath'] . $this->options['file.prefix'] . $this->sid;
 		}
 
-		if(file_exists($this->filename))
-		{
-			unlink($this->filename);
-		}
+		$this->deleteSession();
 
 		$this->sid = hash('sha1', $this->filename . $this->options['file.randseed']);
 		$this->filename = $this->options['file.savepath'] . $this->options['file.prefix'] . $this->sid;
@@ -86,6 +83,25 @@ class EngineFilesystem implements EngineInterface
 		}
 
 		return $this->sid;
+	}
+
+	/*
+	 * Delete Session
+	 *
+	 * Deletes the currently loaded session 
+	 * @return void
+	 */
+	public function deleteSession()
+	{
+		if(empty($this->filename))
+		{
+			$this->filename = $this->options['file.savepath'] . $this->options['file.prefix'] . $this->sid;
+		}
+
+		if(file_exists($this->filename))
+		{
+			unlink($this->filename);
+		}
 	}
 
 	/*
