@@ -40,6 +40,10 @@ class EngineFilesystem implements EngineInterface
 	private $sid = '';
 
 	/*
+	 */
+	protected $now = 0;
+
+	/*
 	 * Init
 	 *
 	 * Called when the session object is created but before the session has started
@@ -56,6 +60,8 @@ class EngineFilesystem implements EngineInterface
 		{
 			$this->options['file.savepath'] .= '/';
 		}
+
+		$this->now = time();
 	}
 
 	/*
@@ -69,13 +75,13 @@ class EngineFilesystem implements EngineInterface
 	{
 		if(empty($this->filename))
 		{
-			$this->filename = $this->options['file.savepath'] . $this->options['file.prefix'] . $this->sid;
+			$this->filename = $this->options['file.savepath'] . $this->options['file.prefix'] . $this->sid . '.php';
 		}
 
 		$this->deleteSession();
 
 		$this->sid = hash('sha1', $this->filename . $this->options['file.randseed']);
-		$this->filename = $this->options['file.savepath'] . $this->options['file.prefix'] . $this->sid;
+		$this->filename = $this->options['file.savepath'] . $this->options['file.prefix'] . $this->sid . '.php';
 
 		if($clearData)
 		{
@@ -95,7 +101,7 @@ class EngineFilesystem implements EngineInterface
 	{
 		if(empty($this->filename))
 		{
-			$this->filename = $this->options['file.savepath'] . $this->options['file.prefix'] . $this->sid;
+			$this->filename = $this->options['file.savepath'] . $this->options['file.prefix'] . $this->sid . '.php';
 		}
 
 		if(file_exists($this->filename))
@@ -113,11 +119,12 @@ class EngineFilesystem implements EngineInterface
 	public function loadSession($sid)
 	{
 		$this->sid = $sid;
-		$this->filename = $this->options['file.savepath'] . $this->options['file.prefix'] . $this->sid;
+		$this->filename = $this->options['file.savepath'] . $this->options['file.prefix'] . $this->sid . '.php';
 
 		if(file_exists($this->filename))
 		{
-			$this->data = unserialize(file_get_contents($this->filename));
+			list($ts, $data) = explode("\n", file_get_contents($this->filename, NULL, NULL, 15));
+			$this->data = unserialize($data);
 			return true;
 		}
 		else
@@ -147,7 +154,8 @@ class EngineFilesystem implements EngineInterface
 	{
 		$this->data = $data;
 
-		file_put_contents($this->options['file.savepath'] . $this->options['file.prefix'] . $this->sid, serialize($this->data));
+		file_put_contents($this->options['file.savepath'] . $this->options['file.prefix'] . $this->sid . '.php', 
+			"<?php exit; ?>\n{$this->now}\n" . serialize($this->data) . "\n");
 	}
 
 	/*
@@ -163,10 +171,13 @@ class EngineFilesystem implements EngineInterface
 		{
 			$fullpath = $this->options['file.savepath'] . $file;
 
-			if (substr($file, 0, strlen($this->options['file.prefix'])) == $this->options['file.prefix'] &&
-				filemtime($fullpath) < $cutoff)
+			if (substr($file, 0, strlen($this->options['file.prefix'])) == $this->options['file.prefix'])
 			{
-				unlink($fullpath);
+				// If the date in the older than the cutoff, /dev/null it goes. 
+				if(reset(explode("\n", file_get_contents($fullpath, NULL, NULL, 15))) < $cutoff)
+				{
+					unlink($fullpath);
+				}
 			}
 		}
 	}
