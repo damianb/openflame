@@ -48,7 +48,7 @@ class Driver
 	/*
 	 *  @var autlogin key
 	 */
-	protected $alk = '';
+	public $alk = '';
 
 	/*
 	 *	@var fingerprint
@@ -169,6 +169,8 @@ class Driver
 	public function start()
 	{
 		$now = time();
+		$paramsToSend = array();
+
 		// Grab the data from our client id
 		$params = $this->clientEngine->getParams();
 		$sid = $params['sid'];
@@ -207,6 +209,13 @@ class Driver
 				// They should get a new session now
 				$this->sid = $this->storageEngine->newSession();
 				$valid = $al = true;
+		
+				$seeder = new \OpenFlame\Framework\Security\Seeder();
+				$this->alk = $seeder->buildRandomString(22, '', '0123456789abcdefghijklmnopqrstuvwxyz');
+				$this->autologinEngine->store($this->uid, $this->alk);
+
+				$paramsToSend['uid'] = $this->uid;
+				$paramsToSend['alk'] = $this->alk;
 			}
 		}
 
@@ -246,15 +255,6 @@ class Driver
 				{
 					$this->sid = $sid;
 				}
-
-				// If we autologined at this page load, then we're going to
-				// store the data to ensure we can do it next time.
-				if ($al)
-				{
-					$seeder = new \OpenFlame\Framework\Security\Seeder();
-					$this->alk = $seeder->buildRandomString(22);
-					$this->autologinEngine->store($this->uid, $this->alk);
-				}
 			}
 			else
 			{
@@ -282,13 +282,10 @@ class Driver
 
 		if ($this->options['session.trackguest'] || $this->authenticated)
 		{
+			$paramsToSend['sid'] = $this->sid;
+	
 			// Make our client engine aware
-			$this->clientEngine->setParams(array(
-				'sid' => $this->sid,
-				'uid' => $this->uid,
-				'alk' => $this->alk,
-			));
-
+			$this->clientEngine->setParams($paramsToSend);
 			$this->expireTime = $now + $this->options['session.expiretime'];
 		}
 	}
@@ -305,6 +302,7 @@ class Driver
 	public function login($username, $password, $autologin = false, $flags = array())
 	{
 		$dispatcher = Core::getObject('dispatcher');
+		$paramsToSend = array();
 
 		$event = $dispatcher->triggerUntilBreak(\OpenFlame\Framework\Event\Instance::newEvent('session.login')
 			->setData(array(
@@ -338,8 +336,11 @@ class Driver
 				$result['autologin'] == true )
 			{
 				$seeder = new \OpenFlame\Framework\Security\Seeder();
-				$this->alk = $seeder->buildRandomString(22);
+				$this->alk = $seeder->buildRandomString(10, '', '0123456789abcdefghijklmnopqrstuvwxyz');
 				$this->autologinEngine->store($this->uid, $this->alk);
+
+				$paramsToSend['uid'] = $this->uid;
+				$paramsToSend['alk'] = $this->alk;
 			}
 
 			$this->authenticated = true;
@@ -349,12 +350,9 @@ class Driver
 		if ($this->options['session.trackguest'] || $result['successful'])
 		{
 			$this->expireTime = time() + $this->options['session.expiretime'];
+			$paramsToSend['sid'] = $this->sid;
 
-			$this->clientEngine->setParams(array(
-				'sid' => $this->sid,
-				'uid' => $this->uid,
-				'alk' => $this->alk,
-			));
+			$this->clientEngine->setParams($paramsToSend);
 		}
 	}
 
