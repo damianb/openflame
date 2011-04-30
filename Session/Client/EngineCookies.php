@@ -63,12 +63,12 @@ class EngineCookies implements EngineInterface
 
 	/**
 	 * Set params to be stored by the client
-	 * @param array - Structure: 'sid' => '', 'uid' => '', 'autologinkey' => ''
+	 * @param array - Structure: 'sid' => '', 'uid' => '', 'alk' => ''
 	 * @return void
 	 */
 	public function setParams($params)
 	{
-		if(isset($params['sid']) || isset($params['uid']) || isset($params['autologinkey']))
+		if(isset($params['sid']) || isset($params['uid']) || isset($params['alk']))
 		{
 			$header = Core::getObject('header');
 			$cookie = $header->loadSubmodule('Cookie');
@@ -95,9 +95,9 @@ class EngineCookies implements EngineInterface
 			$cookie->setCookie(static::UID)->setCookieValue($params['uid']);
 		}
 
-		if(isset($params['autologinkey']))
+		if(isset($params['alk']))
 		{
-			$cookie->setCookie(static::ALK)->setCookieValue($params['autologinkey']);
+			$cookie->setCookie(static::ALK)->setCookieValue($params['alk']);
 		}
 	}
 }

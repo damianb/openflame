@@ -63,7 +63,12 @@ class EngineFilesystem implements EngineInterface
 	 */
 	public function store($uid, $key)
 	{
-		return (file_put_contents($this->options['autologin.savepath'] . $options['autologin.prefix'] . $key . '.php', 
+		if($this->now == 0)
+		{
+			$this->now = time();
+		}
+
+		return (file_put_contents($this->options['autologin.savepath'] . $this->options['autologin.prefix'] . $key . '.php', 
 			"<?php exit; ?>\n{$this->now}\n{$uid}\n") > 0) ? true : false;
 	}
 
