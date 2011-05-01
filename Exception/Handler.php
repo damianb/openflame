@@ -10,6 +10,7 @@
  */
 
 namespace OpenFlame\Framework\Exception;
+use OpenFlame\Framework\Core;
 
 if(!defined('OpenFlame\\ROOT_PATH')) exit;
 
