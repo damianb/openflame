@@ -13,7 +13,7 @@ namespace OpenFlame\Framework\Session;
 use OpenFlame\Framework\Core;
 use \OpenFlame\Framework\Event\Instance as Event;
 
-if(!defined('OpenFlame\\ROOT_PATH')) exit;
+if (!defined('OpenFlame\\ROOT_PATH')) exit;
 
 /**
  * OpenFlame Web Framework - Session Handler Base
@@ -36,14 +36,19 @@ class Driver
 	protected $clientEngine;
 
 	/*
+	 * @var \OpenFlame\Framework\Session\Autologin\EngineInterface
+	 */
+	protected $autologinEngine;
+
+	/*
 	 *  @var user ID
 	 */
-	protected $uid = '';
+	public $uid = '';
 
 	/*
 	 *  @var autlogin key
 	 */
-	protected $autologinKey = '';
+	public $alk = '';
 
 	/*
 	 *	@var fingerprint
@@ -63,12 +68,12 @@ class Driver
 	/*
 	 * @var IP Partial 
 	 */
-	protected $ipAddrPartial = array();
+	protected $ipAddrPartial = '';
 
 	/*
 	 * @var IP Address
 	 */
-	public $ipAddr = array();
+	public $ipAddr = '';
 
 	/*
 	 * @var session data
@@ -79,6 +84,11 @@ class Driver
 	 *  @var session id
 	 */
 	public $sid = '';
+
+	/*
+	 * @var Is the session authenticated (i.e. logged in)
+	 */
+	public $authenticated = false;
 
 	/**
 	 * Sets the session storage engine to be used
@@ -105,21 +115,49 @@ class Driver
 	}
 
 	/**
+	 * Sets the Session Autologin engine
+	 * @param \OpenFlame\Framework\Session\Client\EngineInterface - The Session engine to use.
+	 * @return \OpenFlame\Framework\Session\Driver - Provides a fluent interface.
+	 */
+	public function setAutologinEngine(\OpenFlame\Framework\Session\Autologin\EngineInterface $engine)
+	{
+		$this->autologinEngine = $engine;
+
+		return $this;
+	}
+
+	/**
 	 * Sets the session storage engine to be used
 	 * @param array - Options to feed the engine
 	 * @return \OpenFlame\Framework\Session\Driver - Provides a fluent interface.
 	 */
 	public function setOptions($options)
 	{
-		$this->storageEngine->init($options);
-		$this->clientEngine->setOptions($options);
+		// Copy the array in here 
+		$this->options = $options;
 
-		$this->options['expiretime'] = isset($options['expiretime']) ? 
-			(int) $options['expiretime'] : 3600;
+		// Now do some basic validation
+		$this->options['session.expiretime'] = isset($options['session.expiretime']) ? 
+			(int) $options['session.expiretime'] : 3600;
 	
-		$this->options['ipvallevel'] = (isset($options['ipvallevel']) && 
-			$options['ipvallevel'] > 0 && $options['ipvallevel'] < 5) ? 
-			(int) $options['ipvallevel'] : 0;
+		$this->options['session.ipvallevel'] = (isset($options['session.ipvallevel']) && 
+			$options['session.ipvallevel'] > 0 && $options['session.ipvallevel'] < 5) ? 
+			(int) $options['session.ipvallevel'] : 0;
+
+		$this->options['session.loginsid'] = (isset($options['session.loginsid'])) ? 
+			(bool) $options['session.loginsid'] : true;
+
+		$this->options['session.trackguest'] = (isset($options['session.trackguest'])) ?
+			(bool) $options['session.trackguest'] : true;
+
+		// These come after the validations above in case the drivers want to use them. 
+		$this->storageEngine->init($this->options);
+		$this->clientEngine->setOptions($this->options);
+		
+		if (is_object($this->autologinEngine))
+		{
+			$this->autologinEngine->setOptions($this->options);
+		}
 
 		return $this;
 	}
@@ -131,65 +169,92 @@ class Driver
 	public function start()
 	{
 		$now = time();
+		$paramsToSend = array();
 
 		// Grab the data from our client id
 		$params = $this->clientEngine->getParams();
-		$this->sid			= $params['sid'];
-		$this->uid			= $params['uid'];
-		$this->autologinKey = $params['autologinkey'];
+		$sid = $params['sid'];
+		$uid = $params['uid'];
+		$alk = $params['alk'];
+
+		$this->pullIPAddress();
+		$this->pullIPPartial();
 
 		// Our flag to make the logic flow a bit nicer
 		$valid = false;
+		$al = false;
 
 		// Let's see if they have a session first
-		if ($this->storageEngine->loadSession($this->sid))
+		if ($this->storageEngine->loadSession($sid))
 		{
-			list($data, $fingerprint, $exp, $uid, $autologinKey) = $this->storageEngine->loadData();
-	
+			list($this->data, $this->fingerprint, $exp, $this->uid, $this->authenticated) = 
+				$this->storageEngine->loadData();
+
 			// Validate it / do autologin process
 			if ($now < $exp)
 			{
 				$valid = true;
 			}
-			else
+		}
+
+		// Now that we know they do not have a valid session, we need to check
+		// if they are presenting autologin cookies
+		if (!$valid && is_object($this->autologinEngine))
+		{
+			$this->uid = $this->autologinEngine->lookup($alk);
+
+			// This MUST be a strict compare
+			if ($uid === $this->uid)
 			{
-				// Session is OVER, check for autologin
-				if	($this->autologinKey == $autologinKey && $uid == $this->uid)
-				{
-					$this->sid = $this->storageEngine->newSession(true);
-					$valid = true;
-				}
+				// They should get a new session now
+				$this->sid = $this->storageEngine->newSession();
+				$valid = $al = true;
+		
+				$seeder = new \OpenFlame\Framework\Security\Seeder();
+				$this->alk = $seeder->buildRandomString(22, '', '0123456789abcdefghijklmnopqrstuvwxyz');
+				$this->autologinEngine->store($this->uid, $this->alk);
+
+				$paramsToSend['uid'] = $this->uid;
+				$paramsToSend['alk'] = $this->alk;
 			}
 		}
 
 		// Valid up to this point? not for long
-		if($valid)
+		if ($valid)
 		{
-			$this->fingerprint = $this->makeFingerprint();
+			$fingerprint = $this->makeFingerprint();
 
-			if($fingerprint == $this->fingerprint)
+			if ($fingerprint == $this->fingerprint)
 			{
 				$dispatcher = Core::getObject('dispatcher');
 	
 				$event = $dispatcher->triggerUntilBreak(\OpenFlame\Framework\Event\Instance::newEvent('session.get')
-					->setData(array(
-						'userid'	=> $this->uid,
-					))
-				);
+					->setData(array('useruid'=>$this->uid)));
 
-				if($event->countReturns() > 1)
+				if ($event->countReturns() > 1)
 				{
 					throw new \LogicException("Too many responses to the 'session.get' event.");
 				}
 
 				// If it's not an array, something is not right here.
 				$returns = $event->getReturns();
-				if(!is_array($returns))
+				if (!is_array($returns))
 				{
 					$returns = array();
 				}
 
+				// Just in case
+				if (!is_array($this->data))
+				{
+					$this->data = array();
+				}
+
 				$this->data = array_merge($returns, $this->data);
+
+				if (empty($this->sid))
+				{
+					$this->sid = $sid;
+				}
 			}
 			else
 			{
@@ -197,21 +262,32 @@ class Driver
 			}
 		}
 
-		// If we do not have a valid session, create a new one
 		if (!$valid)
 		{
-			$this->sid = $this->storageEngine->newSession(true);
-			$this->defaultData();
+			$this->authenticated = false;
+			$this->getDefaultData();
 		}
 
-		// Make our client engine aware
-		$this->clientEngine->setParams(array(
-			'sid'			=> $this->sid,
-			'uid'			=> $this->uid,
-			'autologinkey'	=> $this->autologinKey,
-		));
+		// Depending on if we are tracking guests or not, we must either delete
+		// the session or createa  new one.
+		if (!$valid && !$this->authenticated && !$this->options['session.trackguest'])
+		{
+			$this->storageEngine->deleteSession();
+			$this->sid = '';
+		}
+		else if (!$valid && !$this->authenticated && $this->options['session.trackguest'])
+		{
+			$this->sid = $this->storageEngine->newSession(true);
+		}
 
-		$this->expireTime = $now + $this->options['expiretime'];
+		if ($this->options['session.trackguest'] || $this->authenticated)
+		{
+			$paramsToSend['sid'] = $this->sid;
+	
+			// Make our client engine aware
+			$this->clientEngine->setParams($paramsToSend);
+			$this->expireTime = $now + $this->options['session.expiretime'];
+		}
 	}
 
 	/**
@@ -226,6 +302,7 @@ class Driver
 	public function login($username, $password, $autologin = false, $flags = array())
 	{
 		$dispatcher = Core::getObject('dispatcher');
+		$paramsToSend = array();
 
 		$event = $dispatcher->triggerUntilBreak(\OpenFlame\Framework\Event\Instance::newEvent('session.login')
 			->setData(array(
@@ -236,44 +313,73 @@ class Driver
 			))
 		);
 
-		if($event->countReturns())
+		if ($event->countReturns() > 1)
 		{
 			throw new LogicException("Too many responses to the 'session.login' event.");
 		}
 
 		$result = $event->getReturns();
 
-		if($result['successful'])
+		// Fill the data upon successful login
+		if ($result['successful'])
 		{
-			$this->sid = $this->storageEngine->newSession(true);
 			$this->data = $result['data'];
-			$this->autologinKey = $result['autologinKey'];
 			$this->uid = $result['uid'];
+
+			if ($this->options['session.loginsid'])
+			{
+				$this->sid = $this->storageEngine->newSession(true);
+			}
+
+			if (is_object($this->autologinEngine) && 
+				isset($result['autologin']) && 
+				$result['autologin'] == true )
+			{
+				$seeder = new \OpenFlame\Framework\Security\Seeder();
+				$this->alk = $seeder->buildRandomString(10, '', '0123456789abcdefghijklmnopqrstuvwxyz');
+				$this->autologinEngine->store($this->uid, $this->alk);
+
+				$paramsToSend['uid'] = $this->uid;
+				$paramsToSend['alk'] = $this->alk;
+			}
+
+			$this->authenticated = true;
 		}
 
-		$this->clientEngine->setParams(array(
-			'sid'			=> $this->sid,
-			'uid'			=> $this->uid,
-			'autologinkey'	=> $this->autologinKey,
-		));
+		// If we set for the SID to change when we log in, do so here.
+		if ($this->options['session.trackguest'] || $result['successful'])
+		{
+			$this->expireTime = time() + $this->options['session.expiretime'];
+			$paramsToSend['sid'] = $this->sid;
+
+			$this->clientEngine->setParams($paramsToSend);
+		}
 	}
 
 	/**
-	 * Start the session 
+	 * Kill the session
 	 * @return void
 	 */
 	public function kill()
 	{
 		$dispatcher = Core::getObject('dispatcher');
-		$this->sid = $this->storageEngine->newSession(true);
+		$this->sid = ($this->options['session.trackguest']) ? $this->storageEngine->newSession(true) : '';
 
-		$this->defaultData();
+		if ($this->alk)
+		{
+			$this->autologinEngine->lookup($this->alk);
+		}
 
-		$this->clientEngine->setParams(array(
-			'sid'			=> $this->sid,
-			'uid'			=> '',
-			'autologinkey'	=> '',
-		));
+		$this->getDefaultData();
+
+		if ($this->options['session.trackguest'])
+		{
+			$this->clientEngine->setParams(array(
+				'sid' => $this->sid,
+				'uid' => '',
+				'alk' => '',
+			));
+		}
 	}
 
 	/**
@@ -282,13 +388,16 @@ class Driver
 	 */
 	public function commit()
 	{
-		$this->storageEngine->storeData(array(
-			$this->data, 
-			$this->fingerprint, 
-			$this->expireTime, 
-			$this->uid, 
-			$this->autologinKey
-		));
+		if (!empty($this->sid))
+		{
+			$this->storageEngine->storeData(array(
+				$this->data, 
+				$this->fingerprint, 
+				$this->expireTime, 
+				$this->uid, 
+				$this->authenticated,
+			));
+		}
 	}
 
 	/**
@@ -298,7 +407,7 @@ class Driver
 	protected function makeFingerprint()
 	{
 		// MD5 is faster, not going to have a sha1 running every page load
-		hash('md5', $this->ipAddrPartial . $_SERVER['HTTP_USER_AGENT']);
+		return hash('md5', $this->ipAddrPartial . $_SERVER['HTTP_USER_AGENT']);
 	}
 
 	/*
@@ -306,17 +415,84 @@ class Driver
 	 * @return void
 	 * @throws LogicException
 	 */
-	protected function defaultData()
+	protected function getDefaultData()
 	{
 		$dispatcher = Core::getObject('dispatcher');
 
 		$event = $dispatcher->triggerUntilBreak(\OpenFlame\Framework\Event\Instance::newEvent('session.default'));
 
-		if($event->countReturns())
+		if ($event->countReturns() > 1)
 		{
 			throw new \LogicException("Too many responses to the 'session.default' event.");
 		}
 
+		$this->uid = '';
+		$this->alk = NULL;
+		$this->fingerprint = $this->makeFingerprint();
+
 		$this->data = $event->getReturns();
+	}
+
+	/*
+	 * Pull IP address
+	 * Ported from legacy OfSession
+	 * @return bool
+	 */
+	protected function pullIPAddress()
+	{
+		$input = Core::getObject('input');
+		$ip		= $input->getInput('SERVER::REMOTE_ADDR', '127.0.0.1');
+		$xip	= $input->getInput('SERVER::HTTP_X_REMOTE_ADDR', '127.0.0.1');
+
+		if (!$ip->getWasSet() || !filter_var($ip, FILTER_VALIDATE_IP))
+		{
+			if (!$xip->getWasSet() || !filter_var($xip, FILTER_VALIDATE_IP))
+			{
+				$this->ipAddr = '0.0.0.0'; 
+			}
+			else
+			{
+				$this->ipAddr = $xip->getClean();
+			}
+		}
+		else
+		{
+			$this->ipAddr = $ip->getClean();
+		}
+	}
+
+	/*
+	 * Pull a partial IP address
+	 * @return bool
+	 */
+	protected function pullIPPartial()
+	{
+		if (empty($this->ipAddr))
+		{
+			$this->pullIPAddress();
+		}
+
+		if (strpos($this->ipAddr, ':'))
+		{
+			// IPv6
+			// @TODO - Get partial validation working or continue to assume
+			// everyone using IPv6 will have thier own IP for the duration of
+			// the session
+			$this->ipAddrPartial = $this->ipAddr;
+		}
+		else
+		{
+			// IPv4
+			$this->ipAddrPartial = implode('.', array_slice(explode('.', $this->ipAddr), 0, $this->options['session.ipvallevel']));
+		}
+	}
+
+	/*
+	 * Garbage Collection
+	 * Should be called periodically
+	 */
+	public function gc() 
+	{
+		$this->storageEngine->gc(); 
 	}
 }
