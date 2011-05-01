@@ -51,6 +51,14 @@ interface EngineInterface
 	public function newSession($clearData = false);
 
 	/*
+	 * Delete Session
+	 *
+	 * Deletes the currently loaded session 
+	 * @return void
+	 */
+	public function deleteSession();
+
+	/*
 	 * Load Session Data
 	 *
 	 * Get the current session data
@@ -64,4 +72,10 @@ interface EngineInterface
 	 * @param array - arbitrary array
 	 */
 	public function storeData($data);
+
+	/*
+	 * Garbage collection
+	 * Should be called periodically
+	 */
+	public function gc();
 }

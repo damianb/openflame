@@ -40,6 +40,10 @@ class EngineFilesystem implements EngineInterface
 	private $sid = '';
 
 	/*
+	 */
+	protected $now = 0;
+
+	/*
 	 * Init
 	 *
 	 * Called when the session object is created but before the session has started
@@ -47,14 +51,17 @@ class EngineFilesystem implements EngineInterface
 	 */
 	public function init($options)
 	{
-		$this->options['savepath'] = isset($options['savepath']) ? $options['savepath'] : ini_get('upload_tmp_dir');
-		$this->options['fileprefix'] = isset($options['fileprefix']) ? $options['fileprefix'] : 'sess_';
-		$this->options['randseed'] = isset($options['randseed']) ? $options['randseed'] : chr(64 + mt_rand(1,26));
+		$this->options['file.savepath'] = isset($options['file.savepath']) ? $options['file.savepath'] : ini_get('upload_tmp_dir');
+		$this->options['file.prefix'] = isset($options['file.prefix']) ? $options['file.prefix'] : 'sess_';
+		$this->options['file.randseed'] = isset($options['file.randseed']) ? $options['file.randseed'] : chr(64 + mt_rand(1,26));
+		$this->options['file.gctime'] = isset($options['file.gctime']) ? (int) $options['file.gctime'] : $options['session.expiretime'];
 		
-		if(substr($this->options['savepath'], -1) != '/' || substr($this->options['savepath'], -1) != '\\')
+		if(substr($this->options['file.savepath'], -1) != '/' || substr($this->options['file.savepath'], -1) != '\\')
 		{
-			$this->options['savepath'] .= '/';
+			$this->options['file.savepath'] .= '/';
 		}
+
+		$this->now = time();
 	}
 
 	/*
@@ -68,16 +75,13 @@ class EngineFilesystem implements EngineInterface
 	{
 		if(empty($this->filename))
 		{
-			$this->filename = $this->options['savepath'] . $this->options['fileprefix'] . $this->sid;
+			$this->filename = $this->options['file.savepath'] . $this->options['file.prefix'] . $this->sid . '.php';
 		}
 
-		if(file_exists($this->filename))
-		{
-			unlink($this->filename);
-		}
+		$this->deleteSession();
 
-		$this->sid = hash('sha1', $this->filename . $this->options['randseed']);
-		$this->filename = $this->options['savepath'] . $this->options['fileprefix'] . $this->sid;
+		$this->sid = hash('sha1', $this->filename . $this->options['file.randseed']);
+		$this->filename = $this->options['file.savepath'] . $this->options['file.prefix'] . $this->sid . '.php';
 
 		if($clearData)
 		{
@@ -85,6 +89,25 @@ class EngineFilesystem implements EngineInterface
 		}
 
 		return $this->sid;
+	}
+
+	/*
+	 * Delete Session
+	 *
+	 * Deletes the currently loaded session 
+	 * @return void
+	 */
+	public function deleteSession()
+	{
+		if(empty($this->filename))
+		{
+			$this->filename = $this->options['file.savepath'] . $this->options['file.prefix'] . $this->sid . '.php';
+		}
+
+		if(file_exists($this->filename))
+		{
+			unlink($this->filename);
+		}
 	}
 
 	/*
@@ -96,11 +119,12 @@ class EngineFilesystem implements EngineInterface
 	public function loadSession($sid)
 	{
 		$this->sid = $sid;
-		$this->filename = $this->options['savepath'] . $this->options['fileprefix'] . $this->sid;
-//echo $this->filename;
+		$this->filename = $this->options['file.savepath'] . $this->options['file.prefix'] . $this->sid . '.php';
+
 		if(file_exists($this->filename))
 		{
-			$this->data = unserialize(file_get_contents($this->filename));
+			list($ts, $data) = explode("\n", file_get_contents($this->filename, NULL, NULL, 15));
+			$this->data = unserialize($data);
 			return true;
 		}
 		else
@@ -130,6 +154,31 @@ class EngineFilesystem implements EngineInterface
 	{
 		$this->data = $data;
 
-		file_put_contents($this->options['savepath'] . $this->options['fileprefix'] . $this->sid, serialize($this->data));
+		file_put_contents($this->options['file.savepath'] . $this->options['file.prefix'] . $this->sid . '.php', 
+			"<?php exit; ?>\n{$this->now}\n" . serialize($this->data) . "\n");
+	}
+
+	/*
+	 * Garbage collection
+	 * Should be called periodically
+	 */
+	public function gc()
+	{
+		$files = scandir($this->options['file.savepath']);
+		$cutoff = time() - $this->options['file.gctime'];
+
+		foreach($files as $file)
+		{
+			$fullpath = $this->options['file.savepath'] . $file;
+
+			if (substr($file, 0, strlen($this->options['file.prefix'])) == $this->options['file.prefix'])
+			{
+				// If the date in the older than the cutoff, /dev/null it goes. 
+				if(reset(explode("\n", file_get_contents($fullpath, NULL, NULL, 15))) < $cutoff)
+				{
+					unlink($fullpath);
+				}
+			}
+		}
 	}
 }
