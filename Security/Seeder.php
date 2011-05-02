@@ -60,7 +60,7 @@ class Seeder
 	{
 		if($length > 64)
 		{
-			throw new \InvalidArgumentException('Length specified for random string exceeds maximum allowed length of 88 characters');
+			throw new \InvalidArgumentException('Length specified for random string exceeds maximum allowed length of 64 characters');
 		}
 		elseif($length < 1)
 		{
