@@ -24,15 +24,9 @@ if(!defined('OpenFlame\\ROOT_PATH')) exit;
  */
 class Seeder
 {
-	protected $last_seed = '';
-
-	protected $last_seed_time = 0;
-
 	protected $session_seed = '';
 
 	protected $application_seed = '';
-
-	protected $instance_seed_count = 0;
 
 	public function getSessionSeed()
 	{
