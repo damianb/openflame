@@ -24,8 +24,14 @@ if(!defined('OpenFlame\\ROOT_PATH')) exit;
  */
 class Seeder
 {
+	/**
+	 * @var string - The session-based seed to use when generating random strings/seeds.
+	 */
 	protected $session_seed = '';
 
+	/**
+	 * @var string - The application-based seed to use when generating random strings/seeds.
+	 */
 	protected $application_seed = '';
 
 	public function getSessionSeed()
