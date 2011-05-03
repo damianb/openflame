@@ -34,28 +34,57 @@ class Seeder
 	 */
 	protected $application_seed = '';
 
+	/**
+	 * Get the current session seed string
+	 * @return string - The current session seed string.
+	 */
 	public function getSessionSeed()
 	{
 		return $this->session_seed;
 	}
 
+	/**
+	 * Set the session seed string to use for generating random strings/seeds
+	 * @param string $seed - The session-specific seed to use for random string/seed generation.
+	 * @return \OpenFlame\Framework\Security\Seeder - Provides a fluent interface.
+	 */
 	public function setSessionSeed($seed)
 	{
 		$this->session_seed = $seed;
+
 		return $this;
 	}
 
+	/**
+	 * Get the current application seed string
+	 * @return string - The current application seed string.
+	 */
 	public function getApplicationSeed()
 	{
 		return $this->application_seed;
 	}
 
+	/**
+	 * Set the application seed string to use for generating random strings/seeds
+	 * @param string $seed - The application-specific seed to use for random string/seed generation.
+	 * @return \OpenFlame\Framework\Security\Seeder - Provides a fluent interface.
+	 */
 	public function setApplicationSeed($seed)
 	{
 		$this->application_seed = $seed;
+
 		return $this;
 	}
 
+	/**
+	 * Create a random string of a specified length
+	 * @param integer $length - The length of the string to return.
+	 * @param string $seed - Additional randomness for generating the random string with.
+	 * @param string $charset - The range of characters to use for the random string (will not modify character cases!)
+	 * @return string - A random string!
+	 *
+	 * @throws \InvalidArgumentException
+	 */
 	public function buildRandomString($length = 12, $seed = '', $charset = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')
 	{
 		if($length > 64)
@@ -88,6 +117,9 @@ class Seeder
 		return $return;
 	}
 
+	/**
+	 * @ignore
+	 */
 	public function buildSeedString($algo = 'md5', $pad_length = 46, array $extra = array())
 	{
 		$hash = hash($algo, implode('', array_merge(array($this->getSessionSeed(), $this->getApplicationSeed()), $extra)));
