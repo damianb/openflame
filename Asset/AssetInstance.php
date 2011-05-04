@@ -40,9 +40,9 @@ class AssetInstance
 	protected $url = '';
 
 	/**
-	 * @var string - The base URL used across all asset instances.
+	 * @var \OpenFlame\Framework\Asset\Manager - The asset manager object.
 	 */
-	protected $base_url = '';
+	protected $manager;
 
 	/**
 	 * @var array - Array of various properties belonging to this asset instance.
@@ -56,6 +56,17 @@ class AssetInstance
 	public static function newInstance()
 	{
 		return new static();
+	}
+
+	/**
+	 * Link this object and the asset manager
+	 * @return \OpenFlame\Framework\Asset\AssetInstance - Provides a fluent interface.
+	 */
+	public function setManager(\OpenFlame\Framework\Asset\Manager $manager)
+	{
+		$this->manager = $manager;
+
+		return $this;
 	}
 
 	/**
@@ -75,6 +86,7 @@ class AssetInstance
 	public function setName($name)
 	{
 		$this->name = (string) $name;
+
 		return $this;
 	}
 
@@ -95,6 +107,7 @@ class AssetInstance
 	public function setType($type)
 	{
 		$this->type = (string) $type;
+
 		return $this;
 	}
 
@@ -115,6 +128,7 @@ class AssetInstance
 	public function setURL($url)
 	{
 		$this->url = '/' . ltrim($url, '/');
+
 		return $this;
 	}
 
@@ -142,27 +156,6 @@ class AssetInstance
 	public function setProperty($property, $value)
 	{
 		$this->properties[(string) $property] = $value;
-
-		return $this;
-	}
-
-	/**
-	 * Get the "base URL" of this installation, which is added to the beginning of all asset URLs automatically.
-	 * @return string - The base URL we are using.
-	 */
-	public function getBaseURL()
-	{
-		return $this->base_url;
-	}
-
-	/**
-	 * Set the "base URL" for this installation, which will be added to the beginning of all asset URLs.
-	 * @param string $base_url - The "base URL" which we're going to prepend.
-	 * @return \OpenFlame\Framework\Asset\AssetInstance - Provides a fluent interface.
-	 */
-	public function setBaseURL($base_url)
-	{
-		$this->base_url = rtrim($base_url, '/'); // We don't want a trailing slash here.
 
 		return $this;
 	}
@@ -198,6 +191,6 @@ class AssetInstance
 	 */
 	public function __toString()
 	{
-		return $this->base_url . $this->url;
+		return rtrim($this->manager->getBase(), '/') . $this->url;
 	}
 }
