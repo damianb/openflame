@@ -29,6 +29,15 @@ class Dispatcher
 	 */
 	protected $listeners = array();
 
+	/**#@+
+	 * @var integer - Constants representing the type of listener being interacted with.
+	 */
+	const LISTENER_CLOSURE = 1;
+	const LISTENER_FUNCTION = 2;
+	const LISTENER_STATIC_METHOD = 3;
+	const LISTENER_CALL_USER_FUNC = 4;
+	/**#@-*/
+
 	/**
 	 * Register a new listener with the dispatcher
 	 * @param string $event_type - The type of event type to attach the listener to.
@@ -43,6 +52,7 @@ class Dispatcher
 			$this->listeners[$event_type] = array();
 		}
 
+		// Handle priority settings (a la UNIX nice values)
 		$priority = (int) $priority;
 		if($priority > 20)
 		{
@@ -53,7 +63,31 @@ class Dispatcher
 			$priority = -20;
 		}
 
-		$this->listeners[$event_type][$priority][] = $listener;
+		// Check to see what type of listener we're dealing with here; this allows us to use some shortcuts down the road.
+		$listener_type = NULL;
+		if($listener instanceof \Closure)
+		{
+			// It's a closure!  <3
+			$listener_type = static::LISTENER_CLOSURE;
+		}
+		elseif(function_exists($listener))
+		{
+			$listener_type = static::LISTENER_FUNCTION;
+		}
+		elseif(is_string($listener) && sizeof(explode('::', $listener, 2)) > 1) // checking to see if we're actually using a static call and doing so properly
+		{
+			$listener_type = static::LISTENER_STATIC_METHOD;
+		}
+		else
+		{
+			// Worst case scenario.  We HAVE to use call_user_func() now.
+			$listener_type = static::LISTENER_CALL_USER_FUNC;
+		}
+
+		$this->listeners[$event_type][$priority][] = array(
+			'listener'		=> $listener,
+			'type'			=> $listener_type,
+		);
 
 		return $this;
 	}
