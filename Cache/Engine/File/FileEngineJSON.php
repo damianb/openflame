@@ -43,7 +43,7 @@ class FileEngineJSON extends \OpenFlame\Framework\Cache\Engine\File\FileEngineBa
 	 * @param mixed $data - The data to cache.
 	 * @return string - Full JSON code to be stored in a cache file.
 	 */
-	public function engineBuild($data)
+	protected function engineBuild($data)
 	{
 		$data = \OpenFlame\Framework\Utility\JSON::encode($data);
 
@@ -60,7 +60,7 @@ class FileEngineJSON extends \OpenFlame\Framework\Cache\Engine\File\FileEngineBa
 	 * @param string $key - The file to load from.
 	 * @return mixed - The cached data.
 	 */
-	public function engineLoad($key)
+	protected function engineLoad($key)
 	{
 		return \OpenFlame\Framework\Utility\JSON::decode($this->readFile("$key.json.tmp"));
 	}
