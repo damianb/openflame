@@ -230,7 +230,7 @@ class Driver
 				{
 					$returns = array();
 				}
-				$this->data = array_merge($returns, $this->data);
+				$this->data = array_merge($this->data, $returns);
 
 				$paramsToSend['uid'] = $this->uid;
 				$paramsToSend['alk'] = $this->alk;
