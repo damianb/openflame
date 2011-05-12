@@ -9,7 +9,7 @@
  * Minimum Requirement: PHP 5.3.0
  */
 
-namespace OpenFlame\Framework\Cache\Engine;
+namespace OpenFlame\Framework\Cache\Engine\File;
 use \OpenFlame\Framework\Core;
 
 if(!defined('OpenFlame\\ROOT_PATH')) exit;
@@ -22,7 +22,7 @@ if(!defined('OpenFlame\\ROOT_PATH')) exit;
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
  * @link        https://github.com/OpenFlame/OpenFlame-Framework
  */
-class EngineSerialize extends \OpenFlame\Framework\Cache\Engine\EngineFileBase implements \OpenFlame\Framework\Cache\Engine\EngineInterface
+class FileEngineSerialize extends \OpenFlame\Framework\Cache\Engine\File\FileEngineBase implements \OpenFlame\Framework\Cache\Engine\EngineInterface
 {
 	/**
 	 * @const - The algorithm to use for checksum of the cache file's cache contents
@@ -43,7 +43,7 @@ class EngineSerialize extends \OpenFlame\Framework\Cache\Engine\EngineFileBase i
 	 * @param mixed $data - The data to cache.
 	 * @return string - Full JSON code to be stored in a cache file.
 	 */
-	public function build($data)
+	public function engineBuild($data)
 	{
 		$data = serialize($data);
 
@@ -57,12 +57,12 @@ class EngineSerialize extends \OpenFlame\Framework\Cache\Engine\EngineFileBase i
 
 	/**
 	 * Loads a serialize() cache file and returns the cached data.
-	 * @param string $file - The file to load from.
+	 * @param string $key - The file to load from.
 	 * @return mixed - The cached data.
 	 */
-	public function load($file)
+	public function engineLoad($key)
 	{
-		$data = $this->readFile("$file.srl.tmp");
+		$data = $this->readFile("$key.srl.tmp");
 		$data = preg_replace("/#.*?\n/", '', $data);
 		return unserialize($data);
 	}
@@ -72,29 +72,29 @@ class EngineSerialize extends \OpenFlame\Framework\Cache\Engine\EngineFileBase i
 	 * @param string $file - The file to check.
 	 * @return boolean - Has the data been cached?
 	 */
-	public function exists($file)
+	public function exists($key)
 	{
-		return $this->fileExists("$file.srl.tmp");
+		return $this->fileExists("$key.srl.tmp");
 	}
 
 	/**
 	 * Destroys a cache file.
-	 * @param string $file - The cache file to destroy.
+	 * @param string $key - The cache file to destroy.
 	 * @return void
 	 */
-	public function destroy($file)
+	public function destroy($key)
 	{
-		$this->deleteFile("$file.srl.tmp");
+		$this->deleteFile("$key.srl.tmp");
 	}
 
 	/**
 	 * Stores data to a cache file.
-	 * @param string $file - The cache file to store our data in.
+	 * @param string $key - The cache file to store our data in.
 	 * @param string $data - The data to cache.
 	 * @return void
 	 */
-	public function store($file, $data)
+	public function store($key, $data)
 	{
-		$this->writeFile("$file.srl.tmp", $data);
+		$this->writeFile("$key.srl.tmp", $data);
 	}
 }

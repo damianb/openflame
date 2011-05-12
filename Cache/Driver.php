@@ -81,25 +81,13 @@ class Driver
 			throw new \LogicException('Cache engine not loaded');
 		}
 
-		// if data is not cached already, return null
+		// if data is not cached already, return NULL
 		if(!$this->dataCached($index))
 		{
 			return NULL;
 		}
 
-		$cache = $this->engine->load($index);
-
-		if($this->engine->useTTLCheck())
-		{
-			// check ttl.  If the data has expired, trash it and return null.
-			if(isset($cache['cache_expire']) && $cache['cache_expire'] != 0 && time() > $cache['cache_expire'])
-			{
-				$this->destroyData($index);
-				return NULL;
-			}
-		}
-
-		return $cache['data'];
+		return $this->engine->load($index);
 	}
 
 	/**
@@ -119,10 +107,7 @@ class Driver
 		}
 
 		// build the cache, with data and ttl expiry included
-		$this->engine->store($index, $this->engine->build(array(
-			'data'			=> $data,
-			'cache_expire'	=> ($ttl) ? time() + (int) $ttl : 0,
-		)));
+		$this->engine->store($index, $this->engine->build($data, $ttl));
 	}
 
 	/**
