@@ -216,8 +216,21 @@ class Driver
 				$this->alk = $seeder->buildRandomString(22, '', '0123456789abcdefghijklmnopqrstuvwxyz');
 				$this->autologinEngine->store($this->uid, $this->alk);
 
+				// In case we want to manipulate the session data when autologin is successful.
 				$event = $dispatcher->triggerUntilBreak(\OpenFlame\Framework\Event\Instance::newEvent('session.autologin')
 					->setData(array('uid'=>$this->uid,'data'=>$this->data)));
+
+				if ($event->countReturns() > 1)
+				{
+					throw new \LogicException("Too many responses to the 'session.autologin' event.");
+				}
+
+				$returns = $event->getReturns();
+				if (!is_array($returns))
+				{
+					$returns = array();
+				}
+				$this->data = array_merge($returns, $this->data);
 
 				$paramsToSend['uid'] = $this->uid;
 				$paramsToSend['alk'] = $this->alk;
