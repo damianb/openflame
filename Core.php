@@ -69,7 +69,7 @@ class Core
 	{
 		if(self::$commit === NULL)
 		{
-			self::$commit = (file_exists(\OpenFlame\ROOT_PATH . '/OF-F_COMMIT_ID')) ? rtrim(file_get_contents(\OpenFlame\ROOT_PATH . '/OF-F_COMMIT_ID')) : '';
+			self::$commit = (file_exists(\OpenFlame\ROOT_PATH . 'OF-F_COMMIT_ID')) ? rtrim(file_get_contents(\OpenFlame\ROOT_PATH . 'OF-F_COMMIT_ID')) : '';
 		}
 
 		return self::$commit;
