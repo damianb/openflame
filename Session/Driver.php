@@ -17,7 +17,7 @@ if (!defined('OpenFlame\\ROOT_PATH')) exit;
 
 /**
  * OpenFlame Web Framework - Session Handler Base
- * 	     The base class for the session handler. 
+ * 	     The base class for the session handler.
  *
  *
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
@@ -66,7 +66,7 @@ class Driver
 	protected $options = array();
 
 	/*
-	 * @var IP Partial 
+	 * @var IP Partial
 	 */
 	protected $ipAddrPartial = '';
 
@@ -133,27 +133,27 @@ class Driver
 	 */
 	public function setOptions($options)
 	{
-		// Copy the array in here 
+		// Copy the array in here
 		$this->options = $options;
 
 		// Now do some basic validation
-		$this->options['session.expiretime'] = isset($options['session.expiretime']) ? 
+		$this->options['session.expiretime'] = isset($options['session.expiretime']) ?
 			(int) $options['session.expiretime'] : 3600;
-	
-		$this->options['session.ipvallevel'] = (isset($options['session.ipvallevel']) && 
-			$options['session.ipvallevel'] > 0 && $options['session.ipvallevel'] < 5) ? 
+
+		$this->options['session.ipvallevel'] = (isset($options['session.ipvallevel']) &&
+			$options['session.ipvallevel'] > 0 && $options['session.ipvallevel'] < 5) ?
 			(int) $options['session.ipvallevel'] : 0;
 
-		$this->options['session.loginsid'] = (isset($options['session.loginsid'])) ? 
+		$this->options['session.loginsid'] = (isset($options['session.loginsid'])) ?
 			(bool) $options['session.loginsid'] : true;
 
 		$this->options['session.trackguest'] = (isset($options['session.trackguest'])) ?
 			(bool) $options['session.trackguest'] : true;
 
-		// These come after the validations above in case the drivers want to use them. 
+		// These come after the validations above in case the drivers want to use them.
 		$this->storageEngine->init($this->options);
 		$this->clientEngine->setOptions($this->options);
-		
+
 		if (is_object($this->autologinEngine))
 		{
 			$this->autologinEngine->setOptions($this->options);
@@ -163,11 +163,13 @@ class Driver
 	}
 
 	/**
-	 * Start the session 
+	 * Start the session
 	 * @return void
 	 */
 	public function start()
 	{
+		$dispatcher = Core::getObject('dispatcher');
+
 		$now = time();
 		$paramsToSend = array();
 
@@ -187,7 +189,7 @@ class Driver
 		// Let's see if they have a session first
 		if ($this->storageEngine->loadSession($sid))
 		{
-			list($this->data, $this->fingerprint, $exp, $this->uid, $this->authenticated) = 
+			list($this->data, $this->fingerprint, $exp, $this->uid, $this->authenticated) =
 				$this->storageEngine->loadData();
 
 			// Validate it / do autologin process
@@ -209,10 +211,26 @@ class Driver
 				// They should get a new session now
 				$this->sid = $this->storageEngine->newSession();
 				$valid = $al = true;
-		
+
 				$seeder = new \OpenFlame\Framework\Security\Seeder();
 				$this->alk = $seeder->buildRandomString(22, '', '0123456789abcdefghijklmnopqrstuvwxyz');
 				$this->autologinEngine->store($this->uid, $this->alk);
+
+				// In case we want to manipulate the session data when autologin is successful.
+				$event = $dispatcher->triggerUntilBreak(\OpenFlame\Framework\Event\Instance::newEvent('session.autologin')
+					->setData(array('uid'=>$this->uid,'data'=>$this->data)));
+
+				if ($event->countReturns() > 1)
+				{
+					throw new \LogicException("Too many responses to the 'session.autologin' event.");
+				}
+
+				$returns = $event->getReturns();
+				if (!is_array($returns))
+				{
+					$returns = array();
+				}
+				$this->data = array_merge($this->data, $returns);
 
 				$paramsToSend['uid'] = $this->uid;
 				$paramsToSend['alk'] = $this->alk;
@@ -227,7 +245,7 @@ class Driver
 			if ($fingerprint == $this->fingerprint)
 			{
 				$dispatcher = Core::getObject('dispatcher');
-	
+
 				$event = $dispatcher->triggerUntilBreak(\OpenFlame\Framework\Event\Instance::newEvent('session.get')
 					->setData(array('useruid'=>$this->uid)));
 
@@ -283,7 +301,7 @@ class Driver
 		if ($this->options['session.trackguest'] || $this->authenticated)
 		{
 			$paramsToSend['sid'] = $this->sid;
-	
+
 			// Make our client engine aware
 			$this->clientEngine->setParams($paramsToSend);
 			$this->expireTime = $now + $this->options['session.expiretime'];
@@ -331,8 +349,8 @@ class Driver
 				$this->sid = $this->storageEngine->newSession(true);
 			}
 
-			if (is_object($this->autologinEngine) && 
-				isset($result['autologin']) && 
+			if (is_object($this->autologinEngine) &&
+				isset($result['autologin']) &&
 				$result['autologin'] == true )
 			{
 				$seeder = new \OpenFlame\Framework\Security\Seeder();
@@ -383,7 +401,7 @@ class Driver
 	}
 
 	/**
-	 * Commit the session data, should be called at the end of execution 
+	 * Commit the session data, should be called at the end of execution
 	 * @return void
 	 */
 	public function commit()
@@ -391,10 +409,10 @@ class Driver
 		if (!empty($this->sid))
 		{
 			$this->storageEngine->storeData(array(
-				$this->data, 
-				$this->fingerprint, 
-				$this->expireTime, 
-				$this->uid, 
+				$this->data,
+				$this->fingerprint,
+				$this->expireTime,
+				$this->uid,
 				$this->authenticated,
 			));
 		}
@@ -448,7 +466,7 @@ class Driver
 		{
 			if (!$xip->getWasSet() || !filter_var($xip, FILTER_VALIDATE_IP))
 			{
-				$this->ipAddr = '0.0.0.0'; 
+				$this->ipAddr = '0.0.0.0';
 			}
 			else
 			{
@@ -491,8 +509,8 @@ class Driver
 	 * Garbage Collection
 	 * Should be called periodically
 	 */
-	public function gc() 
+	public function gc()
 	{
-		$this->storageEngine->gc(); 
+		$this->storageEngine->gc();
 	}
 }

@@ -9,20 +9,20 @@
  * Minimum Requirement: PHP 5.3.0
  */
 
-namespace OpenFlame\Framework\Cache\Engine;
+namespace OpenFlame\Framework\Cache\Engine\File;
 use \OpenFlame\Framework\Core;
 
 if(!defined('OpenFlame\\ROOT_PATH')) exit;
 
 /**
- * OpenFlame Web Framework - JSON Cache engine,
- * 		JSON cache engine for use with the cache interface.
+ * OpenFlame Web Framework - serialize() Cache engine,
+ * 		serialize() cache engine for use with the cache interface.
  *
  *
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
  * @link        https://github.com/OpenFlame/OpenFlame-Framework
  */
-class EngineJSON extends \OpenFlame\Framework\Cache\Engine\EngineFileBase implements \OpenFlame\Framework\Cache\Engine\EngineInterface
+class FileEngineSerialize extends \OpenFlame\Framework\Cache\Engine\File\FileEngineBase implements \OpenFlame\Framework\Cache\Engine\EngineInterface
 {
 	/**
 	 * @const - The algorithm to use for checksum of the cache file's cache contents
@@ -35,17 +35,17 @@ class EngineJSON extends \OpenFlame\Framework\Cache\Engine\EngineFileBase implem
 	 */
 	public function getEngineName()
 	{
-		return 'JSON';
+		return 'serialize';
 	}
 
 	/**
-	 * Builds a JSON-based cache file, complete with idiot warning.
+	 * Builds a serialize()-based cache file, complete with idiot warning.
 	 * @param mixed $data - The data to cache.
 	 * @return string - Full JSON code to be stored in a cache file.
 	 */
-	public function build($data)
+	protected function engineBuild($data)
 	{
-		$data = \OpenFlame\Framework\Utility\JSON::encode($data);
+		$data = serialize($data);
 
 		return implode("\n", array(
 			'# OpenFlame Web Framework cache file - modify at your own risk!',
@@ -56,13 +56,15 @@ class EngineJSON extends \OpenFlame\Framework\Cache\Engine\EngineFileBase implem
 	}
 
 	/**
-	 * Loads a JSON cache file and returns the cached data.
-	 * @param string $file - The file to load from.
+	 * Loads a serialize() cache file and returns the cached data.
+	 * @param string $key - The file to load from.
 	 * @return mixed - The cached data.
 	 */
-	public function load($file)
+	protected function engineLoad($key)
 	{
-		return \OpenFlame\Framework\Utility\JSON::decode($this->readFile("$file.json.tmp"));
+		$data = $this->readFile("$key.srl.tmp");
+		$data = preg_replace("/#.*?\n/", '', $data);
+		return unserialize($data);
 	}
 
 	/**
@@ -70,29 +72,29 @@ class EngineJSON extends \OpenFlame\Framework\Cache\Engine\EngineFileBase implem
 	 * @param string $file - The file to check.
 	 * @return boolean - Has the data been cached?
 	 */
-	public function exists($file)
+	public function exists($key)
 	{
-		return $this->fileExists("$file.json.tmp");
+		return $this->fileExists("$key.srl.tmp");
 	}
 
 	/**
 	 * Destroys a cache file.
-	 * @param string $file - The cache file to destroy.
+	 * @param string $key - The cache file to destroy.
 	 * @return void
 	 */
-	public function destroy($file)
+	public function destroy($key)
 	{
-		$this->deleteFile("$file.json.tmp");
+		$this->deleteFile("$key.srl.tmp");
 	}
 
 	/**
 	 * Stores data to a cache file.
-	 * @param string $file - The cache file to store our data in.
+	 * @param string $key - The cache file to store our data in.
 	 * @param string $data - The data to cache.
 	 * @return void
 	 */
-	public function store($file, $data)
+	public function store($key, $data)
 	{
-		$this->writeFile("$file.json.tmp", $data);
+		$this->writeFile("$key.srl.tmp", $data);
 	}
 }

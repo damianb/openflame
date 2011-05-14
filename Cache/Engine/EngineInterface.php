@@ -26,9 +26,9 @@ interface EngineInterface
 {
 	public function getEngineName();
 	public function useTTLCheck();
-	public function build($data);
-	public function load($file);
-	public function exists($file);
-	public function destroy($file);
-	public function store($file, $data);
+	public function build($data, $ttl);
+	public function load($key);
+	public function exists($key);
+	public function destroy($key);
+	public function store($key, $data);
 }

@@ -25,9 +25,19 @@ if(!defined('OpenFlame\\ROOT_PATH')) exit;
 class Manager
 {
 	/**
-	 * @var string - The base url to prepend to all asset URL's.
+	 * @var string - The base url to prepend to all asset URLs.
 	 */
 	protected $base_url = '';
+
+	/**
+	 * @var string - The external domain to use for all asset URLs (assuming that external domains are being used instead of base URLs).
+	 */
+	protected $external_domain = '';
+
+	/**
+	 * @var boolean - Should we use an external domain for the base URL?
+	 */
+	protected $use_external_base = false;
 
 	/**
 	 * @var array - The array of asset instances.
@@ -38,6 +48,22 @@ class Manager
 	 * @var boolean - Do we want to throw an exception when accessing an invalid asset or asset type?
 	 */
 	protected $exception_on_invalid_asset = false;
+
+	/**
+	 * Get the base to prepend to all asset URLs
+	 * @return string - The base to prepend.
+	 */
+	public function getBase()
+	{
+		if($this->use_external_base)
+		{
+			return $this->external_domain;
+		}
+		else
+		{
+			return $this->base_url;
+		}
+	}
 
 	/**
 	 * Get the "base URL" of this installation, which is added to the beginning of all asset URLs automatically.
@@ -65,6 +91,73 @@ class Manager
 				$asset->setBaseURL($base_url);
 			}
 		}
+
+		return $this;
+	}
+
+	/**
+	 * Check to see if we are using the external domain or local base URL for the base of our asset URLs.
+	 * @return boolean - Are we using the external domain or the local base URL for asset URLs?
+	 */
+	public function usingExternalBase()
+	{
+		return (bool) $this->use_external_base;
+	}
+
+	/**
+	 * Use the external domain instead of the local base URL for the base of all asset URLs
+	 * @return \OpenFlame\Framework\Asset\Manager - Provides a fluent interface.
+	 *
+	 * @throws \RuntimeException
+	 */
+	public function enableExternalBase()
+	{
+		// If the external domain hasn't been set, we have a problem.
+		if(empty($this->external_domain))
+		{
+			throw new \RuntimeException('Cannot use an empty external domain as base URL');
+		}
+
+		$this->use_external_base = true;
+
+		return $this;
+	}
+
+	/**
+	 * Use the local base URL instead of the external domain for the base of all asset URLs
+	 * @return \OpenFlame\Framework\Asset\Manager - Provides a fluent interface.
+	 */
+	public function disableExternalBase()
+	{
+		$this->use_external_base = false;
+
+		return $this;
+	}
+
+	/**
+	 * Get the external domain to use for the base URL.
+	 * @return string - The external domain to use for the base URL.
+	 */
+	public function getExternalBase()
+	{
+		return $this->external_domain;
+	}
+
+	/**
+	 * Set the external domain to use for the base URL.
+	 * @param string $base_url - The external domain to use.
+	 * @return \OpenFlame\Framework\Asset\Manager - Provides a fluent interface.
+	 *
+	 * @throws \InvalidArgumentException
+	 */
+	public function setExternalBase($base_url)
+	{
+		if(!filter_var($base_url, FILTER_VALIDATE_URL))
+		{
+			throw new \InvalidArgumentException('Invalid external domain specified for asset URL base');
+		}
+
+		$this->external_domain = $base_url;
 
 		return $this;
 	}
@@ -107,7 +200,7 @@ class Manager
 	{
 		// Require the use of the AssetInstanceInterface for the provided class
 		$asset = \OpenFlame\Framework\Asset\AssetInstance::newInstance();
-		$asset->setBaseURL($this->getBaseURL());
+		$asset->setManager($this);
 
 		return $asset;
 	}

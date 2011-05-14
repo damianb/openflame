@@ -30,6 +30,11 @@ class BuilderProxy
 	protected $builder;
 
 	/**
+	 * @var string - The string containing the extra GET data to append, if any.
+	 */
+	protected $extra_get_data = false;
+
+	/**
 	 * Constructor
 	 * @param \OpenFlame\Framework\URL\Builder $manager - The URL builder object.
 	 * @return void
@@ -48,11 +53,37 @@ class BuilderProxy
 	public function __call($name, array $arguments)
 	{
 		$pattern = $this->builder->getPattern($name);
+		// NULL pattern? No URL to generate.
 		if($pattern === NULL)
 		{
 			return '';
 		}
 
-		return $this->builder->getBaseURL() . '/' . vsprintf($pattern, $arguments);
+		$url = $this->builder->getBaseURL() . '/' . vsprintf($pattern, $arguments);
+
+		if($this->extra_get_data === false)
+		{
+			// Handle appending extra GET data (for things like CSRF tokens, session IDs, etc.)
+			$extra_params = $this->builder->getGlobalGetData();
+
+			if($extra_params !== '')
+			{
+				$get_string = array();
+				foreach($extra_params as $name => $value)
+				{
+					$get_string[] = $name . '=' . rawurlencode($value);
+				}
+				$extra_params = implode('&', $get_string);
+			}
+
+			$this->extra_get_data = $extra_params;
+		}
+
+		if($this->extra_get_data !== '')
+		{
+			$url .= (strpos($url, '?') !== false) ? rtrim($url, '&') . '&' . $this->extra_get_data : '?' . $this->extra_get_data;
+		}
+
+		return $url;
 	}
 }

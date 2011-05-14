@@ -9,7 +9,7 @@
  * Minimum Requirement: PHP 5.3.0
  */
 
-namespace OpenFlame\Framework\Cache\Engine;
+namespace OpenFlame\Framework\Cache\Engine\File;
 use \OpenFlame\Framework\Core;
 
 if(!defined('OpenFlame\\ROOT_PATH')) exit;
@@ -22,7 +22,7 @@ if(!defined('OpenFlame\\ROOT_PATH')) exit;
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
  * @link        https://github.com/OpenFlame/OpenFlame-Framework
  */
-abstract class EngineFileBase
+abstract class FileEngineBase
 {
 	/**
 	 * @var string - The path to where cache files will be stored, if we are using a file-based cache engine.
@@ -30,12 +30,12 @@ abstract class EngineFileBase
 	protected $cache_path = '';
 
 	/**
-	 * Do we want to use a TTL check for this cache engine?
-	 * @return true - Filecache-based engines don't implement TTL themselves.
+	 * Gets the current cache path.
+	 * @return string - Current cache path.
 	 */
-	public function useTTLCheck()
+	public function getCachePath()
 	{
-		return true;
+		return $this->cache_path;
 	}
 
 	/**
@@ -43,14 +43,14 @@ abstract class EngineFileBase
 	 * @param string $path - The path to store cache files in.
 	 * @return OpenFlame\Framework\Cache\Engine\EngineFileBase - Provides a fluent interface.
 	 *
-	 * @throws \LogicException
+	 * @throws \InvalidArgumentException
 	 * @throws \RuntimeException
 	 */
 	public function setCachePath($path)
 	{
 		if(!is_dir($path))
 		{
-			throw new \LogicException(sprintf('The cache path "%1$s" is not a directory or does not exist', $path));
+			throw new \InvalidArgumentException(sprintf('The cache path "%1$s" is not a directory or does not exist', $path));
 		}
 		if(!is_readable($path) || !is_writable($path))
 		{
@@ -62,13 +62,41 @@ abstract class EngineFileBase
 	}
 
 	/**
-	 * Gets the current cache path.
-	 * @return string - Current cache path.
+	 * Build the data for the cache file (and integrate in TTL checking)
+	 * @param mixed $data - The data to cache.
+	 * @param integer $ttl - The lifespan of the cached data, in seconds.  Leave empty or set as 0 to disable cache timeout.
+	 * @return The data to store in the cache file.
 	 */
-	public function getCachePath()
+	final public function build($data, $ttl)
 	{
-		return $this->cache_path;
+		return $this->engineBuild(array(
+			'data'			=> $data,
+			'cache_expire'	=> ($ttl != NULL && $ttl > 0) ? time() + (int) $ttl : 0,
+		));
 	}
+
+	/**
+	 * Load data from a cache file, with TTL checking integrated.
+	 * @param string $key - The cache index to grab the data out of.
+	 * @return mixed - The previously cached data, or NULL if the data is out of date.
+	 */
+	final public function load($key)
+	{
+		$cache = $this->engineLoad($key);
+
+		// handle ttl checking here
+		if(isset($cache['cache_expire']) && $cache['cache_expire'] != 0 && time() > $cache['cache_expire'])
+		{
+			$this->destroy($key);
+
+			return NULL;
+		}
+
+		return $cache['data'];
+	}
+
+	abstract protected function engineBuild($data);
+	abstract protected function engineLoad($key);
 
 	/**
 	 * Checks to see if a specified cache file exists.

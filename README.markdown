@@ -1,15 +1,17 @@
 # OpenFlame Framework
 
-The OpenFlame Framework is a library of scripts used to power OpenFlame CMS and FireTracker.
+The OpenFlame Framework is a library of scripts used to power the OpenFlame CCMS and FireTracker.
 
-It is a simple multi-purpose PHP 5.3 framework that can be used for any purpose, and is released under the MIT License to facilitate widespread use.
+It is a simple, efficient, multi-purpose PHP 5.3 framework intended for widespread use.
 
-**License**: *MIT License* - <http://opensource.org/licenses/mit-license.php>
+## license
 
-**Copyright**: (c) 2010 - 2011 -- OpenFlameCMS.com
+In order to facilitate widespread use, the framework is being released under the MIT License, allowing it to be used in both open source and proprietary applications.
 
-This library generously provided for free by the OpenFlame CMS Development Team.
+see ./LICENSE or <http://opensource.org/licenses/mit-license.php>
 
-## Contents
+## copyright
 
-All files in the repository are located and named according to their namespace location.
+(c) 2010 - 2011 OpenFlameCMS.com
+
+This framework is generously provided for free by the OpenFlame CCMS Development Team.
