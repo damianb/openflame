@@ -28,7 +28,7 @@ class Core
 	/**
 	 * @var string - The version for the Framework
 	 */
-	private static $version = '1.0.0';
+	private static $version = '1.1.0';
 
 	/**
 	 * @var string - The commit ID for phar-packaged forms of the framework (considering "unstable" development builds)
@@ -69,7 +69,7 @@ class Core
 	{
 		if(self::$commit === NULL)
 		{
-			self::$commit = file_exists(\OpenFlame\ROOT_PATH . '/COMMIT_ID') ? file_get_contents(\OpenFlame\ROOT_PATH) : '';
+			self::$commit = file_exists(\OpenFlame\ROOT_PATH . '/OF-F_COMMIT_ID') ? file_get_contents(\OpenFlame\ROOT_PATH) : '';
 		}
 
 		return self::$commit;

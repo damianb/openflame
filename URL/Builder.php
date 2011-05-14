@@ -35,6 +35,11 @@ class Builder
 	protected $base_url = '';
 
 	/**
+	 * @var array - Array of extra GET vars to add to every URL.
+	 */
+	protected $extra_get_params = array();
+
+	/**
 	 * Get the "base URL" of this installation, which is automatically added to all URLs.
 	 * @return string - The base URL we are using.
 	 */
@@ -51,6 +56,28 @@ class Builder
 	public function setBaseURL($base_url)
 	{
 		$this->base_url = '/' . ltrim(rtrim($base_url, '/'), '/'); // We don't want a trailing slash here, but we want to guarantee a leading slash.
+
+		return $this;
+	}
+
+	/**
+	 * Get the entire array of GET data elements to append to all generated URLs.
+	 * @return array
+	 */
+	public function getGlobalGetData()
+	{
+		return $this->extra_get_params;
+	}
+
+	/**
+	 * Define a new GET data element to append to all generated URLs.
+	 * @param string $name - The name of the data element to add
+	 * @param string $value - The value to use for the data.
+	 * @return \OpenFlame\Framework\URL\Builder - Provides a fluent interface.
+	 */
+	public function addGlobalGetVar($name, $value)
+	{
+		$this->extra_get_params[(string) $name] = $value;
 
 		return $this;
 	}
