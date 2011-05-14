@@ -33,7 +33,7 @@ class Core
 	/**
 	 * @var string - The commit ID for phar-packaged forms of the framework (considering "unstable" development builds)
 	 */
-	private static $commit;
+	private static $commit = NULL;
 
 	/**
 	 * @var array - Array of settings we have loaded and stored
