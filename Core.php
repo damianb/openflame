@@ -28,7 +28,7 @@ class Core
 	/**
 	 * @var string - The version for the Framework
 	 */
-	private static $version = '1.1.0-dev';
+	private static $version = '1.1.1-dev';
 
 	/**
 	 * @var string - The commit ID for phar-packaged forms of the framework (considering "unstable" development builds)
