@@ -112,7 +112,7 @@ class Seeder
 		$return = substr($string, $start, $length);
 		if(strlen($return) < $length)
 		{
-			$return .= substr($return, 0, strlen($return) - $length);
+			$return .= substr($string, 0, $length - strlen($return));
 		}
 		return $return;
 	}
