@@ -14,3 +14,5 @@
 	 - Introduce a new object (`Security\Form`) that provides form key creation and validation (ticket #20)
  - 1.1.1 release
 	 - Fix minor bug with grabbing the commit ID from within the framework phar
+ - 1.1.2 release
+	 - Fix bug with `Security\Seeder` component - all randomly generated strings will be returned of the requested length now.
