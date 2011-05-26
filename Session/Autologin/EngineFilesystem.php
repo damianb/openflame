@@ -1,8 +1,9 @@
 <?php
 /**
  *
- * @package     OpenFlame Web Framework
- * @copyright   (c) 2010 OpenFlameCMS.com
+ * @package     openflame-framework
+ * @subpackage  session
+ * @copyright   (c) 2010 - 2011 openflame-project.org
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
  * @link        https://github.com/OpenFlame/OpenFlame-Framework
  *
@@ -15,7 +16,7 @@ use \OpenFlame\Framework\Core;
 if(!defined('OpenFlame\\ROOT_PATH')) exit;
 
 /**
- * OpenFlame Web Framework - Sessions Autologin Engine
+ * OpenFlame Framework - Sessions Autologin Engine
  *
  *
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
@@ -38,14 +39,14 @@ class EngineFilesystem implements EngineInterface
 	 */
 	public function setOptions($options)
 	{
-		$this->options['autologin.savepath'] = isset($options['autologin.savepath']) ? 
-			(string) $options['autologin.savepath'] : 
+		$this->options['autologin.savepath'] = isset($options['autologin.savepath']) ?
+			(string) $options['autologin.savepath'] :
 			(isset($options['file.savepath']) ? $options['file.savepath'] : ini_get('upload_tmp_dir'));
 
-		$this->options['autologin.ttl'] = isset($options['autologin.ttl']) ? 
+		$this->options['autologin.ttl'] = isset($options['autologin.ttl']) ?
 			(int) $options['autologin.ttl'] : 7776000; // Defaults to 90 days
 
-		$this->options['autologin.prefix'] = isset($options['autologin.prefix']) ? 
+		$this->options['autologin.prefix'] = isset($options['autologin.prefix']) ?
 			(string) $options['autologin.prefix'] : 'al_'; // Defaults to 90 days
 
 		// I don't want your damn lemons
@@ -59,7 +60,7 @@ class EngineFilesystem implements EngineInterface
 	 * Store a key/uid
 	 * @param string key
 	 * @param string uid
-	 * @return bool 
+	 * @return bool
 	 */
 	public function store($uid, $key)
 	{
@@ -68,13 +69,13 @@ class EngineFilesystem implements EngineInterface
 			$this->now = time();
 		}
 
-		return (file_put_contents($this->options['autologin.savepath'] . $this->options['autologin.prefix'] . $key . '.php', 
+		return (file_put_contents($this->options['autologin.savepath'] . $this->options['autologin.prefix'] . $key . '.php',
 			"<?php exit; ?>\n{$this->now}\n{$uid}\n") > 0) ? true : false;
 	}
 
 	/*
 	 * Lookup autologin by key and delete the old one
-	 * @param string - key from the user 
+	 * @param string - key from the user
 	 * @return string - UID stored associated with the key or null
 	 */
 	public function lookup($key)
@@ -122,7 +123,7 @@ class EngineFilesystem implements EngineInterface
 
 			if (substr($file, 0, strlen($this->options['autologin.prefix'])) == $this->options['autologin.prefix'])
 			{
-				// If the date in the older than the cutoff, /dev/null it goes. 
+				// If the date in the older than the cutoff, /dev/null it goes.
 				if(reset(explode("\n", file_get_contents($fullpath, NULL, NULL, 15))) < $cutoff)
 				{
 					unlink($fullpath);

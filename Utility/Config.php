@@ -1,8 +1,9 @@
 <?php
 /**
  *
- * @package     OpenFlame Web Framework
- * @copyright   (c) 2010 OpenFlameCMS.com
+ * @package     openflame-framework
+ * @subpackage  utility
+ * @copyright   (c) 2010 - 2011 openflame-project.org
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
  * @link        https://github.com/OpenFlame/OpenFlame-Framework
  *
@@ -14,7 +15,7 @@ namespace OpenFlame\Framework\Utility;
 if(!defined('OpenFlame\\ROOT_PATH')) exit;
 
 /**
- * OpenFlame Web Framework - General Configuration Manager
+ * OpenFlame Framework - General Configuration Manager
  * 	     Provides an applicaiton-level configuration manager
  *
  *
@@ -87,7 +88,7 @@ class Config implements ArrayAccess
 
 	/*
 	 * ArrayAccess - Set
-	 * Does not allow setting of 
+	 * Does not allow setting of
 	 *
 	 * @param mixed - Key to store the new value in
 	 * @param mixed - New value
@@ -108,7 +109,7 @@ class Config implements ArrayAccess
 		{
 			$toInsert[] = $offset;
 		}
-		
+
 		$this->data[$offset] = $value;
 	}
 

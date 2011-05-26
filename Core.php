@@ -1,8 +1,9 @@
 <?php
 /**
  *
- * @package     OpenFlame Web Framework
- * @copyright   (c) 2010 OpenFlameCMS.com
+ * @package     openflame-framework
+ * @subpackage  core
+ * @copyright   (c) 2010 - 2011 openflame-project.org
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
  * @link        https://github.com/OpenFlame/OpenFlame-Framework
  *
@@ -14,7 +15,7 @@ namespace OpenFlame\Framework;
 if(!defined('OpenFlame\\ROOT_PATH')) exit;
 
 /**
- * OpenFlame Web Framework - Main class
+ * OpenFlame Framework - Main class
  * 	     Contains the objects that power the framework.
  *
  *

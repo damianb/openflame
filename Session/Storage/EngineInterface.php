@@ -1,8 +1,9 @@
 <?php
 /**
  *
- * @package     OpenFlame Web Framework
- * @copyright   (c) 2010 OpenFlameCMS.com
+ * @package     openflame-framework
+ * @subpackage  session
+ * @copyright   (c) 2010 - 2011 openflame-project.org
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
  * @link        https://github.com/OpenFlame/OpenFlame-Framework
  *
@@ -15,7 +16,7 @@ use \OpenFlame\Framework\Core;
 if(!defined('OpenFlame\\ROOT_PATH')) exit;
 
 /**
- * OpenFlame Web Framework - Sessions Engine interface,
+ * OpenFlame Framework - Sessions Engine interface,
  * 		Sessions engine prototype, declares required methods that a sessions engine must define in order to be valid.
  *
  *
@@ -28,7 +29,7 @@ interface EngineInterface
 	 * Init
 	 *
 	 * Called when the session object is created but before the session has started
-	 * @param array - key, value pairs of config options and their values; implemented per driver. 
+	 * @param array - key, value pairs of config options and their values; implemented per driver.
 	 * @return void
 	 */
 	public function init($options);
@@ -53,7 +54,7 @@ interface EngineInterface
 	/*
 	 * Delete Session
 	 *
-	 * Deletes the currently loaded session 
+	 * Deletes the currently loaded session
 	 * @return void
 	 */
 	public function deleteSession();
