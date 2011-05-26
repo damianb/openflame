@@ -16,5 +16,7 @@
 	 - Fix minor bug with grabbing the commit ID from within the framework phar
  - 1.1.2 **maintenance** release
 	 - Fix bug with `Security\Seeder` component - all randomly generated strings will be returned of the requested length now.
+ - 1.1.3 **maintenance** release
+	 - Fix bug with cache component - removed an old unneeded method from the engine interface
  - 1.2.0 **minor** release
 	 - Add in new dependency injection component `Dependency\Injector` (ticket #57)
