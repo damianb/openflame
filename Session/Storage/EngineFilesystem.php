@@ -1,8 +1,9 @@
 <?php
 /**
  *
- * @package     OpenFlame Web Framework
- * @copyright   (c) 2010 OpenFlameCMS.com
+ * @package     openflame-framework
+ * @subpackage  session
+ * @copyright   (c) 2010 - 2011 openflame-project.org
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
  * @link        https://github.com/OpenFlame/OpenFlame-Framework
  *
@@ -15,7 +16,7 @@ use \OpenFlame\Framework\Core;
 if(!defined('OpenFlame\\ROOT_PATH')) exit;
 
 /**
- * OpenFlame Web Framework - Sessions over the Filesystem,
+ * OpenFlame Framework - Sessions over the Filesystem,
  * 		(re)impementes the PHP native sessions to be abstracted for OpenFlame framework.
  *
  *
@@ -55,7 +56,7 @@ class EngineFilesystem implements EngineInterface
 		$this->options['file.prefix'] = isset($options['file.prefix']) ? $options['file.prefix'] : 'sess_';
 		$this->options['file.randseed'] = isset($options['file.randseed']) ? $options['file.randseed'] : chr(64 + mt_rand(1,26));
 		$this->options['file.gctime'] = isset($options['file.gctime']) ? (int) $options['file.gctime'] : $options['session.expiretime'];
-		
+
 		if(substr($this->options['file.savepath'], -1) != '/' || substr($this->options['file.savepath'], -1) != '\\')
 		{
 			$this->options['file.savepath'] .= '/';
@@ -94,7 +95,7 @@ class EngineFilesystem implements EngineInterface
 	/*
 	 * Delete Session
 	 *
-	 * Deletes the currently loaded session 
+	 * Deletes the currently loaded session
 	 * @return void
 	 */
 	public function deleteSession()
@@ -154,7 +155,7 @@ class EngineFilesystem implements EngineInterface
 	{
 		$this->data = $data;
 
-		file_put_contents($this->options['file.savepath'] . $this->options['file.prefix'] . $this->sid . '.php', 
+		file_put_contents($this->options['file.savepath'] . $this->options['file.prefix'] . $this->sid . '.php',
 			"<?php exit; ?>\n{$this->now}\n" . serialize($this->data) . "\n");
 	}
 
@@ -173,7 +174,7 @@ class EngineFilesystem implements EngineInterface
 
 			if (substr($file, 0, strlen($this->options['file.prefix'])) == $this->options['file.prefix'])
 			{
-				// If the date in the older than the cutoff, /dev/null it goes. 
+				// If the date in the older than the cutoff, /dev/null it goes.
 				if(reset(explode("\n", file_get_contents($fullpath, NULL, NULL, 15))) < $cutoff)
 				{
 					unlink($fullpath);

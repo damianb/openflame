@@ -1,8 +1,9 @@
 <?php
 /**
  *
- * @package     OpenFlame Web Framework
- * @copyright   (c) 2010 OpenFlameCMS.com
+ * @package     openflame-framework
+ * @subpackage  cache
+ * @copyright   (c) 2010 - 2011 openflame-project.org
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
  * @link        https://github.com/OpenFlame/OpenFlame-Framework
  *
@@ -15,7 +16,7 @@ use \OpenFlame\Framework\Core;
 if(!defined('OpenFlame\\ROOT_PATH')) exit;
 
 /**
- * OpenFlame Web Framework - serialize() Cache engine,
+ * OpenFlame Framework - serialize() Cache engine,
  * 		serialize() cache engine for use with the cache interface.
  *
  *
@@ -48,7 +49,7 @@ class FileEngineSerialize extends \OpenFlame\Framework\Cache\Engine\File\FileEng
 		$data = serialize($data);
 
 		return implode("\n", array(
-			'# OpenFlame Web Framework cache file - modify at your own risk!',
+			'# OpenFlame Framework cache file - modify at your own risk!',
 			'# data ' . self::CHECKSUM_ALGO . ' checksum: { ' . hash(self::CHECKSUM_ALGO, $data) . ' }',
 			'# engine: ' . $this->getEngineName(),
 			$data,
