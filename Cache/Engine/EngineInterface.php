@@ -25,7 +25,6 @@ if(!defined('OpenFlame\\ROOT_PATH')) exit;
 interface EngineInterface
 {
 	public function getEngineName();
-	public function useTTLCheck();
 	public function build($data, $ttl);
 	public function load($key);
 	public function exists($key);
