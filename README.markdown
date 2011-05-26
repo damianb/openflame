@@ -12,6 +12,6 @@ see ./LICENSE or <http://opensource.org/licenses/mit-license.php>
 
 ## copyright
 
-(c) 2010 - 2011 OpenFlameCMS.com
+(c) 2010 - 2011 openflame-project.org
 
-This framework is generously provided for free by the OpenFlame CCMS Development Team.
+This framework is generously provided for free by the OpenFlame Development Group.
