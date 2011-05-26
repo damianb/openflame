@@ -168,7 +168,7 @@ class Instance
 
 		$path = $this->manager->getCookiePath();
 		$domain = $this->manager->getCookieDomain();
-		$use_secure = $this->manager->getCookieSecure();
+		$use_secure = $this->manager->usingSecureCookies();
 
 		$cookie_data = array();
 		$cookie_data[] = rawurlencode($this->manager->getCookiePrefix() . $this->cookie_name) . '=' . rawurlencode($this->cookie_value);
