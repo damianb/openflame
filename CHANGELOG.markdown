@@ -20,3 +20,4 @@
 	 - Fix bug with cache component - removed an old unneeded method from the engine interface
  - 1.2.0 **minor** release
 	 - Add in new dependency injection component `Dependency\Injector` (ticket #57)
+	 - Refactored the cookie management code and split it out into its own component (ticket #55).
