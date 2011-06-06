@@ -33,7 +33,7 @@ class Injector
 	/**
 	 * @var \OpenFlame\Framework\Dependency\Injector - Singleton instance of the dependency injector
 	 */
-	protected static $instance = false;
+	protected static $instance;
 
 	/**
 	 * Constructor
