@@ -233,11 +233,11 @@ class Manager
 	/**
 	 * Create a new cookie instance
 	 * @param string $cookie_name - The name for this cookie instance to use.
-	 * @return \OpenFlame\Framework\Header\CookieInstance - The newly created cookie instance.
+	 * @return \OpenFlame\Framework\Cookie\Instance - The newly created cookie instance.
 	 */
 	public function setCookie($cookie_name)
 	{
-		$cookie = \OpenFlame\Framework\Header\CookieInstance::newInstance($this);
+		$cookie = \OpenFlame\Framework\Cookie\Instance::newInstance($this);
 		$cookie->setCookieName((string) $cookie_name);
 
 		$this->cookies[(string) $cookie_name] = $cookie;
