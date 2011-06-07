@@ -47,7 +47,6 @@ class Cookie implements \OpenFlame\Framework\Header\Submodule\SubmoduleInterface
 	public static function newInstance()
 	{
 		$self = new static();
-		$self->setNowTime();
 		return $self;
 	}
 
