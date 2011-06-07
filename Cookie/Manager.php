@@ -66,7 +66,7 @@ class Manager
 	 */
 	public function __construct()
 	{
-		$self->setNowTime();
+		$this->setNowTime();
 	}
 
 	/**
