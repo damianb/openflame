@@ -91,6 +91,9 @@ class Dispatcher
 			'type'			=> $listener_type,
 		);
 
+		// Ensure the listener priorities are in order
+		ksort($this->listeners[$event_type]);
+
 		return $this;
 	}
 
@@ -116,8 +119,6 @@ class Dispatcher
 			return $event;
 		}
 
-		// Ensure the listener priorities are in order
-		ksort($this->listeners[$event->getName()]);
 		foreach($this->listeners[$event->getName()] as $priority => $priority_thread)
 		{
 			for($i = 0, $size = sizeof($priority_thread); $i <= $size - 1; $i++)
@@ -162,7 +163,7 @@ class Dispatcher
 	}
 
 	/**
-	 * Dispatch an event to registered listeners, and checking to see if a listener wants to abort a
+	 * Dispatch an event to registered listeners, and checking to see if a listener wants to abort (and if so, break)
 	 * @param \OpenFlame\Framework\Event\Instance $event - The event to dispatch.
 	 * @return \OpenFlame\Framework\Event\Instance - The event dispatched.
 	 */
@@ -173,8 +174,6 @@ class Dispatcher
 			return $event;
 		}
 
-		// Ensure the listener priorities are in order
-		ksort($this->listeners[$event->getName()]);
 		foreach($this->listeners[$event->getName()] as $priority => $priority_thread)
 		{
 			for($i = 0, $size = sizeof($priority_thread); $i <= $size - 1; $i++)
@@ -214,6 +213,66 @@ class Dispatcher
 				}
 
 				if($event->wasBreakTriggered())
+				{
+					break 2; // break 2 so that we completely break out
+				}
+			}
+		}
+
+		return $event;
+	}
+
+	/**
+	 * Dispatch an event to registered listeners, and checking to see if a listener returned a value yet or not (and if so, break)
+	 * @param \OpenFlame\Framework\Event\Instance $event - The event to dispatch.
+	 * @return \OpenFlame\Framework\Event\Instance - The event dispatched.
+	 */
+	public function triggerUntilReturn(\OpenFlame\Framework\Event\Instance $event)
+	{
+		if(!$this->hasListeners($event->getName()))
+		{
+			return $event;
+		}
+
+		foreach($this->listeners[$event->getName()] as $priority => $priority_thread)
+		{
+			for($i = 0, $size = sizeof($priority_thread); $i <= $size - 1; $i++)
+			{
+				$listener = $priority_thread[$i]['listener'];
+				$listener_type = $priority_thread[$i]['type'];
+
+				try
+				{
+					// Use faster, quicker methods than call_user_func() for triggering listeners if they're available
+					switch($listener_type)
+					{
+						case static::LISTENER_CLOSURE:
+						case static::LISTENER_FUNCTION:
+							$return = $listener($event);
+							break;
+
+						case static::LISTENER_STATIC_METHOD:
+							list($class, $method) = $listener;
+							$return = $class::$method($event);
+							break;
+
+						case static::LISTENER_CALL_USER_FUNC:
+						default:
+							$return = call_user_func($listener, $event);
+							break;
+					}
+
+					if($return !== NULL)
+					{
+						$event->setReturn($return);
+					}
+				}
+				catch(\Exception $e)
+				{
+					throw new \RuntimeException(sprintf('Exception encountered in event listener assigned to event "%1$s"', $event->getName()), 0, $e);
+				}
+
+				if($return !== NULL)
 				{
 					break 2; // break 2 so that we completely break out
 				}
