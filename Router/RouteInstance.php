@@ -20,6 +20,8 @@ use OpenFlame\Framework\Core;
  *
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
  * @link        https://github.com/OpenFlame/OpenFlame-Framework
+ *
+ * @note Depends upon AliasRouter via dep injector if route aliases are used.
  */
 class RouteInstance
 {
@@ -152,11 +154,22 @@ class RouteInstance
 	 * Assign a callback to this route instance.
 	 * @param callable $callback - The callback to assign to this route instance.
 	 * @return \OpenFlame\Framework\Router\RouteInstance - Provides a fluent interface.
+	 *
+	 * @throws \LogicException
 	 */
 	public function setRouteCallback($callback)
 	{
 		// reset the serialized route on any changes to the route...
 		$this->setSerializedRoute(NULL);
+
+		if(substr($callback, 0, 2) != '::' && substr($callback, -2, 2) != '::')
+		{
+			if(!is_callable($callback))
+			{
+				throw new \LogicException('Invalid callback provided for route instance');
+			}
+		}
+
 		$this->route_callback = $callback;
 
 		return $this;
@@ -326,6 +339,16 @@ class RouteInstance
 		if($callback === NULL)
 		{
 			throw new \LogicException('Attempted to fire callback when no callback has been set');
+		}
+
+		// Check to see if this is a route "alias"
+		if(substr($callback, 0, 2) == '::' && substr($callback, -2, 2) == '::')
+		{
+			$injector = \OpenFlame\Framework\Dependency\Injector::getInstance();
+			$alias_router = $injector->get('alias_router');
+
+			$route_alias = substr($callback, 2, strlen($callback) - 4);
+			return call_user_func($alias_router->resolveAlias($route_alias), $this);
 		}
 
 		return call_user_func($callback, $this);
