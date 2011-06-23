@@ -13,8 +13,6 @@
 namespace OpenFlame\Framework\Input;
 use OpenFlame\Framework\Core;
 
-if(!defined('OpenFlame\\ROOT_PATH')) exit;
-
 /**
  * OpenFlame Framework - User Input Handler
  * 	     Allows for safe user input and validation of such.

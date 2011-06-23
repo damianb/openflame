@@ -13,8 +13,6 @@
 namespace OpenFlame\Framework\Router;
 use OpenFlame\Framework\Core;
 
-if(!defined('OpenFlame\\ROOT_PATH')) exit;
-
 /**
  * OpenFlame Framework - Static URL router route instance,
  * 	     A route instance for the static URL router, provides abstraction of request verification.

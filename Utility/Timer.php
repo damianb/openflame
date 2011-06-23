@@ -13,8 +13,6 @@
 namespace OpenFlame\Framework\Utility;
 use OpenFlame\Framework\Core;
 
-if(!defined('OpenFlame\\ROOT_PATH')) exit;
-
 /**
  * OpenFlame Framework - Benchmarking class,
  * 		Utility for tracking execution time throughout page execution.

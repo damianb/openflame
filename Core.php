@@ -12,8 +12,6 @@
 
 namespace OpenFlame\Framework;
 
-if(!defined('OpenFlame\\ROOT_PATH')) exit;
-
 /**
  * OpenFlame Framework - Main class
  * 	     Contains the objects that power the framework.

@@ -13,8 +13,6 @@
 namespace OpenFlame\Framework\Dependency;
 use OpenFlame\Framework\Core;
 
-if(!defined('OpenFlame\\ROOT_PATH')) exit;
-
 /**
  * OpenFlame Framework - Dependency injector
  * 	     Provides fluid dependency injection.

@@ -13,8 +13,6 @@
 namespace OpenFlame\Framework\Utility;
 use OpenFlame\Framework\Core;
 
-if(!defined('OpenFlame\\ROOT_PATH')) exit;
-
 /**
  * OpenFlame Framework - Base Convertor
  * 		OOP interface for converting between different bases of arbitrary charsets.

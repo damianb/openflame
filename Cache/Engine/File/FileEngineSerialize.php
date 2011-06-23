@@ -13,8 +13,6 @@
 namespace OpenFlame\Framework\Cache\Engine\File;
 use \OpenFlame\Framework\Core;
 
-if(!defined('OpenFlame\\ROOT_PATH')) exit;
-
 /**
  * OpenFlame Framework - serialize() Cache engine,
  * 		serialize() cache engine for use with the cache interface.

@@ -12,8 +12,6 @@
 
 namespace OpenFlame\Framework\Language;
 
-if(!defined('OpenFlame\\ROOT_PATH')) exit;
-
 /**
  * OpenFlame Framework - Language entry handler
  * 	     Manages document language entries and provides access to manipulate them.

@@ -13,8 +13,6 @@
 namespace OpenFlame\Framework\URL;
 use OpenFlame\Framework\Core;
 
-if(!defined('OpenFlame\\ROOT_PATH')) exit;
-
 /**
  * OpenFlame Framework - Template proxy object for internal URL construction,
  * 	     Provides a near-seamless method of generating internal URLs inside of templates.

@@ -13,8 +13,6 @@
 namespace OpenFlame\Framework\Utility;
 use OpenFlame\Framework\Core;
 
-if(!defined('OpenFlame\\ROOT_PATH')) exit;
-
 /**
  * OpenFlame Framework - JSON handling class,
  * 		OOP interface for use with JSON files/strings.

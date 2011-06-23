@@ -13,8 +13,6 @@
 namespace OpenFlame\Framework\Header\Submodule;
 use OpenFlame\Framework\Core;
 
-if(!defined('OpenFlame\\ROOT_PATH')) exit;
-
 /**
  * OpenFlame Framework - Header management submodule interface,
  * 	     Makes sure that we have the methods necessary to manipulate the header management submodule object.

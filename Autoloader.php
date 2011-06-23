@@ -12,8 +12,6 @@
 
 namespace OpenFlame\Framework;
 
-if(!defined('OpenFlame\\ROOT_PATH')) exit;
-
 /**
  * OpenFlame Framework - Autoloader object
  * 	     Provides just-in-time class autoloading functionality.

@@ -13,8 +13,6 @@
 namespace OpenFlame\Framework\Twig;
 use OpenFlame\Framework\Core;
 
-if(!defined('OpenFlame\\ROOT_PATH')) exit;
-
 /**
  * OpenFlame Framework - Template variable management class,
  * 	     Manages template variables for the template system.

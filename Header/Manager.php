@@ -13,8 +13,6 @@
 namespace OpenFlame\Framework\Header;
 use OpenFlame\Framework\Core;
 
-if(!defined('OpenFlame\\ROOT_PATH')) exit;
-
 /**
  * OpenFlame Framework - Header manager object
  * 	     Takes in and manages headers that should be sent upon page display.

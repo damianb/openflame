@@ -13,8 +13,6 @@
 namespace OpenFlame\Framework\Language;
 use \OpenFlame\Framework\Core;
 
-if(!defined('OpenFlame\\ROOT_PATH')) exit;
-
 /**
  * OpenFlame Framework - Language proxy object
  * 	     Provides seamless access to language variables from within a Twig template.

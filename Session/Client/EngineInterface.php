@@ -13,8 +13,6 @@
 namespace OpenFlame\Framework\Session\Client;
 use \OpenFlame\Framework\Core;
 
-if(!defined('OpenFlame\\ROOT_PATH')) exit;
-
 /**
  * OpenFlame Framework - Session Client-side identification,
  * 		Sessions client engine prototype

@@ -12,8 +12,6 @@
 
 namespace OpenFlame\Framework\Utility;
 
-if(!defined('OpenFlame\\ROOT_PATH')) exit;
-
 /**
  * OpenFlame Framework - General Configuration Manager
  * 	     Provides an applicaiton-level configuration manager

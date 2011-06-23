@@ -13,8 +13,6 @@
 namespace OpenFlame\Framework\Asset;
 use OpenFlame\Framework\Core;
 
-if(!defined('OpenFlame\\ROOT_PATH')) exit;
-
 /**
  * OpenFlame Framework - Template proxy object
  * 	     Provides smooth access to asset object instances in twig templates.
