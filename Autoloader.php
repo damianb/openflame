@@ -32,13 +32,16 @@ class Autoloader
 	 * @param array $paths - Extra paths to include in the autoload search
 	 * @return void
 	 */
-	public function __construct(array $paths = array())
+	public function __construct($path)
 	{
-		$paths = array_merge($paths, array(
-			\OpenFlame\ROOT_PATH,
-		));
-
-		foreach($paths as $path)
+		if(is_array($path))
+		{
+			foreach($paths as $p)
+			{
+				$this->setPath($p);
+			}
+		}
+		else
 		{
 			$this->setPath($path);
 		}
@@ -61,7 +64,7 @@ class Autoloader
 			require $filepath;
 			if(!class_exists($class) && !interface_exists($class))
 			{
-				throw new \RuntimeException(sprintf('Invalid class contained within file %s', $filepath));
+				throw new \RuntimeException(sprintf('Invalid class contained within file "%s"', $filepath));
 			}
 			return;
 		}
