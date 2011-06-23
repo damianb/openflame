@@ -13,8 +13,6 @@
 namespace OpenFlame\Framework\Security;
 use OpenFlame\Framework\Core;
 
-if(!defined('OpenFlame\\ROOT_PATH')) exit;
-
 /**
  * OpenFlame Framework - Hashing framework,
  * 		Used as the Framework's password hashing system.

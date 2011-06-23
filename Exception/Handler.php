@@ -13,8 +13,6 @@
 namespace OpenFlame\Framework\Exception;
 use OpenFlame\Framework\Core;
 
-if(!defined('OpenFlame\\ROOT_PATH')) exit;
-
 /**
  * OpenFlame Framework - Exception handler class,
  * 		Extension handler class, builds a page that shows debug info on an uncaught exception.

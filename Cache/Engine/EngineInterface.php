@@ -13,8 +13,6 @@
 namespace OpenFlame\Framework\Cache\Engine;
 use \OpenFlame\Framework\Core;
 
-if(!defined('OpenFlame\\ROOT_PATH')) exit;
-
 /**
  * OpenFlame Framework - Cache Engine interface,
  * 		Cache engine prototype, declares required methods that a cache engine must define in order to be valid.

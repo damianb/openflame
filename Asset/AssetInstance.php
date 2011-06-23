@@ -13,8 +13,6 @@
 namespace OpenFlame\Framework\Asset;
 use OpenFlame\Framework\Core;
 
-if(!defined('OpenFlame\\ROOT_PATH')) exit;
-
 /**
  * OpenFlame Framework - Asset instance object
  * 	     Represents the individual asset instance and its properties.

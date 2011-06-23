@@ -13,8 +13,6 @@
 namespace OpenFlame\Framework\Cache\Engine\File;
 use \OpenFlame\Framework\Core;
 
-if(!defined('OpenFlame\\ROOT_PATH')) exit;
-
 /**
  * OpenFlame Framework - File-based cache engine base class,
  * 		Cache engine prototype, provides some common methods for all file-based engines to use.

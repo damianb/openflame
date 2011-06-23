@@ -13,8 +13,6 @@
 namespace OpenFlame\Framework\Cookie;
 use OpenFlame\Framework\Core;
 
-if(!defined('OpenFlame\\ROOT_PATH')) exit;
-
 /**
  * OpenFlame Framework - Cookie manager object
  * 	     Manages the cookies we need to keep track of.

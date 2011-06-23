@@ -13,8 +13,6 @@
 namespace OpenFlame\Framework\Event;
 use OpenFlame\Framework\Core;
 
-if(!defined('OpenFlame\\ROOT_PATH')) exit;
-
 /**
  * OpenFlame Framework - Event object
  * 	     Represents a dispatched event.

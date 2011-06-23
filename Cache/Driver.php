@@ -13,8 +13,6 @@
 namespace OpenFlame\Framework\Cache;
 use \OpenFlame\Framework\Core;
 
-if(!defined('OpenFlame\\ROOT_PATH')) exit;
-
 /**
  * OpenFlame Framework - Cache interface class,
  * 		Provides an easy-to-use object interface for interacting with the loaded cache engine.

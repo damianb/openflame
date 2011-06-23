@@ -13,8 +13,6 @@
 namespace OpenFlame\Framework\Session\Storage;
 use \OpenFlame\Framework\Core;
 
-if(!defined('OpenFlame\\ROOT_PATH')) exit;
-
 /**
  * OpenFlame Framework - Sessions Engine interface,
  * 		Sessions engine prototype, declares required methods that a sessions engine must define in order to be valid.

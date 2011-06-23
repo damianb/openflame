@@ -13,8 +13,6 @@
 namespace OpenFlame\Framework\Security;
 use OpenFlame\Framework\Core;
 
-if(!defined('OpenFlame\\ROOT_PATH')) exit;
-
 /**
  * OpenFlame Framework - Random string/seed generator
  * 	     Provides a coherent random seed or string for use in applications.

@@ -13,8 +13,6 @@
 namespace OpenFlame\Framework\Router;
 use OpenFlame\Framework\Core;
 
-if(!defined('OpenFlame\\ROOT_PATH')) exit;
-
 /**
  * OpenFlame Framework - Static URL router,
  * 	     A straightforward and powerful router, provides an alternative to the previous fluid URL handler.

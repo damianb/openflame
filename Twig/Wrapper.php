@@ -13,8 +13,6 @@
 namespace OpenFlame\Framework\Twig;
 use OpenFlame\Framework\Core;
 
-if(!defined('OpenFlame\\ROOT_PATH')) exit;
-
 /**
  * OpenFlame Framework - Twig management class
  * 	     Basically sets up Twig for use by the OpenFlame Framework.

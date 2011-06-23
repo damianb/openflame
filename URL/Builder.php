@@ -13,8 +13,6 @@
 namespace OpenFlame\Framework\URL;
 use OpenFlame\Framework\Core;
 
-if(!defined('OpenFlame\\ROOT_PATH')) exit;
-
 /**
  * OpenFlame Framework - URL abstraction and construction object,
  * 	     A cohesive method of generating internal URLs.

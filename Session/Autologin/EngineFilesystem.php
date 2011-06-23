@@ -13,8 +13,6 @@
 namespace OpenFlame\Framework\Session\Autologin;
 use \OpenFlame\Framework\Core;
 
-if(!defined('OpenFlame\\ROOT_PATH')) exit;
-
 /**
  * OpenFlame Framework - Sessions Autologin Engine
  *

@@ -13,8 +13,6 @@
 namespace OpenFlame\Framework\Asset;
 use OpenFlame\Framework\Core;
 
-if(!defined('OpenFlame\\ROOT_PATH')) exit;
-
 /**
  * OpenFlame Framework - Asset mananger object
  * 	     Manages all asset instances and provides access plus some helpful debugging tools with them.

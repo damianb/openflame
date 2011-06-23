@@ -13,8 +13,6 @@
 namespace OpenFlame\Framework\Session\Storage;
 use \OpenFlame\Framework\Core;
 
-if(!defined('OpenFlame\\ROOT_PATH')) exit;
-
 /**
  * OpenFlame Framework - Sessions over the Filesystem,
  * 		(re)impementes the PHP native sessions to be abstracted for OpenFlame framework.
