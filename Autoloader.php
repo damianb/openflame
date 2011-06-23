@@ -133,11 +133,12 @@ class Autoloader
 
 	/**
 	 * Register this class as an autoloader within the autoloader stack.
+	 * @param mixed $path - The path or array of paths to register with the autoloader.
 	 * @return \OpenFlame\Framework\Autoloader - The newly created autoloader instance.
 	 */
-	public static function register()
+	public static function register($path)
 	{
-		$self = new self();
+		$self = new self($path);
 		spl_autoload_register(array($self, 'loadFile'));
 		return $self;
 	}
