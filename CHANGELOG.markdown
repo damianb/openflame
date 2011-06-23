@@ -25,3 +25,5 @@
 	 - Added new method `triggerUntilReturn()` in component `Event\Dispatcher` (see commit id d88453eaec for details)
 	 - Refactor RouteInstance callback storage, simplify callback execution and remove ability to "call" methods of objects stored in the OpenFlame Framework core
 	 - Pass the `$request_url` parameter in method `processRequest()` the component `Router\Router` by reference to allow the end application to obtain the sanitized form without resanitizing it
+	 - Remove `OpenFlame\ROOT_PATH` constant check in every class file
+	 - Refactor the autoloader to not use the now-defunct `OpenFlame\ROOT_PATH` constant for autoloading; it must now be passed the autoload path upon instantiation
