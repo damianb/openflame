@@ -252,11 +252,11 @@ class Router
 
 	/**
 	 * Take the (dirty) request url for the current request and return the route that matches it.
-	 * @param string $request_url - The requested local url.
+	 * @param string &$request_url - The requested local url.
 	 * @return \OpenFlame\Framework\Router\RouteInstance - The matching route instance.
 	 * @note This method will sanitize the URL before processing.
 	 */
-	public function processRequest($request_url)
+	public function processRequest(&$request_url)
 	{
 
 		// Get rid of the _GET stuff.
