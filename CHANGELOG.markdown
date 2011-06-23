@@ -15,7 +15,7 @@
  - 1.1.1 **maintenance** release
 	 - Fix minor bug with grabbing the commit ID from within the framework phar
  - 1.1.2 **maintenance** release
-	 - Fix bug with `Security\Seeder` component - all randomly generated strings will be returned of the requested length now.
+	 - Fix bug with `Security\Seeder` component - all randomly generated strings will be returned of the requested length now
  - 1.1.3 **maintenance** release
 	 - Fix bug with cache component - removed an old unneeded method from the engine interface
  - 1.2.0 **minor** release
@@ -23,3 +23,4 @@
 	 - Refactored the cookie management code and split it out into its own component (ticket #55).
 	 - Made microoptimizations in component `Event\Dispatcher`
 	 - Added new method triggerUntilReturn() in component `Event\Dispatcher` (see commit id d88453eaec for details)
+	 - Refactor RouteInstance callback storage, simplify callback execution and remove ability to "call" methods of objects stored in the OpenFlame Framework core
