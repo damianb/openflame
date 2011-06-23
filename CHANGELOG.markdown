@@ -22,5 +22,6 @@
 	 - Add in new dependency injection component `Dependency\Injector` (ticket #57)
 	 - Refactored the cookie management code and split it out into its own component (ticket #55).
 	 - Made microoptimizations in component `Event\Dispatcher`
-	 - Added new method triggerUntilReturn() in component `Event\Dispatcher` (see commit id d88453eaec for details)
+	 - Added new method `triggerUntilReturn()` in component `Event\Dispatcher` (see commit id d88453eaec for details)
 	 - Refactor RouteInstance callback storage, simplify callback execution and remove ability to "call" methods of objects stored in the OpenFlame Framework core
+	 - Pass the `$request_url` parameter in method `processRequest()` the component `Router\Router` by reference to allow the end application to obtain the sanitized form without resanitizing it
