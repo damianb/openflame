@@ -69,21 +69,21 @@ class Dispatcher
 		if($listener instanceof \Closure)
 		{
 			// It's a closure!  <3
-			$listener_type = static::LISTENER_CLOSURE;
+			$listener_type = self::LISTENER_CLOSURE;
 		}
 		elseif(function_exists($listener))
 		{
-			$listener_type = static::LISTENER_FUNCTION;
+			$listener_type = self::LISTENER_FUNCTION;
 		}
 		elseif(is_string($listener) && sizeof(explode('::', $listener, 2)) > 1) // checking to see if we're actually using a static call and doing so properly
 		{
 			$listener = explode('::', $listener, 2);
-			$listener_type = static::LISTENER_STATIC_METHOD;
+			$listener_type = self::LISTENER_STATIC_METHOD;
 		}
 		else
 		{
 			// Worst case scenario.  We HAVE to use call_user_func() now.
-			$listener_type = static::LISTENER_CALL_USER_FUNC;
+			$listener_type = self::LISTENER_CALL_USER_FUNC;
 		}
 
 		$this->listeners[$event_type][$priority][] = array(
@@ -131,17 +131,17 @@ class Dispatcher
 					// Use faster, quicker methods than call_user_func() for triggering listeners if they're available
 					switch($listener_type)
 					{
-						case static::LISTENER_CLOSURE:
-						case static::LISTENER_FUNCTION:
+						case self::LISTENER_CLOSURE:
+						case self::LISTENER_FUNCTION:
 							$return = $listener($event);
 							break;
 
-						case static::LISTENER_STATIC_METHOD:
+						case self::LISTENER_STATIC_METHOD:
 							list($class, $method) = $listener;
 							$return = $class::$method($event);
 							break;
 
-						case static::LISTENER_CALL_USER_FUNC:
+						case self::LISTENER_CALL_USER_FUNC:
 						default:
 							$return = call_user_func($listener, $event);
 							break;
@@ -186,17 +186,17 @@ class Dispatcher
 					// Use faster, quicker methods than call_user_func() for triggering listeners if they're available
 					switch($listener_type)
 					{
-						case static::LISTENER_CLOSURE:
-						case static::LISTENER_FUNCTION:
+						case self::LISTENER_CLOSURE:
+						case self::LISTENER_FUNCTION:
 							$return = $listener($event);
 							break;
 
-						case static::LISTENER_STATIC_METHOD:
+						case self::LISTENER_STATIC_METHOD:
 							list($class, $method) = $listener;
 							$return = $class::$method($event);
 							break;
 
-						case static::LISTENER_CALL_USER_FUNC:
+						case self::LISTENER_CALL_USER_FUNC:
 						default:
 							$return = call_user_func($listener, $event);
 							break;
@@ -246,17 +246,17 @@ class Dispatcher
 					// Use faster, quicker methods than call_user_func() for triggering listeners if they're available
 					switch($listener_type)
 					{
-						case static::LISTENER_CLOSURE:
-						case static::LISTENER_FUNCTION:
+						case self::LISTENER_CLOSURE:
+						case self::LISTENER_FUNCTION:
 							$return = $listener($event);
 							break;
 
-						case static::LISTENER_STATIC_METHOD:
+						case self::LISTENER_STATIC_METHOD:
 							list($class, $method) = $listener;
 							$return = $class::$method($event);
 							break;
 
-						case static::LISTENER_CALL_USER_FUNC:
+						case self::LISTENER_CALL_USER_FUNC:
 						default:
 							$return = call_user_func($listener, $event);
 							break;
