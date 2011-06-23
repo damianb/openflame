@@ -21,3 +21,5 @@
  - 1.2.0 **minor** release
 	 - Add in new dependency injection component `Dependency\Injector` (ticket #57)
 	 - Refactored the cookie management code and split it out into its own component (ticket #55).
+	 - Made microoptimizations in component `Event\Dispatcher`
+	 - Added new method triggerUntilReturn() in component `Event\Dispatcher` (see commit id d88453eaec for details)
