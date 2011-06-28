@@ -24,9 +24,8 @@ use \OpenFlame\Framework\Core;
 interface EngineInterface
 {
 	public function getEngineName();
-	public function build($data, $ttl);
 	public function load($key);
 	public function exists($key);
 	public function destroy($key);
-	public function store($key, $data);
+	public function store($key, $data, $ttl);
 }

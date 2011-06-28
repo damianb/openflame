@@ -105,8 +105,8 @@ class Driver
 			throw new \LogicException('Cache engine not loaded');
 		}
 
-		// build the cache, with data and ttl expiry included
-		$this->engine->store($index, $this->engine->build($data, $ttl));
+		// store the data in the cache
+		$this->engine->store($index, $data, $ttl);
 	}
 
 	/**

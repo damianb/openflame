@@ -90,10 +90,11 @@ class FileEngineSerialize extends \OpenFlame\Framework\Cache\Engine\File\FileEng
 	 * Stores data to a cache file.
 	 * @param string $key - The cache file to store our data in.
 	 * @param string $data - The data to cache.
+	 * @param integer $ttl - The lifespan of the cached data, in seconds.  Leave empty or set as 0 to disable cache timeout.
 	 * @return void
 	 */
 	public function store($key, $data)
 	{
-		$this->writeFile("$key.srl.tmp", $data);
+		$this->writeFile("$key.srl.tmp", $this->build($data, $ttl));
 	}
 }
