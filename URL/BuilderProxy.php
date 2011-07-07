@@ -58,7 +58,7 @@ class BuilderProxy
 			return '';
 		}
 
-		$url = $this->builder->getBaseURL() . '/' . vsprintf($pattern, $arguments);
+		$url = rtrim($this->builder->getBaseURL(), '/') . '/' . vsprintf($pattern, $arguments);
 
 		if($this->extra_get_data === false)
 		{
