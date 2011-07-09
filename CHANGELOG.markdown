@@ -32,3 +32,4 @@
 	 - Refactor the cache component again internally, altered the interface and the file-cache engine base to remove the need for the "build" method  in all cache engines (makes an opcache-based engine much more viable)
 	 - Fix a bug in the `URL\BuilderProxy` class, which caused problems when the site root directory was used as the base URL (commit id `090993b42d`)
 	 - Convert the autoloader into a singleton class
+	 - `Core::getCommit()` no longer relies on the `OpenFlame\ROOT_PATH` constant for obtaining the commit-id file
