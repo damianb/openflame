@@ -33,6 +33,11 @@ class Autoloader
 	private static $instance;
 
 	/**
+	 * @ignore
+	 */
+	private function __construct() { }
+
+	/**
 	 * Gets the singleton instance of the autoloader.
 	 * @param mixed $path - The path or array of paths to include in the autoload search.
 	 * @return \OpenFlame\Framework\Autoloader - The singleton autoloader instance.
