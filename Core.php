@@ -68,7 +68,16 @@ class Core
 	{
 		if(self::$commit === NULL)
 		{
-			self::$commit = (file_exists(\OpenFlame\ROOT_PATH . 'OF-F_COMMIT_ID')) ? rtrim(file_get_contents(\OpenFlame\ROOT_PATH . 'OF-F_COMMIT_ID')) : '';
+			$autoloader = \OpenFlame\Framework\Autoloader::getInstance();
+			$filepath = $autoloader->getFile('OF-F_COMMIT_ID');
+			if($filepath !== false)
+			{
+				self::$commit = rtrim(file_get_contents($filepath));
+			}
+			else
+			{
+				self::$commit = '';
+			}
 		}
 
 		return self::$commit;
