@@ -22,10 +22,13 @@
 	 - Add in new dependency injection component `Dependency\Injector` (ticket #57)
 	 - Refactored the cookie management code and split it out into its own component (ticket #55).
 	 - Made microoptimizations in component `Event\Dispatcher`
-	 - Added new method `triggerUntilReturn()` in component `Event\Dispatcher` (see commit id d88453eaec for details)
+	 - Added new method `triggerUntilReturn()` in component `Event\Dispatcher` (see commit id `d88453eaec` for details)
 	 - Refactor RouteInstance callback storage, simplify callback execution and remove ability to "call" methods of objects stored in the OpenFlame Framework core
 	 - Pass the `$request_url` parameter in method `processRequest()` the component `Router\Router` by reference to allow the end application to obtain the sanitized form without resanitizing it
 	 - Remove `OpenFlame\ROOT_PATH` constant check in every class file
 	 - Refactor the autoloader to not use the now-defunct `OpenFlame\ROOT_PATH` constant for autoloading; it must now be passed the autoload path upon instantiation
 	 - Add new component object `Router\AliasRouter` to expand upon current dynamic routing capabilities
 	 - Modify the `Router\RouteInstance` component object to add new route "aliases", which are resolved against the new component `Router\AliasRouter` for a usable callback
+	 - Refactor the cache component again internally, altered the interface and the file-cache engine base to remove the need for the "build" method  in all cache engines (makes an opcache-based engine much more viable)
+	 - Fix a bug in the `URL\BuilderProxy` class, which caused problems when the site root directory was used as the base URL (commit id `090993b42d`)
+	 - Convert the autoloader into a singleton class
