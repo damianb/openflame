@@ -192,33 +192,12 @@ class Instance
 	}
 
 	/**
-	 * Get the number of values returned.
-	 * @return integer - The number of values
-	 */
-	public function countReturns()
-	{
-		return sizeof($this->returns);
-	}
-
-	/**
 	 * Get the return values provided by the listeners.
-	 * @return mixed - Returns an array of returned data, the single piece of returned data, or NULL if no returned datta present.
+	 * @return array - Returns the array of returned data.
 	 */
 	public function getReturns()
 	{
-		$results = $this->countReturns();
-		if($results > 1)
-		{
-			return $this->returns;
-		}
-		elseif($results == 1)
-		{
-			return reset($this->returns);
-		}
-		else
-		{
-			return NULL;
-		}
+		return $this->returns;
 	}
 
 	/**
