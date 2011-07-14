@@ -272,7 +272,7 @@ class Dispatcher
 
 				if($return !== NULL)
 				{
-					break 2; // break 2 so that we completely break out
+					return $event; // PHP 5.4 compat -- cannot use "break (int)" anymore, so we just return the $event
 				}
 			}
 		}
