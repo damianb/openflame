@@ -225,7 +225,7 @@ class Handler
 			</div>
 			<div id="footer">
 				<div class="retainer">
-					Powered by the <p class="copyright hang-right"><a href="http://www.openflamecms.com/" target="_blank" title="OpenFlame: Community Content Management">OpenFlame Framework</a></p>
+					Powered by the <p class="copyright hang-right"><a href="http://openflame-project.org/" target="_blank" title="The OpenFlame Project">OpenFlame Framework</a></p>
 					<div class="hang-clear"><!-- // --></div>
 				</div>
 			</div>
