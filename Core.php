@@ -25,6 +25,13 @@ namespace OpenFlame\Framework;
 class Core
 {
 	/**
+	 * DO NOT _EVER_ CHANGE THESE, FOR THE SAKE OF HUMANITY.
+	 * @link http://xkcd.com/534/
+	 */
+	const CAN_BECOME_SKYNET = false;
+	const COST_TO_BECOME_SKYNET = 999999999;
+
+	/**
 	 * @var string - The version for the Framework
 	 */
 	private static $version = '1.2.0-dev';
