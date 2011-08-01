@@ -83,6 +83,16 @@ class Injector
 	}
 
 	/**
+	 * Check to see if an injector has been defined for a particular dependency.
+	 * @param string $name - The name of the dependency to check.
+	 * @return boolean - Is the injector present?
+	 */
+	public function injectorPresent($name)
+	{
+		return !empty($this->injectors[$name]);
+	}
+
+	/**
 	 * Trigger the dependency injector and store a reference to the resulting object in the OpenFlame core
 	 * @param string $name - The name of the dependency to inject.
 	 * @return object - The object that we are injecting.
