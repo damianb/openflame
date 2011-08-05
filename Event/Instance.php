@@ -133,26 +133,24 @@ class Instance
 
 	/**
 	 * Check if a data point exists in this event.
-	 * @param string - The key for the data point to grab.
+	 * @param string $point - The key for the data point to grab.
 	 * @return boolean - Does the data point exist?
 	 */
 	public function dataPointExists($point)
 	{
-		return (bool) array_key_exists($point, $this->data);
+		return isset($this->data[$point]);
 	}
 
 	/**
 	 * Get a single point of data attached to this event.
-	 * @param string - The key for the data point to grab.
+	 * @param string $point - The key for the data point to grab.
 	 * @return mixed - The point of data we're looking for
-	 *
-	 * @throws \InvalidArgumentException
 	 */
 	public function getDataPoint($point)
 	{
-		if(!$this->dataPointExists($point))
+		if(!isset($this->data[$point]))
 		{
-			throw new \InvalidArgumentException('Invalid event parameter specified');
+			return NULL;
 		}
 
 		return $this->data[$point];
@@ -169,6 +167,52 @@ class Instance
 		$this->data[$point] = $value;
 
 		return $this;
+	}
+
+	/**
+	 * Magic method alternative to \OpenFlame\Framework\Event\Instance->dataPointExists()
+	 * @param string $point - The key for the data point to grab.
+	 * @return boolean - Does the data point exist?
+	 */
+	public function __isset($point)
+	{
+		return isset($this->data[$point]);
+	}
+
+	/**
+	 * Magic method alternative to \OpenFlame\Framework\Event\Instance->getDataPoint()
+	 * @param string $point - The key for the data point to grab.
+	 * @return mixed - The point of data we're looking for
+	 */
+	public function __get($point)
+	{
+		if(!isset($this->data[$point]))
+		{
+			return NULL;
+		}
+
+		return $this->data[$point];
+	}
+
+	/**
+	 * Magic method alternative to \OpenFlame\Framework\Event\Instance->setDataPoint()
+	 * @param string $point - The key to attach the data under.
+	 * @param mixed $value - The data to attach.
+	 * @return void
+	 */
+	public function __set($point, $value)
+	{
+		$this->data[$point] = $value;
+	}
+
+	/**
+	 * Magic method alternative to \OpenFlame\Framework\Event\Instance->setDataPoint()
+	 * @param string $point - The key to unset.
+	 * @return void
+	 */
+	public function __unset($point)
+	{
+		unset($this->data[$point]);
 	}
 
 	/**
