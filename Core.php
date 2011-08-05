@@ -29,7 +29,7 @@ class Core
 	 * @link http://xkcd.com/534/
 	 */
 	const CAN_BECOME_SKYNET = false;
-	const COST_TO_BECOME_SKYNET = 999999999;
+	const COST_TO_BECOME_SKYNET = 999999999999;
 
 	/**
 	 * @var string - The version for the Framework
