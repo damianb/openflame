@@ -21,7 +21,7 @@ use OpenFlame\Framework\Core;
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
  * @link        https://github.com/OpenFlame/OpenFlame-Framework
  */
-class Injector
+class Injector implements \ArrayAccess
 {
 	/**
 	 * @var array - Array of closures which prepare the requested instance on demand.
@@ -152,19 +152,19 @@ class Injector
 	}
 
 	/**
-	 * Get the injector closure.
-	 * @param string $name - The name of the component to grab the injector for.
-	 * @return \Closure - Returns the dependency injector closure to use.
-	 *
-	 * @throws \LogicException
+	 * Get a dependency (and fire the injector if the dependency has not been instantiated)
+	 * @param string $name - The name of the dependency to inject.
+	 * @return object - The object we are injecting.
 	 */
-	protected function getInjector($name)
+	public function get($name)
 	{
-		if(!isset($this->injectors[$name]))
+		$object = \OpenFlame\Framework\Core::getObject($name);
+		if($object === NULL)
 		{
-			throw new \LogicException(sprintf('Cannot fetch dependency object "%s", no injector defined', $name));
+			$object = $this->fireInjector($name);
 		}
-		return $this->injectors[$name];
+
+		return $object;
 	}
 
 	/**
@@ -181,6 +181,18 @@ class Injector
 	}
 
 	/**
+	 * Removes the specified injector
+	 * @param string $name - The name of the dependency
+	 * @return \OpenFlame\Framework\Dependency\Injector - Provides a fluent interface.
+	 */
+	public function unsetInjector($name)
+	{
+		$this->injectors[$name] = NULL;
+
+		return $this;
+	}
+
+	/**
 	 * Check to see if an injector has been defined for a particular dependency.
 	 * @param string $name - The name of the dependency to check.
 	 * @return boolean - Is the injector present?
@@ -188,6 +200,22 @@ class Injector
 	public function injectorPresent($name)
 	{
 		return !empty($this->injectors[$name]);
+	}
+
+	/**
+	 * Get the injector closure.
+	 * @param string $name - The name of the component to grab the injector for.
+	 * @return \Closure - Returns the dependency injector closure to use.
+	 *
+	 * @throws \LogicException
+	 */
+	protected function getInjector($name)
+	{
+		if(!isset($this->injectors[$name]))
+		{
+			throw new \LogicException(sprintf('Cannot fetch dependency object "%s", no injector defined', $name));
+		}
+		return $this->injectors[$name];
 	}
 
 	/**
@@ -202,18 +230,47 @@ class Injector
 	}
 
 	/**
-	 * Get a dependency (and fire the injector if the dependency has not been instantiated)
-	 * @param string $name - The name of the dependency to inject.
-	 * @return object - The object we are injecting.
+	 * ArrayAccess methods
 	 */
-	public function get($name)
-	{
-		$object = \OpenFlame\Framework\Core::getObject($name);
-		if($object === NULL)
-		{
-			$object = $this->fireInjector($name);
-		}
 
-		return $object;
+	/**
+	 * Check if an "array" offset exists in this object.
+	 * @param mixed $offset - The offset to check.
+	 * @return boolean - Does anything exist for this offset?
+	 */
+	public function offsetExists($offset)
+	{
+		return $this->injectorPresent($offset);
+	}
+
+	/**
+	 * Get an "array" offset for this object.
+	 * @param mixed $offset - The offset to grab from.
+	 * @return mixed - The value of the offset, or null if the offset does not exist.
+	 */
+	public function offsetGet($offset)
+	{
+		return $this->get($offset);
+	}
+
+	/**
+	 * Set an "array" offset to a certain value, if the offset exists
+	 * @param mixed $offset - The offset to set.
+	 * @param mixed $value - The value to set to the offset.
+	 * @return void
+	 */
+	public function offsetSet($offset, $value)
+	{
+		$this->setInjector($offset, $value);
+	}
+
+	/**
+	 * Unset an "array" offset.
+	 * @param mixed $offset - The offset to clear out.
+	 * @return void
+	 */
+	public function offsetUnset($offset)
+	{
+		$this->unsetInjector($offset);
 	}
 }
