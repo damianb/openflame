@@ -47,6 +47,12 @@ abstract class JSON
 		if(is_file($json))
 			$json = file_get_contents($json);
 
+		// Empty JSON file?  o_O
+		if(empty($json))
+		{
+			return NULL;
+		}
+
 		$data = json_decode(preg_replace('#\#.*?' . "\n" . '#', '', $json), true);
 
 		if($data === NULL)
