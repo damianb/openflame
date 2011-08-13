@@ -35,9 +35,107 @@ class Injector
 
 	/**
 	 * Constructor
-	 * @return void
 	 */
-	protected function __construct() { }
+	protected function __construct()
+	{
+		// Avoiding problems with use() here, need to pass $injector and not $this to the closure
+		$injector = $this;
+
+		// Define a bunch of injectors
+		$this->setInjector('router', function() {
+			return new \OpenFlame\Framework\Router\Router();
+		});
+
+		$this->setInjector('input', function() {
+			return new \OpenFlame\Framework\Input\Handler();
+		});
+
+		$this->setInjector('template', function() {
+			return new \OpenFlame\Framework\Twig\Variables();
+		});
+
+		$this->setInjector('asset', function() {
+			return new \OpenFlame\Framework\Asset\Manager();
+		});
+
+		$this->setInjector('asset_proxy', function() use($injector) {
+			return new \OpenFlame\Framework\Asset\Proxy($injector->get('asset'));
+		});
+
+		$this->setInjector('dispatcher', function() {
+			return new \OpenFlame\Framework\Event\Dispatcher();
+		});
+
+		$this->setInjector('processor', function() {
+			return new \Codebite\Quartz\Page\Processor();
+		});
+
+		$this->setInjector('language', function() {
+			return new \OpenFlame\Framework\Language\Handler();
+		});
+
+		$this->setInjector('language_proxy', function() use($injector) {
+			return new \OpenFlame\Framework\Language\Proxy($injector->get('language'));
+		});
+
+		$this->setInjector('cookie', function() use($injector) {
+			return new \OpenFlame\Framework\Cookie\Manager();
+		});
+
+		$this->setInjector('header', function() use($injector) {
+			$header = new \OpenFlame\Framework\Header\Manager();
+			$cookie = $header->getSubmodule('cookie');
+			$cookie->setCookieManager($injector->get('cookie'));
+
+			return $header;
+		});
+
+		$this->setInjector('url', function() {
+			return new \OpenFlame\Framework\URL\Builder();
+		});
+
+		$this->setInjector('url_proxy', function() use($injector) {
+			return new \OpenFlame\Framework\URL\BuilderProxy($injector->get('url'));
+		});
+
+		$this->setInjector('hasher', function() {
+			return new \OpenFlame\Framework\Security\Hasher();
+		});
+
+		$this->setInjector('seeder', function() {
+			return new \OpenFlame\Framework\Security\Seeder();
+		});
+
+		$this->setInjector('timer', function() {
+			return new \OpenFlame\Framework\Utility\Timer();
+		});
+
+		// These injectors should be manually defined, as we do not expect any path constants to be defined in the OpenFlame Framework
+		/*
+		$this->setInjector('twig', function() {
+			$twig = new \OpenFlame\Framework\Twig\Wrapper();
+			$twig->setTwigRootPath(Core::getConfig('twig.lib_path') ?: '/vendor/Twig/lib/Twig/')
+				->setTwigCachePath((Core::getConfig('twig.cache_path') ?: '/cache/twig/'))
+				->setTemplatePath((Core::getConfig('twig.template_path') ?: '/data/template/'))
+				->setTwigOption('debug', (Core::getConfig('twig.debug') ?: false));
+			$twig->initTwig();
+
+			return $twig;
+		});
+
+		$this->setInjector('cache_engine', function() {
+			$cache_engine = new \OpenFlame\Framework\Cache\Engine\File\FileEngineJSON();
+			$cache_engine->setCachePath('/cache/');
+			return $cache_engine;
+		});
+
+		$this->setInjector('cache', function() use($injector) {
+			$cache = new \OpenFlame\Framework\Cache\Driver();
+			$cache->setEngine($injector->get('cache_engine'));
+			return $cache;
+		});
+		*/
+	}
 
 	/**
 	 * Get the singleton instance of the dependency injector.
