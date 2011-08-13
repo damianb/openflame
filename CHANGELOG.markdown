@@ -35,3 +35,8 @@
 	 - `Core::getCommit()` no longer relies on the `OpenFlame\ROOT_PATH` constant for obtaining the commit-id file
 	 - Remove "magic" return functionality from `Event\Instance` component -- method `getReturns()` in `Event\Instance` will now always return an array
 	 - Remove `countReturns()` method from `Event\Instance` component, due to the changes in `getReturns()`
+	 - Protect ourselves from sentient code, added `CAN_BECOME_SKYNET` and `COST_TO_BECOME_SKYNET` class constants to the framework Core
+	 - Deprecated `dataPointExists()`, `getDataPoint()`, `setDataPoint()` in `Event\Instance` (use `exists()`, `get()`, `set()` respectively instead)
+	 - Deprecated `getRequestDataPoint()`, `setRequestDataPoint()` in `Router\RouteInstance` (use `get()`, `set()` respectively instead)
+	 - No longer throwing an exception on empty JSON files (which received NULL from `json_decode()` internally) in `Utility\JSON`
+	 - Change behavior of `__get()` method of `Header\Manager` to match that of `getSubmodule()`
