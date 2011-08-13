@@ -135,8 +135,57 @@ class Instance
 	 * Check if a data point exists in this event.
 	 * @param string $point - The key for the data point to grab.
 	 * @return boolean - Does the data point exist?
+	 *
+	 * @deprecated since 1.2.0
 	 */
 	public function dataPointExists($point)
+	{
+		trigger_error('\\OpenFlame\\Framework\\Event\\Instance->dataPointExists() is deprecated', E_USER_DEPRECATED);
+
+		return isset($this->data[$point]);
+	}
+
+	/**
+	 * Get a single point of data attached to this event.
+	 * @param string $point - The key for the data point to grab.
+	 * @return mixed - The point of data we're looking for
+	 *
+	 * @deprecated since 1.2.0
+	 */
+	public function getDataPoint($point)
+	{
+		trigger_error('\\OpenFlame\\Framework\\Event\\Instance->getDataPoint() is deprecated', E_USER_DEPRECATED);
+
+		if(!isset($this->data[$point]))
+		{
+			return NULL;
+		}
+
+		return $this->data[$point];
+	}
+
+	/**
+	 * Attach a single point of data to this event
+	 * @param string $point - The key to attach the data under.
+	 * @param mixed $value - The data to attach.
+	 * @return \OpenFlame\Framework\Event\Instance - Provides a fluent interface.
+	 *
+	 * @deprecated since 1.2.0
+	 */
+	public function setDataPoint($point, $value)
+	{
+		trigger_error('\\OpenFlame\\Framework\\Event\\Instance->setDataPoint() is deprecated', E_USER_DEPRECATED);
+		$this->data[$point] = $value;
+
+		return $this;
+	}
+
+	/**
+	 * Check if a data point exists in this event.
+	 * @param string $point - The key for the data point to grab.
+	 * @return boolean - Does the data point exist?
+	 */
+	public function exists($point)
 	{
 		return isset($this->data[$point]);
 	}
@@ -146,7 +195,7 @@ class Instance
 	 * @param string $point - The key for the data point to grab.
 	 * @return mixed - The point of data we're looking for
 	 */
-	public function getDataPoint($point)
+	public function get($point)
 	{
 		if(!isset($this->data[$point]))
 		{
@@ -162,7 +211,7 @@ class Instance
 	 * @param mixed $value - The data to attach.
 	 * @return \OpenFlame\Framework\Event\Instance - Provides a fluent interface.
 	 */
-	public function setDataPoint($point, $value)
+	public function set($point, $value)
 	{
 		$this->data[$point] = $value;
 
@@ -176,7 +225,7 @@ class Instance
 	 */
 	public function __isset($point)
 	{
-		return isset($this->data[$point]);
+		return $this->exists($point);
 	}
 
 	/**
@@ -186,12 +235,7 @@ class Instance
 	 */
 	public function __get($point)
 	{
-		if(!isset($this->data[$point]))
-		{
-			return NULL;
-		}
-
-		return $this->data[$point];
+		return $this->get($point);
 	}
 
 	/**
@@ -202,7 +246,7 @@ class Instance
 	 */
 	public function __set($point, $value)
 	{
-		$this->data[$point] = $value;
+		$this->set($point, $value);
 	}
 
 	/**
