@@ -303,16 +303,9 @@ class Manager
 	 * Get a loaded header management submodule
 	 * @param string $submodule - The name of the submodule to grab.
 	 * @return \OpenFlame\Framework\Header\Submodule\SubmoduleInterface - The submodule requested.
-	 *
-	 * @throws \RuntimeException
 	 */
 	public function __get($submodule)
 	{
-		if(!isset($this->submodules[$submodule]))
-		{
-			throw new \RuntimeException(sprintf('Failed to retreive submodule, submodule not loaded'));
-		}
-
-		return $this->submodules[$submodule];
+		return $this->getSubmodule($submodule);
 	}
 }
