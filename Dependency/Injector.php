@@ -84,7 +84,7 @@ class Injector implements \ArrayAccess
 
 		$this->setInjector('header', function() use($injector) {
 			$header = new \OpenFlame\Framework\Header\Manager();
-			$cookie = $header->getSubmodule('cookie');
+			$cookie = $header->getSubmodule('Cookie');
 			$cookie->setCookieManager($injector->get('cookie'));
 
 			return $header;
