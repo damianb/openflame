@@ -124,35 +124,28 @@ class Dispatcher
 				$listener = $priority_thread[$i]['listener'];
 				$listener_type = $priority_thread[$i]['type'];
 
-				try
+				// Use faster, quicker methods than call_user_func() for triggering listeners if they're available
+				switch($listener_type)
 				{
-					// Use faster, quicker methods than call_user_func() for triggering listeners if they're available
-					switch($listener_type)
-					{
-						case self::LISTENER_CLOSURE:
-						case self::LISTENER_FUNCTION:
-							$return = $listener($event);
-							break;
+					case self::LISTENER_CLOSURE:
+					case self::LISTENER_FUNCTION:
+						$return = $listener($event);
+						break;
 
-						case self::LISTENER_STATIC_METHOD:
-							list($class, $method) = $listener;
-							$return = $class::$method($event);
-							break;
+					case self::LISTENER_STATIC_METHOD:
+						list($class, $method) = $listener;
+						$return = $class::$method($event);
+						break;
 
-						case self::LISTENER_CALL_USER_FUNC:
-						default:
-							$return = call_user_func($listener, $event);
-							break;
-					}
-
-					if($return !== NULL)
-					{
-						$event->setReturn($return);
-					}
+					case self::LISTENER_CALL_USER_FUNC:
+					default:
+						$return = call_user_func($listener, $event);
+						break;
 				}
-				catch(\Exception $e)
+
+				if($return !== NULL)
 				{
-					throw new \RuntimeException(sprintf('Exception encountered in event listener assigned to event "%1$s"', $event->getName()), 0, $e);
+					$event->setReturn($return);
 				}
 			}
 		}
@@ -179,40 +172,33 @@ class Dispatcher
 				$listener = $priority_thread[$i]['listener'];
 				$listener_type = $priority_thread[$i]['type'];
 
-				try
+				// Use faster, quicker methods than call_user_func() for triggering listeners if they're available
+				switch($listener_type)
 				{
-					// Use faster, quicker methods than call_user_func() for triggering listeners if they're available
-					switch($listener_type)
-					{
-						case self::LISTENER_CLOSURE:
-						case self::LISTENER_FUNCTION:
-							$return = $listener($event);
-							break;
+					case self::LISTENER_CLOSURE:
+					case self::LISTENER_FUNCTION:
+						$return = $listener($event);
+						break;
 
-						case self::LISTENER_STATIC_METHOD:
-							list($class, $method) = $listener;
-							$return = $class::$method($event);
-							break;
+					case self::LISTENER_STATIC_METHOD:
+						list($class, $method) = $listener;
+						$return = $class::$method($event);
+						break;
 
-						case self::LISTENER_CALL_USER_FUNC:
-						default:
-							$return = call_user_func($listener, $event);
-							break;
-					}
-
-					if($return !== NULL)
-					{
-						$event->setReturn($return);
-					}
+					case self::LISTENER_CALL_USER_FUNC:
+					default:
+						$return = call_user_func($listener, $event);
+						break;
 				}
-				catch(\Exception $e)
+
+				if($return !== NULL)
 				{
-					throw new \RuntimeException(sprintf('Exception encountered in event listener assigned to event "%1$s"', $event->getName()), 0, $e);
+					$event->setReturn($return);
 				}
 
 				if($event->wasBreakTriggered())
 				{
-					break 2; // break 2 so that we completely break out
+					return $event; // PHP 5.4 compat -- cannot use "break (int)" anymore, so we just return the $event
 				}
 			}
 		}
@@ -239,35 +225,28 @@ class Dispatcher
 				$listener = $priority_thread[$i]['listener'];
 				$listener_type = $priority_thread[$i]['type'];
 
-				try
+				// Use faster, quicker methods than call_user_func() for triggering listeners if they're available
+				switch($listener_type)
 				{
-					// Use faster, quicker methods than call_user_func() for triggering listeners if they're available
-					switch($listener_type)
-					{
-						case self::LISTENER_CLOSURE:
-						case self::LISTENER_FUNCTION:
-							$return = $listener($event);
-							break;
+					case self::LISTENER_CLOSURE:
+					case self::LISTENER_FUNCTION:
+						$return = $listener($event);
+						break;
 
-						case self::LISTENER_STATIC_METHOD:
-							list($class, $method) = $listener;
-							$return = $class::$method($event);
-							break;
+					case self::LISTENER_STATIC_METHOD:
+						list($class, $method) = $listener;
+						$return = $class::$method($event);
+						break;
 
-						case self::LISTENER_CALL_USER_FUNC:
-						default:
-							$return = call_user_func($listener, $event);
-							break;
-					}
-
-					if($return !== NULL)
-					{
-						$event->setReturn($return);
-					}
+					case self::LISTENER_CALL_USER_FUNC:
+					default:
+						$return = call_user_func($listener, $event);
+						break;
 				}
-				catch(\Exception $e)
+
+				if($return !== NULL)
 				{
-					throw new \RuntimeException(sprintf('Exception encountered in event listener assigned to event "%1$s"', $event->getName()), 0, $e);
+					$event->setReturn($return);
 				}
 
 				if($return !== NULL)
