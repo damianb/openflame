@@ -40,3 +40,4 @@
 	 - Deprecated `getRequestDataPoint()`, `setRequestDataPoint()` in `Router\RouteInstance` (use `get()`, `set()` respectively instead)
 	 - No longer throwing an exception on empty JSON files (which received NULL from `json_decode()` internally) in `Utility\JSON`
 	 - Change behavior of `__get()` method of `Header\Manager` to match that of `getSubmodule()`
+	 - Add new object `Event\Scheduler` for scheduling events to be triggered at regular intervals
