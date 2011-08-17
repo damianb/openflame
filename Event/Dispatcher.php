@@ -190,9 +190,12 @@ class Dispatcher
 	 * Dispatch an event to registered listeners, and checking to see if a listener wants to abort (and if so, break)
 	 * @param \OpenFlame\Framework\Event\Instance $event - The event to dispatch.
 	 * @return \OpenFlame\Framework\Event\Instance - The event dispatched.
+	 *
+	 * @deprecated since 1.2.0
 	 */
 	public function triggerUntilBreak(\OpenFlame\Framework\Event\Instance $event)
 	{
+		trigger_error('\\OpenFlame\\Framework\\Event\\Dispatcher->triggerUntilBreak() is deprecated', E_USER_DEPRECATED);
 		return $this->trigger($event, self::TRIGGER_MANUALBREAK);
 	}
 
@@ -200,9 +203,12 @@ class Dispatcher
 	 * Dispatch an event to registered listeners, and checking to see if a listener returned a value yet or not (and if so, break)
 	 * @param \OpenFlame\Framework\Event\Instance $event - The event to dispatch.
 	 * @return \OpenFlame\Framework\Event\Instance - The event dispatched.
+	 *
+	 * @deprecated since 1.2.0
 	 */
 	public function triggerUntilReturn(\OpenFlame\Framework\Event\Instance $event)
 	{
+		trigger_error('\\OpenFlame\\Framework\\Event\\Dispatcher->triggerUntilReturn() is deprecated', E_USER_DEPRECATED);
 		return $this->trigger($event, self::TRIGGER_RETURNBREAK);
 	}
 }
