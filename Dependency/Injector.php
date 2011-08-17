@@ -46,6 +46,10 @@ class Injector implements \ArrayAccess
 			return new \OpenFlame\Framework\Router\Router();
 		});
 
+		$this->setInjector('alias_router', function() {
+			return new \OpenFlame\Framework\Router\AliasRouter();
+		});
+
 		$this->setInjector('input', function() {
 			return new \OpenFlame\Framework\Input\Handler();
 		});
