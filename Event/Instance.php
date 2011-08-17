@@ -263,6 +263,17 @@ class Instance
 	 * Trigger a break of the event dispatch cycle.
 	 * @return \OpenFlame\Framework\Event\Instance - Provides a fluent interface.
 	 */
+	public function triggerBreak()
+	{
+		$this->trigger_break = true;
+
+		return $this;
+	}
+
+	/**
+	 * Trigger a break of the event dispatch cycle.
+	 * @return \OpenFlame\Framework\Event\Instance - Provides a fluent interface.
+	 */
 	public function breakTrigger()
 	{
 		$this->trigger_break = true;
