@@ -41,3 +41,5 @@
 	 - No longer throwing an exception on empty JSON files (which received NULL from `json_decode()` internally) in `Utility\JSON`
 	 - Change behavior of `__get()` method of `Header\Manager` to match that of `getSubmodule()`
 	 - Add new object `Event\Scheduler` for scheduling events to be triggered at regular intervals
+	 - Deprecated `triggerUntilReturn()` and `triggerUntilBreak()` in `Event\Dispatcher` (use method `trigger` and supply the second param with the `TRIGGER_NOBREAK`, `TRIGGER_MANUALBREAK`, `TRIGGER_RETURNBREAK` class constants instead)
+	 - Added method alias `triggerBreak()` (aliases to `breakTrigger()`) to `Event\Instance` to make it more intuitive
