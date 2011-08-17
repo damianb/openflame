@@ -28,6 +28,11 @@ class Dispatcher
 	 */
 	protected $listeners = array();
 
+	/**
+	 * @var array - Array of "unsorted" listeners
+	 */
+	protected $unsorted = array();
+
 	/**#@+
 	 * @var integer - Constants representing the type of listener being interacted with.
 	 */
@@ -37,18 +42,26 @@ class Dispatcher
 	const LISTENER_CALL_USER_FUNC = 4;
 	/**#@-*/
 
+	/**#@+
+	 * @var integer - Constants representing the type of trigger mechanism to use.
+	 */
+	const TRIGGER_NOBREAK = 1;
+	const TRIGGER_MANUALBREAK = 2;
+	const TRIGGER_RETURNBREAK = 3;
+	/**#@-*/
+
 	/**
 	 * Register a new listener with the dispatcher
-	 * @param string $event_type - The type of event type to attach the listener to.
+	 * @param string $event_name - The name of the event to attach the listener to.
 	 * @param integer $priority - The priority for the listener to be registered as, similar to *nix "nice" values for CPU processes (-20 top priority, 20 bottom priority)
 	 * @param callable $listener - The callable reference for the listener.
 	 * @return \OpenFlame\Framework\Event\Dispatcher - Provides a fluent interface.
 	 */
-	public function register($event_type, $priority, $listener)
+	public function register($event_name, $priority, $listener)
 	{
-		if(!isset($this->listeners[$event_type]) || !is_array($this->listeners[$event_type]))
+		if(!isset($this->listeners[$event_name]) || !is_array($this->listeners[$event_name]))
 		{
-			$this->listeners[$event_type] = array();
+			$this->listeners[$event_name] = array();
 		}
 
 		// Handle priority settings (a la UNIX nice values)
@@ -84,13 +97,13 @@ class Dispatcher
 			$listener_type = self::LISTENER_CALL_USER_FUNC;
 		}
 
-		$this->listeners[$event_type][$priority][] = array(
+		$this->listeners[$event_name][$priority][] = array(
 			'listener'		=> $listener,
 			'type'			=> $listener_type,
 		);
 
-		// Ensure the listener priorities are in order
-		ksort($this->listeners[$event_type]);
+		// Flag this event as needing a sort before the next event dispatch
+		$this->unsorted[$event_name] = true;
 
 		return $this;
 	}
@@ -108,21 +121,32 @@ class Dispatcher
 	/**
 	 * Dispatch an event to registered listeners
 	 * @param \OpenFlame\Framework\Event\Instance $event - The event to dispatch.
+	 * @param integer $dispatch_type - The type of dispatch method to use (run all listeners, allow listeners to trigger break, break on a non-NULL return value)
 	 * @return \OpenFlame\Framework\Event\Instance - The event dispatched.
 	 */
-	public function trigger(\OpenFlame\Framework\Event\Instance $event)
+	public function trigger(\OpenFlame\Framework\Event\Instance $event, $dispatch_type = self::TRIGGER_NOBREAK)
 	{
-		if(!$this->hasListeners($event->getName()))
+		$event_name = $event->getName();
+
+		// Check to see if this event has ANY listeners - if it doesn't, just bail out.
+		if(!$this->hasListeners($event_name))
 		{
 			return $event;
 		}
 
-		foreach($this->listeners[$event->getName()] as $priority => $priority_thread)
+		// On-the-fly priority sorting
+		if(isset($this->unsorted[$event_name]))
 		{
-			for($i = 0, $size = sizeof($priority_thread); $i <= $size - 1; $i++)
+			ksort($this->listeners[$event_name]);
+			unset($this->unsorted[$event_name]);
+		}
+
+		foreach($this->listeners[$event_name] as $priority => $priority_thread)
+		{
+			foreach($priority_thread as $listener_entry)
 			{
-				$listener = $priority_thread[$i]['listener'];
-				$listener_type = $priority_thread[$i]['type'];
+				$listener = $listener_entry['listener'];
+				$listener_type = $listener_entry['type'];
 
 				// Use faster, quicker methods than call_user_func() for triggering listeners if they're available
 				switch($listener_type)
@@ -130,22 +154,31 @@ class Dispatcher
 					case self::LISTENER_CLOSURE:
 					case self::LISTENER_FUNCTION:
 						$return = $listener($event);
-						break;
+					break;
 
 					case self::LISTENER_STATIC_METHOD:
 						list($class, $method) = $listener;
 						$return = $class::$method($event);
-						break;
+					break;
 
 					case self::LISTENER_CALL_USER_FUNC:
 					default:
 						$return = call_user_func($listener, $event);
-						break;
+					break;
 				}
 
 				if($return !== NULL)
 				{
 					$event->setReturn($return);
+					if($dispatch_type = self::TRIGGER_RETURNBREAK)
+					{
+						return $event; // PHP 5.4 compat -- cannot use "break (int)" anymore, so we just return the $event
+					}
+				}
+
+				if($dispatch_type = self::TRIGGER_MANUALBREAK && $event->wasBreakTriggered())
+				{
+					return $event; // PHP 5.4 compat -- cannot use "break (int)" anymore, so we just return the $event
 				}
 			}
 		}
@@ -160,50 +193,7 @@ class Dispatcher
 	 */
 	public function triggerUntilBreak(\OpenFlame\Framework\Event\Instance $event)
 	{
-		if(!$this->hasListeners($event->getName()))
-		{
-			return $event;
-		}
-
-		foreach($this->listeners[$event->getName()] as $priority => $priority_thread)
-		{
-			for($i = 0, $size = sizeof($priority_thread); $i <= $size - 1; $i++)
-			{
-				$listener = $priority_thread[$i]['listener'];
-				$listener_type = $priority_thread[$i]['type'];
-
-				// Use faster, quicker methods than call_user_func() for triggering listeners if they're available
-				switch($listener_type)
-				{
-					case self::LISTENER_CLOSURE:
-					case self::LISTENER_FUNCTION:
-						$return = $listener($event);
-						break;
-
-					case self::LISTENER_STATIC_METHOD:
-						list($class, $method) = $listener;
-						$return = $class::$method($event);
-						break;
-
-					case self::LISTENER_CALL_USER_FUNC:
-					default:
-						$return = call_user_func($listener, $event);
-						break;
-				}
-
-				if($return !== NULL)
-				{
-					$event->setReturn($return);
-				}
-
-				if($event->wasBreakTriggered())
-				{
-					return $event; // PHP 5.4 compat -- cannot use "break (int)" anymore, so we just return the $event
-				}
-			}
-		}
-
-		return $event;
+		return $this->trigger($event, self::TRIGGER_MANUALBREAK);
 	}
 
 	/**
@@ -213,46 +203,6 @@ class Dispatcher
 	 */
 	public function triggerUntilReturn(\OpenFlame\Framework\Event\Instance $event)
 	{
-		if(!$this->hasListeners($event->getName()))
-		{
-			return $event;
-		}
-
-		foreach($this->listeners[$event->getName()] as $priority => $priority_thread)
-		{
-			for($i = 0, $size = sizeof($priority_thread); $i <= $size - 1; $i++)
-			{
-				$listener = $priority_thread[$i]['listener'];
-				$listener_type = $priority_thread[$i]['type'];
-
-				// Use faster, quicker methods than call_user_func() for triggering listeners if they're available
-				switch($listener_type)
-				{
-					case self::LISTENER_CLOSURE:
-					case self::LISTENER_FUNCTION:
-						$return = $listener($event);
-						break;
-
-					case self::LISTENER_STATIC_METHOD:
-						list($class, $method) = $listener;
-						$return = $class::$method($event);
-						break;
-
-					case self::LISTENER_CALL_USER_FUNC:
-					default:
-						$return = call_user_func($listener, $event);
-						break;
-				}
-
-				if($return !== NULL)
-				{
-					$event->setReturn($return);
-
-					return $event; // PHP 5.4 compat -- cannot use "break (int)" anymore, so we just return the $event
-				}
-			}
-		}
-
-		return $event;
+		return $this->trigger($event, self::TRIGGER_RETURNBREAK);
 	}
 }
