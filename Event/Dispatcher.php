@@ -247,10 +247,7 @@ class Dispatcher
 				if($return !== NULL)
 				{
 					$event->setReturn($return);
-				}
 
-				if($return !== NULL)
-				{
 					return $event; // PHP 5.4 compat -- cannot use "break (int)" anymore, so we just return the $event
 				}
 			}
