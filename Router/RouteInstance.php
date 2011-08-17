@@ -162,12 +162,9 @@ class RouteInstance
 		// reset the serialized route on any changes to the route...
 		$this->setSerializedRoute(NULL);
 
-		if(substr($callback, 0, 2) != '::' && substr($callback, -2, 2) != '::')
+		if(substr($callback, 0, 2) != '::' && substr($callback, -2, 2) != '::' && !is_callable($callback))
 		{
-			if(!is_callable($callback))
-			{
-				throw new \LogicException('Invalid callback provided for route instance');
-			}
+			throw new \LogicException('Invalid callback provided for route instance');
 		}
 
 		$this->route_callback = $callback;
