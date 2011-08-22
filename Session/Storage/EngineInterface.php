@@ -24,57 +24,39 @@ use \OpenFlame\Framework\Core;
 interface EngineInterface
 {
 	/*
-	 * Init
-	 *
-	 * Called when the session object is created but before the session has started
-	 * @param array - key, value pairs of config options and their values; implemented per driver.
+	 * Initialized the engine
+	 * @param array options - Associative array of options
 	 * @return void
 	 */
-	public function init($options);
+	public function init(&$options);
 
 	/*
-	 * Load Session
-	 *
-	 * Load the session for use by the driver
-	 * @return bool - True if a session was found, false if not
+	 * Load data associated with the SID
+	 * @param string sid - Session ID (Must be [a-z0-9])
+	 * @return mixed - Arbitrary data stored 
 	 */
-	public function loadSession($sid);
+	public function load($sid);
 
 	/*
-	 * New Session
-	 *
-	 * Called when a new session needs to be created
-	 * @param bool - Clear the session data? Useful to set true when a session does not validate
-	 * @return string - New SID
+	 * Store data associated with the session id
+	 * @param string sid - Session ID (Must be [a-z0-9])
+	 * @param mixed data - Arbitrary data to store
+	 * @return bool - true on success, false on failure
 	 */
-	public function newSession($clearData = false);
+	public function store($sid, $data);
 
 	/*
-	 * Delete Session
-	 *
-	 * Deletes the currently loaded session
+	 * Purge session object
+	 * Basically giving the Engine the que to kill the data associated with 
+	 * this session ID.
+	 * @param string sid
+	 */
+	public function purge($sid);
+
+	/*
+	 * Garbage Collection
+	 * Called at the end of each page load.
 	 * @return void
-	 */
-	public function deleteSession();
-
-	/*
-	 * Load Session Data
-	 *
-	 * Get the current session data
-	 * @return array - arbitrary array of identical structure to one being stored
-	 */
-	public function loadData();
-
-	/*
-	 * Store Session Data
-	 *
-	 * @param array - arbitrary array
-	 */
-	public function storeData($data);
-
-	/*
-	 * Garbage collection
-	 * Should be called periodically
 	 */
 	public function gc();
 }
