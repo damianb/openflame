@@ -47,8 +47,8 @@ class EngineCookie implements EngineInterface
 		// Sanity check, we should not have cookie expirations less than our 
 		// session, otherwise the driver will take a shit over the filesystem
 		// until garbage collection comes around
-		$options['cookie.expire'] = (isset($options['cookie.expire']) && $options['cookie.expire'] < $options['session.expire']) ?
-			$options['session.expire'] : @$options['cookie.expire'];
+		$options['cookie.expire'] = isset($options['cookie.expire']) ?
+			$options['cookie.expire'] : 0;
 
 		// Fallback on SERVER_NAME
 		$options['cookie.domain'] = isset($options['cookie.domain']) ? 
