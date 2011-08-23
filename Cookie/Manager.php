@@ -273,7 +273,7 @@ class Manager
 		}
 
 		$cookie->setCookieValue('')
-			->setExpireTime(0);
+			->setExpireTime(-15000);
 
 		return $this;
 	}
