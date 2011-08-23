@@ -37,6 +37,12 @@ class EngineFilesystem implements EngineInterface
 	{
 		$this->options['filesystem.cachepath'] = isset($options['filesystem.cachepath']) ? 
 			$options['filesystem.cachepath'] : ini_get('session.save_path');
+		
+		$endChar = substr($this->options['filesystem.cachepath'], -1);
+		if ($endChar != '/' || $endChar != '\\')
+		{
+			$this->options['filesystem.cachepath'] .= '/';
+		}
 
 		$this->options['filesystem.prefix'] = isset($options['filesystem.prefix']) ? 
 			$options['filesystem.prefix'] : 'sess_';
@@ -78,7 +84,7 @@ class EngineFilesystem implements EngineInterface
 
 	/*
 	 * Purge session object
-	 * Basically giving the Engine the que to kill the data associated with 
+	 * Basically giving the Engine the signal to kill the data associated with 
 	 * this session ID.
 	 * @param string sid
 	 */
@@ -90,10 +96,27 @@ class EngineFilesystem implements EngineInterface
 	/*
 	 * Garbage Collection
 	 * Called at the end of each page load.
+	 * @param \OpenFlame\Framework\Event\Instance e - Event instance (so this can be used as a closure)
 	 * @return void
 	 */
-	public function gc()
+	public function gc(\OpenFlame\Framework\Event\Instance $e = null)
 	{
-		// @todo
+		$now = time();
+
+		foreach(scandir($this->options['filesystem.cachepath']) as $file)
+		{
+			if ($file == '.' || 
+				$file == '..' ||
+				$this->options['filesystem.prefix'] != substr($file, 0, strlen($this->options['filesystem.prefix'])))
+			{
+				continue;
+			}
+
+			if (filemtime($this->options['filesystem.cachepath'] . $file) + $this->options['filesystem.maxfileage'] < $now)
+			{
+				// Takeing out the trash
+				unlink($this->options['filesystem.cachepath'] . $file);
+			}
+		}
 	}
 }

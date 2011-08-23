@@ -226,6 +226,16 @@ class Driver
 	}
 
 	/*
+	 * Run Session-based garbage collectors
+	 * @param \OpenFlame\Framework\Event\Instance e - Event instance (so this can be used as a closure)
+	 * @return void
+	 */
+	public function gc(\OpenFlame\Framework\Event\Instance $e = null)
+	{
+		$this->storage->gc($e);
+	}
+
+	/*
 	 * Make the fingerprint
 	 * @return string - Hash of the fingerprint
 	 */
