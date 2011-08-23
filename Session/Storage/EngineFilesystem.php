@@ -35,20 +35,17 @@ class EngineFilesystem implements EngineInterface
 	 */
 	public function init(&$options)
 	{
-		$this->options['filesystem.cachepath'] = isset($options['filesystem.cachepath']) ? 
-			$options['filesystem.cachepath'] : ini_get('session.save_path');
-		
-		$endChar = substr($this->options['filesystem.cachepath'], -1);
-		if ($endChar != '/' || $endChar != '\\')
-		{
-			$this->options['filesystem.cachepath'] .= '/';
-		}
+		$defaults = array(
+			'filesystem.cachepath'	=> ini_get('session.save_path'),
+			'filesystem.prefix'		=> 'sess_',
+			'filesystem.maxfileage'	=> (int) $options['session.expire'],
+			'filesystem.ext'		=> 'tmp',
+		);
 
-		$this->options['filesystem.prefix'] = isset($options['filesystem.prefix']) ? 
-			$options['filesystem.prefix'] : 'sess_';
+		$this->options = array_merge($defaults, $options);
 
-		$this->options['filesystem.maxfileage'] = (isset($options['filesystem.maxfileage']) && ((int) $options['filesystem.maxfileage']) >= $options['session.expire']) ?
-			(int) $options['filesystem.maxfileage'] : (int) $options['session.expire'];
+		// Force trailing slash
+		$this->options['filesystem.cachepath'] = rtrim($this->options['filesystem.cachepath'], '/\\') . '/';
 	}
 
 	/*
@@ -58,10 +55,10 @@ class EngineFilesystem implements EngineInterface
 	 */
 	public function load($sid)
 	{
-		$filepath = $this->options['filesystem.cachepath'] . $this->options['filesystem.prefix'] . $sid;
+		$filepath = $this->makeFilepath($sid);
 		$data = array();
 
-		if (file_exists($filepath))
+		if (is_file($filepath))
 		{
 			$data = unserialize(file_get_contents($filepath));
 		}
@@ -77,7 +74,7 @@ class EngineFilesystem implements EngineInterface
 	 */
 	public function store($sid, $data)
 	{
-		$result = file_put_contents($this->options['filesystem.cachepath'] . $this->options['filesystem.prefix'] . $sid, serialize($data));
+		$result = file_put_contents($this->makeFilepath($sid), serialize($data));
 
 		return ($result !== false) ? true : false;
 	}
@@ -90,7 +87,15 @@ class EngineFilesystem implements EngineInterface
 	 */
 	public function purge($sid)
 	{
-		return unlink($this->options['filesystem.cachepath'] . $this->options['filesystem.prefix'] . $sid);
+		return unlink($this->makeFilepath($sid));
+	}
+
+	/*
+	 * Little shortcut to centralize the filename creation
+	 */
+	private function makeFilepath($sid)
+	{
+		return $this->options['filesystem.cachepath'] . $this->options['filesystem.prefix'] . $sid . '.' . $this->options['filesystem.ext'];
 	}
 
 	/*
@@ -103,7 +108,7 @@ class EngineFilesystem implements EngineInterface
 	{
 		$now = time();
 
-		foreach(scandir($this->options['filesystem.cachepath']) as $file)
+		foreach(glob("{$this->options['filesystem.cachepath']}*.{$this->options['filesystem.ext']}") as $file)
 		{
 			if ($file == '.' || 
 				$file == '..' ||
