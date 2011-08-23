@@ -53,6 +53,7 @@ class Instance
 	final protected function __construct(\OpenFlame\Framework\Cookie\Manager $manager)
 	{
 		$this->manager = $manager;
+		$this->expire_time = $this->manager->getDefaultCookieExpire();
 	}
 
 	/**
@@ -71,16 +72,7 @@ class Instance
 	 */
 	public function getExpireTime()
 	{
-		if($this->expire_time < 0)
-		{
-			$expire_time = $this->manager->getNowTime() + $this->manager->getDefaultCookieExpire();
-		}
-		else
-		{
-			$expire_time = $this->manager->getNowTime() + $this->expire_time;
-		}
-
-		return $expire_time;
+		return $this->manager->getNowTime() + $this->expire_time;
 	}
 
 	/**
@@ -97,7 +89,7 @@ class Instance
 	 * @param integer $expire_time - The time, in seconds, of how far into the future this cookie will expire.
 	 * @return \OpenFlame\Framework\Header\CookieInstance - Provides a fluent interface.
 	 */
-	public function setExpireTime($expire_time = -1)
+	public function setExpireTime($expire_time = 0)
 	{
 		$this->expire_time = (int) $expire_time;
 
