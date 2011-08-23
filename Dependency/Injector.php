@@ -114,6 +114,24 @@ class Injector implements \ArrayAccess
 			return new \OpenFlame\Framework\Utility\Timer();
 		});
 
+		$this->setInjector('session_store_engine', function() {
+			$store_engine = new \OpenFlame\Framework\Session\Storage\EngineFilesystem();
+			return $store_engine;
+		});
+
+		$this->setInjector('session_client_engine', function() {
+			$client_engine = new \OpenFlame\Framework\Session\Client\EngineCookie();
+			return $client_engine;
+		});
+
+		$this->setInjector('session', function() use($injector) {
+			$session = new \OpenFlame\Framework\Session\Driver();
+			$session->setStorageEngine($injector->get('session_store_engine'));
+			$session->setClientEngine($injector->get('session_client_engine'));
+
+			return $session;
+		});
+
 		// These injectors should be manually defined, as we do not expect any path constants to be defined in the OpenFlame Framework
 		/*
 		$this->setInjector('twig', function() {
