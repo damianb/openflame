@@ -70,10 +70,6 @@ class Injector implements \ArrayAccess
 			return new \OpenFlame\Framework\Event\Dispatcher();
 		});
 
-		$this->setInjector('processor', function() {
-			return new \Codebite\Quartz\Page\Processor();
-		});
-
 		$this->setInjector('language', function() {
 			return new \OpenFlame\Framework\Language\Handler();
 		});
