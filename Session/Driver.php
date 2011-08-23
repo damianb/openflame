@@ -105,6 +105,10 @@ class Driver
 	{
 		$options['session.expire'] = (isset($options['session.expire']) && (int) $options['session.expire'] > 0) ? 
 			(int) $options['session.expire'] : 3600; // One hour default 
+		
+		// How many octects do you want validated against?
+		$options['session.ipval'] = isset($options['session.ipval']) ? 
+			$options['session.ipval'] : 3;
 
 		$this->storage->init($options);
 		$this->client->init($options);
@@ -227,7 +231,19 @@ class Driver
 	 */
 	private function makeFingerprint($salt)
 	{
-		return md5($this->ip . $this->ua . $salt);
+		if (strpos($this->ip, ':') !== false)
+		{
+			// IPv6
+			// We're assuming they are going to keep the same IP address
+			$ipPartial = $this->ip;
+		}
+		else
+		{
+			// Slice up the IP into our validation level
+			$ipPartial = implode('.', array_slice(explode('.', $this->ip), 0, $this->options['session.ipval']));
+		}
+
+		return md5($ipPartial . $this->ua . $salt);
 	}
 
 	/*
