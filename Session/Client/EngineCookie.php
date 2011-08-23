@@ -27,12 +27,18 @@ class EngineCookie implements EngineInterface
 	/*
 	 * @var Cookie options
 	 */
-	private $options;
+	private $options = array();
 
 	/*
 	 * @var injector
 	 */
 	private $injector;
+
+	/*
+	 * @var the data read from the cookie (So we don't have to end up taking 
+	 * inputs twice.)
+	 */
+	public $readCookie = '';
 
 	/*
 	 * Initialize the engine
@@ -60,9 +66,22 @@ class EngineCookie implements EngineInterface
 
 		// Cast these properly
 		$options['cookie.name'] = isset($options['cookie.name']) ? (string) $options['cookie.name'] : 'sid';
+		$options['cookie.prefix'] = isset($options['cookie.prefix']) ? (string) $options['cookie.prefix'] : '';
 		$options['cookie.secure'] = isset($options['cookie.secure']) ? (boolean) $options['cookie.secure'] : false;
 
 		$this->options = $options;
+
+		// Set up our cookie
+		$cookie = $this->injector->get('cookie');
+
+		$cookie->setCookieDomain($this->options['cookie.domain'])
+			->setCookiePath($this->options['cookie.path'])
+			->setCookiePrefix($options['cookie.prefix']);
+
+		if ($this->options['cookie.secure'])
+		{
+			$cookie->enableSecureCookies();
+		}
 	}
 
 	/*
@@ -71,9 +90,15 @@ class EngineCookie implements EngineInterface
 	 */
 	public function getSID()
 	{
-		$input = $this->injector->get('input');
+		if (empty($this->readCookie))
+		{
+			$input = $this->injector->get('input');
+			$fullName = $this->options['cookie.prefix'] . $this->options['cookie.name'];
 
-		return $input->getInput('COOKIE::' . $this->options['cookie.name'], '')->getClean();
+			$this->readCookie = $input->getInput("COOKIE::$fullName", '')->getClean();
+		}
+
+		return $this->readCookie;
 	}
 
 	/*
@@ -83,17 +108,18 @@ class EngineCookie implements EngineInterface
 	 */
 	public function setSID($sid)
 	{
-		$cookie = $this->injector->get('cookie');
-
-		$cookie->setCookieDomain($this->options['cookie.domain'])
-			->setCookiePath($this->options['cookie.path'])
-			->setCookiePrefix('');
-
-		if ($this->options['cookie.secure'])
+		if ($sid != $this->getSID())
 		{
-			$cookie->enableSecureCookies();
+			$cookie = $this->injector->get('cookie');
+			
+			if (empty($sid))
+			{
+				$cookie->expireCookie($this->options['cookie.name']);
+			}
+			else
+			{
+				$cookie->setCookie($this->options['cookie.name'])->setCookieValue($sid);
+			}
 		}
-
-		$cookie->setCookie($this->options['cookie.name'])->setCookieValue($sid);
 	}
 }
