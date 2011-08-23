@@ -253,7 +253,6 @@ class Driver
 	private function extractIp()
 	{
 		$input = $this->injector->get('input');
-		$input->getInput('SERVER::HTTP_USER_AGENT', '/')->getClean();
 		$cleanip = '';
 
 		$ip = $input->getInput('SERVER::REMOTE_ADDR', '127.0.0.1');
