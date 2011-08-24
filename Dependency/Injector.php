@@ -78,7 +78,7 @@ class Injector implements \ArrayAccess
 			return new \OpenFlame\Framework\Language\Proxy($injector->get('language'));
 		});
 
-		$this->setInjector('cookie', function() use($injector) {
+		$this->setInjector('cookie', function() {
 			return new \OpenFlame\Framework\Cookie\Manager();
 		});
 
@@ -111,13 +111,11 @@ class Injector implements \ArrayAccess
 		});
 
 		$this->setInjector('session_store_engine', function() {
-			$store_engine = new \OpenFlame\Framework\Session\Storage\EngineFilesystem();
-			return $store_engine;
+			return new \OpenFlame\Framework\Session\Storage\EngineFilesystem();
 		});
 
 		$this->setInjector('session_client_engine', function() {
-			$client_engine = new \OpenFlame\Framework\Session\Client\EngineCookie();
-			return $client_engine;
+			return new \OpenFlame\Framework\Session\Client\EngineCookie();
 		});
 
 		$this->setInjector('session', function() use($injector) {
