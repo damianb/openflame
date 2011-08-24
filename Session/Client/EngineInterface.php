@@ -28,7 +28,7 @@ interface EngineInterface
 	 * @param array options - Associative array of options
 	 * @return void
 	 */
-	public function init(&$options);
+	public function init(array &$options);
 
 	/*
 	 * Get the SID of the current visitor
