@@ -28,7 +28,7 @@ interface EngineInterface
 	 * @param array options - Associative array of options
 	 * @return void
 	 */
-	public function init(&$options);
+	public function init(array &$options);
 
 	/*
 	 * Load data associated with the SID
