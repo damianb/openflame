@@ -50,26 +50,16 @@ class EngineCookie implements EngineInterface
 		$this->injector = Injector::getInstance();
 		$input = $this->injector->get('input');
 
-		// Sanity check, we should not have cookie expirations less than our 
-		// session, otherwise the driver will take a shit over the filesystem
-		// until garbage collection comes around
-		$options['cookie.expire'] = isset($options['cookie.expire']) ?
-			$options['cookie.expire'] : 0;
+		$defaults = array(
+			'cookie.expire'	=> 0,
+			'cookie.domain'	=> $input->getInput('SERVER::SERVER_NAME', '')->getClean(),
+			'cookie.path'	=> '/',
+			'cookie.name'	=> 'sid',
+			'cookie.prefix'	=> '',
+			'cookie.secure'	=> false,
+		);
 
-		// Fallback on SERVER_NAME
-		$options['cookie.domain'] = isset($options['cookie.domain']) ? 
-			(string) $options['cookie.domain'] : $input->getInput('SERVER::SERVER_NAME', '')->getClean();
-
-		// Fallback on /
-		$options['cookie.path'] = isset($options['cookie.path']) ?
-			(string) $options['cookie.path'] : '/';
-
-		// Cast these properly
-		$options['cookie.name'] = isset($options['cookie.name']) ? (string) $options['cookie.name'] : 'sid';
-		$options['cookie.prefix'] = isset($options['cookie.prefix']) ? (string) $options['cookie.prefix'] : '';
-		$options['cookie.secure'] = isset($options['cookie.secure']) ? (boolean) $options['cookie.secure'] : false;
-
-		$this->options = $options;
+		$this->options = array_merge($defaults, $options);
 
 		// Set up our cookie
 		$cookie = $this->injector->get('cookie');
