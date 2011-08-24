@@ -103,12 +103,12 @@ class Driver
 	 */
 	public function setOptions($options)
 	{
-		$options['session.expire'] = (isset($options['session.expire']) && (int) $options['session.expire'] > 0) ? 
-			(int) $options['session.expire'] : 3600; // One hour default 
-		
-		// How many octects do you want validated against?
-		$options['session.ipval'] = isset($options['session.ipval']) ? 
-			$options['session.ipval'] : 3;
+		$defaults = array(
+			'session.expire'	=> 3600,
+			'session.ipval'		=> 3,
+		);
+
+		$options = array_merge($defaults, $options);
 
 		$this->storage->init($options);
 		$this->client->init($options);
