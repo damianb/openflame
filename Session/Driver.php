@@ -219,7 +219,7 @@ class Driver
 		if (empty($this->sid) && sizeof($this->data))
 		{
 			$seeder = $this->injector->get('seeder');
-			$this->sid = md5($seeder->buildRandomString());
+			$this->sid = $seeder->buildRandomString(32, '', '0123456789abcdef');
 		}
 
 		return $this->sid;
