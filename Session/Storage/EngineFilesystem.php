@@ -46,6 +46,16 @@ class EngineFilesystem implements EngineInterface
 
 		// Force trailing slash
 		$this->options['filesystem.cachepath'] = rtrim($this->options['filesystem.cachepath'], '/\\') . '/';
+
+		// Do some basic checks on our filesystem
+		if (!file_exists($this->options['filesystem.cachepath']))
+		{
+			throw new \RuntimeException("Session cachepath does not exist.");
+		}
+		else if (!is_readable($this->options['filesystem.cachepath']) || !is_writable($this->options['filesystem.cachepath']))
+		{
+			throw new \RuntimeException("Could write to the session cachepath.");
+		}
 	}
 
 	/*
@@ -110,17 +120,15 @@ class EngineFilesystem implements EngineInterface
 
 		foreach(glob("{$this->options['filesystem.cachepath']}*.{$this->options['filesystem.ext']}") as $file)
 		{
-			if ($file == '.' || 
-				$file == '..' ||
-				$this->options['filesystem.prefix'] != substr($file, 0, strlen($this->options['filesystem.prefix'])))
+			if ($this->options['filesystem.prefix'] != substr(basename($file), 0, strlen($this->options['filesystem.prefix'])))
 			{
 				continue;
 			}
 
-			if (filemtime($this->options['filesystem.cachepath'] . $file) + $this->options['filesystem.maxfileage'] < $now)
+			if (filemtime($file) + $this->options['filesystem.maxfileage'] < $now)
 			{
 				// Takeing out the trash
-				unlink($this->options['filesystem.cachepath'] . $file);
+				unlink($file);
 			}
 		}
 	}
