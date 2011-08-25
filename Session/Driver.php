@@ -194,7 +194,7 @@ class Driver
 			$sid = $this->getSid();
 
 			$seeder = $this->injector->get('seeder');
-			$this->data['_salt'] = $seeder->buildRandomString();
+			$this->data['_salt'] = $seeder->buildRandomString(10);
 			$this->data['_fingerprint'] = $this->makeFingerprint($this->data['_salt']);
 			
 			if (!isset($data['_lastclick']))
@@ -219,7 +219,7 @@ class Driver
 		if (empty($this->sid) && sizeof($this->data))
 		{
 			$seeder = $this->injector->get('seeder');
-			$this->sid = $seeder->buildRandomString(32, '', '0123456789abcdef');
+			$this->sid = $seeder->buildRandomString(32);
 		}
 
 		return $this->sid;
