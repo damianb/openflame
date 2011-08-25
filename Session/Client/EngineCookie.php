@@ -35,7 +35,7 @@ class EngineCookie implements EngineInterface
 	private $injector;
 
 	/*
-	 * @var the data read from the cookie (So we don't have to end up taking 
+	 * @var the data read from the cookie (So we don't have to end up taking
 	 * inputs twice.)
 	 */
 	public $readCookie = '';
@@ -66,7 +66,7 @@ class EngineCookie implements EngineInterface
 
 		$cookie->setCookieDomain($this->options['cookie.domain'])
 			->setCookiePath($this->options['cookie.path'])
-			->setCookiePrefix($options['cookie.prefix']);
+			->setCookiePrefix($this->options['cookie.prefix']);
 
 		if ($this->options['cookie.secure'])
 		{
@@ -76,7 +76,7 @@ class EngineCookie implements EngineInterface
 
 	/*
 	 * Get the SID of the current visitor
-	 * @return string - Session ID 
+	 * @return string - Session ID
 	 */
 	public function getSID()
 	{
@@ -101,7 +101,7 @@ class EngineCookie implements EngineInterface
 		if ($sid != $this->getSID())
 		{
 			$cookie = $this->injector->get('cookie');
-			
+
 			if (empty($sid))
 			{
 				$cookie->expireCookie($this->options['cookie.name']);
