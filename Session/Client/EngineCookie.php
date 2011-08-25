@@ -108,7 +108,9 @@ class EngineCookie implements EngineInterface
 			}
 			else
 			{
-				$cookie->setCookie($this->options['cookie.name'])->setCookieValue($sid);
+				$cookie->setCookie($this->options['cookie.name'])
+					->setCookieValue($sid)
+					->setExpireTime($this->options['cookie.expire']);
 			}
 		}
 	}
