@@ -27,7 +27,7 @@ class EngineCookie implements EngineInterface
 	/*
 	 * @var Cookie options
 	 */
-	private $options = array();
+	private $options;
 
 	/*
 	 * @var injector
@@ -45,7 +45,7 @@ class EngineCookie implements EngineInterface
 	 * @param array options - Associative array of options
 	 * @return void
 	 */
-	public function init(&$options)
+	public function init(array &$options)
 	{
 		$this->injector = Injector::getInstance();
 		$input = $this->injector->get('input');

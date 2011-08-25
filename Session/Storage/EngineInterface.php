@@ -28,7 +28,7 @@ interface EngineInterface
 	 * @param array options - Associative array of options
 	 * @return void
 	 */
-	public function init(&$options);
+	public function init(array &$options);
 
 	/*
 	 * Load data associated with the SID
@@ -56,7 +56,8 @@ interface EngineInterface
 	/*
 	 * Garbage Collection
 	 * Called at the end of each page load.
+	 * @param \OpenFlame\Framework\Event\Instance - The event instance, if using this method with the event dispatcher/scheduler.
 	 * @return void
 	 */
-	public function gc();
+	public function gc(\OpenFlame\Framework\Event\Instance $event = NULL);
 }
