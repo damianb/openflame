@@ -37,7 +37,7 @@ class EngineFilesystem implements EngineInterface
 	public function init(array &$options)
 	{
 		$defaults = array(
-			'filesystem.cachepath'	=> ini_get('session.save_path'),
+			'filesystem.savepath'	=> ini_get('session.save_path'),
 			'filesystem.prefix'		=> 'sess_',
 			'filesystem.maxfileage'	=> (int) $options['session.expire'],
 			'filesystem.ext'		=> 'tmp',
@@ -46,14 +46,14 @@ class EngineFilesystem implements EngineInterface
 		$this->options = array_merge($defaults, $options);
 
 		// Force trailing slash
-		$this->options['filesystem.cachepath'] = rtrim($this->options['filesystem.cachepath'], '/\\') . '/';
+		$this->options['filesystem.savepath'] = rtrim($this->options['filesystem.savepath'], '/\\') . '/';
 
 		// Do some basic checks on our filesystem
-		if (!file_exists($this->options['filesystem.cachepath']))
+		if (!file_exists($this->options['filesystem.savepath']))
 		{
 			throw new \RuntimeException("The session file storage path does not exist.");
 		}
-		else if (!is_readable($this->options['filesystem.cachepath']) || !is_writable($this->options['filesystem.cachepath']))
+		else if (!is_readable($this->options['filesystem.savepath']) || !is_writable($this->options['filesystem.savepath']))
 		{
 			throw new \RuntimeException("Could write to the session file storage directory.");
 		}
@@ -107,7 +107,7 @@ class EngineFilesystem implements EngineInterface
 	 */
 	private function makeFilepath($sid)
 	{
-		return $this->options['filesystem.cachepath'] . $this->options['filesystem.prefix'] . $sid . '.' . $this->options['filesystem.ext'];
+		return $this->options['filesystem.savepath'] . $this->options['filesystem.prefix'] . $sid . '.' . $this->options['filesystem.ext'];
 	}
 
 	/*
@@ -120,7 +120,7 @@ class EngineFilesystem implements EngineInterface
 	{
 		$now = time();
 
-		foreach(glob("{$this->options['filesystem.cachepath']}*.{$this->options['filesystem.ext']}") as $file)
+		foreach(glob("{$this->options['filesystem.savepath']}*.{$this->options['filesystem.ext']}") as $file)
 		{
 			if ($this->options['filesystem.prefix'] != substr(basename($file), 0, strlen($this->options['filesystem.prefix'])))
 			{
