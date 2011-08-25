@@ -230,7 +230,7 @@ class Driver
 	 * @param \OpenFlame\Framework\Event\Instance e - Event instance (so this can be used as a closure)
 	 * @return void
 	 */
-	public function gc(\OpenFlame\Framework\Event\Instance $e = null)
+	public function gc(\OpenFlame\Framework\Event\Instance $e = NULL)
 	{
 		$this->storage->gc($e);
 	}
