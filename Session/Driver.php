@@ -193,8 +193,12 @@ class Driver
 		{
 			$sid = $this->getSid();
 
-			$seeder = $this->injector->get('seeder');
-			$this->data['_salt'] = $seeder->buildRandomString(10);
+			if (!isset($this->data['_salt']))
+			{
+				$seeder = $this->injector->get('seeder');
+				$this->data['_salt'] = $seeder->buildRandomString(10);
+			}
+
 			$this->data['_fingerprint'] = $this->makeFingerprint($this->data['_salt']);
 			
 			if (!isset($data['_lastclick']))
