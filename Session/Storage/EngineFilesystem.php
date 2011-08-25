@@ -32,6 +32,7 @@ class EngineFilesystem implements EngineInterface
 	 * Initialized the engine
 	 * @param array options - Associative array of options
 	 * @return void
+	 * @throws \RuntimeException
 	 */
 	public function init(array &$options)
 	{
@@ -50,11 +51,11 @@ class EngineFilesystem implements EngineInterface
 		// Do some basic checks on our filesystem
 		if (!file_exists($this->options['filesystem.cachepath']))
 		{
-			throw new \RuntimeException("Session cachepath does not exist.");
+			throw new \RuntimeException("The session file storage path does not exist.");
 		}
 		else if (!is_readable($this->options['filesystem.cachepath']) || !is_writable($this->options['filesystem.cachepath']))
 		{
-			throw new \RuntimeException("Could write to the session cachepath.");
+			throw new \RuntimeException("Could write to the session file storage directory.");
 		}
 	}
 
@@ -102,6 +103,7 @@ class EngineFilesystem implements EngineInterface
 
 	/*
 	 * Little shortcut to centralize the filename creation
+	 * @ignore
 	 */
 	private function makeFilepath($sid)
 	{
@@ -111,10 +113,10 @@ class EngineFilesystem implements EngineInterface
 	/*
 	 * Garbage Collection
 	 * Called at the end of each page load.
-	 * @param \OpenFlame\Framework\Event\Instance e - Event instance (so this can be used as a closure)
+	 * @param \OpenFlame\Framework\Event\Instance - Event instance (so this can be used as a listener)
 	 * @return void
 	 */
-	public function gc(\OpenFlame\Framework\Event\Instance $e = null)
+	public function gc(\OpenFlame\Framework\Event\Instance $event = NULL)
 	{
 		$now = time();
 
@@ -127,7 +129,7 @@ class EngineFilesystem implements EngineInterface
 
 			if (filemtime($file) + $this->options['filesystem.maxfileage'] < $now)
 			{
-				// Takeing out the trash
+				// Taking out the trash
 				unlink($file);
 			}
 		}
