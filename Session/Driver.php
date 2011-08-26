@@ -230,6 +230,15 @@ class Driver
 	}
 
 	/*
+	 * Is the session being tracked?
+	 * @return boolean
+	 */
+	public function isTracked()
+	{
+		return sizeof($this->data) ? true : false;
+	}
+
+	/*
 	 * Run Session-based garbage collectors
 	 * @param \OpenFlame\Framework\Event\Instance e - Event instance (so this can be used as a closure)
 	 * @return void
