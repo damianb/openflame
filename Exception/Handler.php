@@ -31,7 +31,7 @@ class Handler
 	/**
 	 * @var string - The HTML to use for the error page.
 	 */
-	protected static $page_format = '';
+	protected static $page_format = NULL;
 
 	/**
 	 * @var boolean - Do we want to show debug info to everyone?
@@ -292,12 +292,12 @@ class Handler
 						<div>
 							<h3 style="padding: 0 0 20px 0;">Exception information</h3>
 
-							<div>Exception thrown, error code <span style="font-weight: bold; font-family: monospace; background: #ffffff; color: #007700; padding: 0 2px; border: solid 1px #007700;">{$e['e_type']}::{$e['code']}</span> with message &quot;<span style="font-family: monospace; font-weight: bold;">{$e['message']}</span>&quot;<br /><br />
-								on line <span style="font-weight: bold;">{$e['line']}</span> in file: <span style="font-weight: bold; font-family: monospace; background: #ffffff; color: #007700; padding: 0 3px; border: solid 1px #007700;">{$e['file']}</span>
+							<div>Exception thrown, error code <span style="font-weight: bold; font-family: monospace; background: #ffffff; color: #007700; padding: 0 2px; border: solid 1px #007700; font-size: 12px;">{$e['e_type']}::{$e['code']}</span> with message &quot;<span style="font-family: monospace; font-weight: bold; font-size: 12px;">{$e['message']}</span>&quot;<br /><br />
+								on line <span style="font-weight: bold;">{$e['line']}</span> in file: <span style="font-weight: bold; font-family: monospace; background: #ffffff; color: #007700; padding: 0 3px; border: solid 1px #007700; font-size: 12px;">{$e['file']}</span>
 							</div>
 
 							<h3 style="padding: 20px 0;">Trace context</h3>
-							<div style="font-family: monospace; background: #ffffff; color: #007700; padding: 8px; border: solid 1px #007700; font-size: 1.2em; overflow:auto;">
+							<div style="font-family: monospace; background: #ffffff; color: #007700; padding: 8px; border: solid 1px #007700; font-size: 12px; overflow:auto;">
 								{$e['trace']}
 							</div>
 
@@ -430,7 +430,7 @@ EOD;
 		$return[] = '<ol style="list-style-type: none;">' . "\n";
 		foreach($stack as $id => $trace)
 		{
-			$arg_count = sizeof($trace['args']);
+			$arg_count = (isset($trace['args'])) ? sizeof($trace['args']) : 0;
 			if($arg_count)
 			{
 				$i = 1;

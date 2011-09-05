@@ -384,7 +384,12 @@ class RouteInstance
 			$alias_router = $injector->get('alias_router');
 
 			$route_alias = substr($callback, 2, strlen($callback) - 4);
-			return call_user_func($alias_router->resolveAlias($route_alias), $this);
+			$_callback = $alias_router->resolveAlias($route_alias);
+			if(!is_callable($_callback))
+			{
+				throw new \LogicException('Nonexistant callback provided by route alias');
+			}
+			return call_user_func($_callback, $this);
 		}
 
 		return call_user_func($callback, $this);
