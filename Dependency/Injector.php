@@ -58,6 +58,10 @@ class Injector implements \ArrayAccess
 			return new \OpenFlame\Framework\Twig\Variables();
 		});
 
+		$this->setInjector('form', function() {
+			return new \OpenFlame\Framework\Security\Form();
+		});
+
 		$this->setInjector('asset', function() {
 			return new \OpenFlame\Framework\Asset\Manager();
 		});
