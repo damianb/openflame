@@ -113,6 +113,8 @@ class Driver
 	 * Public interface, destroys the specified cache index.
 	 * @param string $index - The cache index to destroy.
 	 * @return NULL
+	 *
+	 * @throws \LogicException
 	 */
 	public function destroyData($index)
 	{
@@ -124,5 +126,21 @@ class Driver
 		$this->engine->destroy($index);
 
 		return NULL;
+	}
+
+	/**
+	 * Public shared interface, garbage-collects the cache if the engine requires this (in case of a file-based cache engine)
+	 * @return void
+	 *
+	 * @throws \LogicException
+	 */
+	public function gc(\OpenFlame\Framework\Event\Instance $event = NULL)
+	{
+		if(empty($this->engine))
+		{
+			throw new \LogicException('Cache engine not loaded');
+		}
+
+		$this->engine->gc($event);
 	}
 }
