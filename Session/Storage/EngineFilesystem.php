@@ -62,7 +62,7 @@ class EngineFilesystem implements EngineInterface
 	/*
 	 * Load data associated with the SID
 	 * @param string sid - Session ID (Must be [a-z0-9])
-	 * @return mixed - Arbitrary data stored 
+	 * @return mixed - Arbitrary data stored
 	 */
 	public function load($sid)
 	{
@@ -92,7 +92,7 @@ class EngineFilesystem implements EngineInterface
 
 	/*
 	 * Purge session object
-	 * Basically giving the Engine the signal to kill the data associated with 
+	 * Basically giving the Engine the signal to kill the data associated with
 	 * this session ID.
 	 * @param string sid
 	 */
@@ -113,7 +113,7 @@ class EngineFilesystem implements EngineInterface
 	/*
 	 * Garbage Collection
 	 * Called at the end of each page load.
-	 * @param \OpenFlame\Framework\Event\Instance - Event instance (so this can be used as a listener)
+	 * @param \OpenFlame\Framework\Event\Instance $event - Event instance (so this can be used as a listener)
 	 * @return void
 	 */
 	public function gc(\OpenFlame\Framework\Event\Instance $event = NULL)
