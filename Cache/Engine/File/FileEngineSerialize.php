@@ -38,6 +38,15 @@ class FileEngineSerialize extends \OpenFlame\Framework\Cache\Engine\File\FileEng
 	}
 
 	/**
+	 * Get the extension for cache files made/used by this engine (e.g. cache_key.{$ext}.tmp)
+	 * @return string - The cache file extension.
+	 */
+	protected function getFileExtension()
+	{
+		return 'srl';
+	}
+
+	/**
 	 * Builds a serialize()-based cache file, complete with idiot warning.
 	 * @param mixed $data - The data to cache.
 	 * @return string - Full JSON code to be stored in a cache file.

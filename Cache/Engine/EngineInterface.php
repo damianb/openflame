@@ -28,4 +28,5 @@ interface EngineInterface
 	public function exists($key);
 	public function destroy($key);
 	public function store($key, $data, $ttl);
+	public function gc(\OpenFlame\Framework\Event\Instance $event = NULL);
 }
