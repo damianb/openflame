@@ -38,6 +38,15 @@ class FileEngineJSON extends \OpenFlame\Framework\Cache\Engine\File\FileEngineBa
 	}
 
 	/**
+	 * Get the extension for cache files made/used by this engine (e.g. cache_key.{$ext}.tmp)
+	 * @return string - The cache file extension.
+	 */
+	protected function getFileExtension()
+	{
+		return 'json';
+	}
+
+	/**
 	 * Builds a JSON-based cache file, complete with idiot warning.
 	 * @param mixed $data - The data to cache.
 	 * @return string - Full JSON code to be stored in a cache file.

@@ -186,4 +186,28 @@ abstract class FileEngineBase
 	{
 		return @unlink($this->cache_path . basename($file));
 	}
+
+	abstract protected function getFileExtension();
+
+	/**
+	 * Garbage collection, goes through the cache and cleans up expired cache files
+	 * @param \OpenFlame\Framework\Event\Instance - Event instance (so this can be used as a listener)
+	 * @return void
+	 */
+	public function gc(\OpenFlame\Framework\Event\Instance $event = NULL)
+	{
+		$now = time();
+		$fileext = $this->getFileExtension();
+
+		foreach(glob("{$this->cache_path}*.{$fileext}.tmp") as $file)
+		{
+			$cache_name = substr(basename($file), 0, strlen($file) - strlen('.' . $fileext . '.tmp'));
+			$cache = $this->engineLoad($cache_name);
+
+			if(isset($cache['cache_expire']) && $cache['cache_expire'] != 0 && time() > $cache['cache_expire'])
+			{
+				$this->destroy($key);
+			}
+		}
+	}
 }
