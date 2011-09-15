@@ -44,9 +44,19 @@ class Wrapper
 	protected $twig_environment_options = array();
 
 	/**
-	 * @var \Twig_Environment - The twig environment object.
+	 * @var \Twig_Loader_Filesystem - The twig filesystem loader object.
 	 */
 	protected $twig_loader;
+
+	/**
+	 * @var \Twig_Loader_Chain - The twig chain loader object.
+	 */
+	protected $twig_chain_loader;
+
+	/**
+	 * @var array - Array of additional twig loaders to use (Twig_Loader_Filesystem will always come first)
+	 */
+	protected $extra_twig_loaders = array();
 
 	/**
 	 * @var \Twig_Environment - The twig environment object.
@@ -125,6 +135,7 @@ class Wrapper
 		return $this->twig_environment_options;
 	}
 
+
 	/**
 	 * Get a specific twig option's value.
 	 * @param string $option - The option to grab.
@@ -151,6 +162,18 @@ class Wrapper
 	public function setTwigOption($option, $value)
 	{
 		$this->twig_environment_options[(string) $option] = $value;
+
+		return $this;
+	}
+
+	/**
+	 * Add another loader for use with twig.
+	 * @param \Twig_LoaderInterface $loader - The loader to add to the loader chain.
+	 * @return \OpenFlame\Framework\Template\Twig - Provides a fluent interface.
+	 */
+	public function setTwigLoader(\Twig_LoaderInterface $loader)
+	{
+		$this->extra_twig_loaders[] = $loader;
 
 		return $this;
 	}
@@ -230,7 +253,8 @@ class Wrapper
 		\Twig_Autoloader::register();
 
 		$this->twig_loader = new \Twig_Loader_Filesystem($this->getTemplatePaths());
-		$this->twig_environment = new \Twig_Environment($this->twig_loader, array_merge(array('cache' => $this->getTwigCachePath()), $this->getTwigOptions()));
+		$this->twig_chain_loader = new \Twig_Loader_Chain(array_merge(array($this->twig_loader), $this->extra_twig_loaders));
+		$this->twig_environment = new \Twig_Environment($this->twig_chain_loader, array_merge(array('cache' => $this->getTwigCachePath()), $this->getTwigOptions()));
 
 		$this->twig_launched = true;
 
