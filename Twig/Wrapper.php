@@ -170,9 +170,16 @@ class Wrapper
 	 * Add another loader for use with twig.
 	 * @param \Twig_LoaderInterface $loader - The loader to add to the loader chain.
 	 * @return \OpenFlame\Framework\Template\Twig - Provides a fluent interface.
+	 *
+	 * @throws \RuntimeException
 	 */
 	public function setTwigLoader(\Twig_LoaderInterface $loader)
 	{
+		if($this->twig_launched)
+		{
+			throw new \RuntimeException('Cannot add additional twig loaders once the Twig environment has been instantiated');
+		}
+
 		$this->extra_twig_loaders[] = $loader;
 
 		return $this;
@@ -253,8 +260,17 @@ class Wrapper
 		\Twig_Autoloader::register();
 
 		$this->twig_loader = new \Twig_Loader_Filesystem($this->getTemplatePaths());
-		$this->twig_chain_loader = new \Twig_Loader_Chain(array_merge(array($this->twig_loader), $this->extra_twig_loaders));
-		$this->twig_environment = new \Twig_Environment($this->twig_chain_loader, array_merge(array('cache' => $this->getTwigCachePath()), $this->getTwigOptions()));
+
+		$options = array_merge(array('cache' => $this->getTwigCachePath()), $this->getTwigOptions());
+		if(!empty($this->extra_twig_loaders))
+		{
+			$this->twig_chain_loader = new \Twig_Loader_Chain(array_merge(array($this->twig_loader), $this->extra_twig_loaders));
+			$this->twig_environment = new \Twig_Environment($this->twig_loader, $options);
+		}
+		else
+		{
+			$this->twig_environment = new \Twig_Environment($this->twig_chain_loader, $options);
+		}
 
 		$this->twig_launched = true;
 
