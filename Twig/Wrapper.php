@@ -265,11 +265,11 @@ class Wrapper
 		if(!empty($this->extra_twig_loaders))
 		{
 			$this->twig_chain_loader = new \Twig_Loader_Chain(array_merge(array($this->twig_loader), $this->extra_twig_loaders));
-			$this->twig_environment = new \Twig_Environment($this->twig_loader, $options);
+			$this->twig_environment = new \Twig_Environment($this->twig_chain_loader, $options);
 		}
 		else
 		{
-			$this->twig_environment = new \Twig_Environment($this->twig_chain_loader, $options);
+			$this->twig_environment = new \Twig_Environment($this->twig_loader, $options);
 		}
 
 		$this->twig_launched = true;
