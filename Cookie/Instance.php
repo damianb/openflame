@@ -1,28 +1,27 @@
 <?php
 /**
  *
- * @package     OpenFlame Web Framework
- * @copyright   (c) 2010 OpenFlameCMS.com
+ * @package     openflame-framework
+ * @subpackage  cookie
+ * @copyright   (c) 2010 - 2011 openflame-project.org
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
  * @link        https://github.com/OpenFlame/OpenFlame-Framework
  *
  * Minimum Requirement: PHP 5.3.0
  */
 
-namespace OpenFlame\Framework\Header;
+namespace OpenFlame\Framework\Cookie;
 use OpenFlame\Framework\Core;
 
-if(!defined('OpenFlame\\ROOT_PATH')) exit;
-
 /**
- * OpenFlame Web Framework - Cookie instance object
- * 	     Represents the individual cookies that are to be set.
+ * OpenFlame Framework - Cookie instance object
+ * 	     Represents the individual cookie that is to be set.
  *
  *
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
  * @link        https://github.com/OpenFlame/OpenFlame-Framework
  */
-class CookieInstance
+class Instance
 {
 	/**
 	 * @var string - The name for this cookie instance
@@ -40,28 +39,31 @@ class CookieInstance
 	protected $expire_time = -1;
 
 	/**
-	 * @var \OpenFlame\Framework\Header\Submodule\Cookie - The cookie manager submodule
+	 * @var \OpenFlame\Framework\Cookie\Manager - The cookie manager submodule
 	 */
-	protected $cookie_manager;
+	protected $manager;
+
+	const RFC_COOKIE_DATE_FORMAT = 'D, d-M-Y H:i:s \\G\\M\\T';
 
 	/**
 	 * Constructor
-	 * @param \OpenFlame\Framework\Header\Submodule\Cookie $cookie_manager - The cookie manager submodule.
+	 * @param \OpenFlame\Framework\Cookie\Manager $manager - The cookie manager submodule.
 	 * @return void
 	 */
-	final protected function __construct(\OpenFlame\Framework\Header\Submodule\Cookie $cookie_manager)
+	final protected function __construct(\OpenFlame\Framework\Cookie\Manager $manager)
 	{
-		$this->cookie_manager = $cookie_manager;
+		$this->manager = $manager;
+		$this->expire_time = $this->manager->getDefaultCookieExpire();
 	}
 
 	/**
 	 * Get a new instance of the cookie instance object
-	 * @param \OpenFlame\Framework\Header\Submodule\Cookie $cookie_manager - The cookie manager submodule.
+	 * @param \OpenFlame\Framework\Cookie\Manager $manager - The cookie manager submodule.
 	 * @return \OpenFlame\Framework\Header\CookieInstance - The newly created cookie instance
 	 */
-	final public static function newInstance(\OpenFlame\Framework\Header\Submodule\Cookie $cookie_manager)
+	final public static function newInstance(\OpenFlame\Framework\Cookie\Manager $manager)
 	{
-		return new static($cookie_manager);
+		return new static($manager);
 	}
 
 	/**
@@ -70,16 +72,7 @@ class CookieInstance
 	 */
 	public function getExpireTime()
 	{
-		if($this->expire_time < 0)
-		{
-			$expire_time = $this->cookie_manager->getNowTime() + $this->cookie_manager->getDefaultCookieExpire();
-		}
-		else
-		{
-			$expire_time = $this->cookie_manager->getNowTime() + $this->expire_time;
-		}
-
-		return $expire_time;
+		return $this->manager->getNowTime() + $this->expire_time;
 	}
 
 	/**
@@ -88,16 +81,7 @@ class CookieInstance
 	 */
 	public function getRFCExpireTime()
 	{
-		if($this->expire_time < 0)
-		{
-			$expire_time = $this->cookie_manager->getNowTime() + $this->cookie_manager->getDefaultCookieExpire();
-		}
-		else
-		{
-			$expire_time = $this->cookie_manager->getNowTime() + $this->expire_time;
-		}
-
-		return gmdate('D, d-M-Y H:i:s \\G\\M\\T', $expire_time);
+		return gmdate(self::RFC_COOKIE_DATE_FORMAT, $this->getExpireTime());
 	}
 
 	/**
@@ -105,7 +89,7 @@ class CookieInstance
 	 * @param integer $expire_time - The time, in seconds, of how far into the future this cookie will expire.
 	 * @return \OpenFlame\Framework\Header\CookieInstance - Provides a fluent interface.
 	 */
-	public function setExpireTime($expire_time = -1)
+	public function setExpireTime($expire_time = 0)
 	{
 		$this->expire_time = (int) $expire_time;
 
@@ -173,12 +157,12 @@ class CookieInstance
 			throw new \LogicException('Attempted to generate cookie data string for a cookie without a cookie name set');
 		}
 
-		$path = $this->cookie_manager->getCookiePath();
-		$domain = $this->cookie_manager->getCookieDomain();
-		$use_secure = $this->cookie_manager->getCookieSecure();
+		$path = $this->manager->getCookiePath();
+		$domain = $this->manager->getCookieDomain();
+		$use_secure = $this->manager->usingSecureCookies();
 
 		$cookie_data = array();
-		$cookie_data[] = rawurlencode($this->cookie_manager->getCookiePrefix() . $this->cookie_name) . '=' . rawurlencode($this->cookie_value);
+		$cookie_data[] = rawurlencode($this->manager->getCookiePrefix() . $this->cookie_name) . '=' . rawurlencode($this->cookie_value);
 		if($this->expire_time !== 0)
 		{
 			$cookie_data[] = 'expires=' . $this->getRFCExpireTime();

@@ -1,8 +1,9 @@
 <?php
 /**
  *
- * @package     OpenFlame Web Framework
- * @copyright   (c) 2010 OpenFlameCMS.com
+ * @package     openflame-framework
+ * @subpackage  utility
+ * @copyright   (c) 2010 - 2011 openflame-project.org
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
  * @link        https://github.com/OpenFlame/OpenFlame-Framework
  *
@@ -12,10 +13,8 @@
 namespace OpenFlame\Framework\Utility;
 use OpenFlame\Framework\Core;
 
-if(!defined('OpenFlame\\ROOT_PATH')) exit;
-
 /**
- * OpenFlame Web Framework - JSON handling class,
+ * OpenFlame Framework - JSON handling class,
  * 		OOP interface for use with JSON files/strings.
  *
  *
@@ -47,6 +46,12 @@ abstract class JSON
 	{
 		if(is_file($json))
 			$json = file_get_contents($json);
+
+		// Empty JSON file?  o_O
+		if(empty($json))
+		{
+			return NULL;
+		}
 
 		$data = json_decode(preg_replace('#\#.*?' . "\n" . '#', '', $json), true);
 

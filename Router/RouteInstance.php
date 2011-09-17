@@ -1,8 +1,9 @@
 <?php
 /**
  *
- * @package     OpenFlame Web Framework
- * @copyright   (c) 2010 OpenFlameCMS.com
+ * @package     openflame-framework
+ * @subpackage  router
+ * @copyright   (c) 2010 - 2011 openflame-project.org
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
  * @link        https://github.com/OpenFlame/OpenFlame-Framework
  *
@@ -12,15 +13,15 @@
 namespace OpenFlame\Framework\Router;
 use OpenFlame\Framework\Core;
 
-if(!defined('OpenFlame\\ROOT_PATH')) exit;
-
 /**
- * OpenFlame Web Framework - Static URL router route instance,
+ * OpenFlame Framework - Static URL router route instance,
  * 	     A route instance for the static URL router, provides abstraction of request verification.
  *
  *
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
  * @link        https://github.com/OpenFlame/OpenFlame-Framework
+ *
+ * @note Depends upon AliasRouter via dep injector if route aliases are used.
  */
 class RouteInstance
 {
@@ -153,39 +154,20 @@ class RouteInstance
 	 * Assign a callback to this route instance.
 	 * @param callable $callback - The callback to assign to this route instance.
 	 * @return \OpenFlame\Framework\Router\RouteInstance - Provides a fluent interface.
+	 *
+	 * @throws \LogicException
 	 */
 	public function setRouteCallback($callback)
 	{
 		// reset the serialized route on any changes to the route...
 		$this->setSerializedRoute(NULL);
-		if(is_string($callback) && strpos($callback, '->') !== false)
+
+		if(substr($callback, 0, 2) != '::' && substr($callback, -2, 2) != '::' && !is_callable($callback, true))
 		{
-			list($class, $method) = explode('->', $callback, 2);
-			$this->route_callback = array(
-				'raw'			=> $callback,
-				'callback'		=> array($class, $method),
-				'object'		=> true,
-				'static'		=> false,
-			);
+			throw new \LogicException('Invalid callback provided for route instance');
 		}
-		elseif(is_string($callback) && strpos($callback, '::') !== false)
-		{
-			$this->route_callback = array(
-				'raw'			=> $callback,
-				'callback'		=> $callback,
-				'object'		=> true,
-				'static'		=> true,
-			);
-		}
-		else
-		{
-			$this->route_callback = array(
-				'raw'			=> $callback,
-				'callback'		=> $callback,
-				'object'		=> false,
-				'static'		=> false,
-			);
-		}
+
+		$this->route_callback = $callback;
 
 		return $this;
 	}
@@ -269,7 +251,7 @@ class RouteInstance
 		$this->setRouteBase($route_data['route_base'])
 			->setRouteMap($route_data['route_map'])
 			->setRouteRegexp($route_data['route_regexp'])
-			->setRouteCallback($route_data['route_callback']['raw'])
+			->setRouteCallback($route_data['route_callback'])
 			->setSerializedRoute($route_string);
 
 		return $this;
@@ -301,7 +283,7 @@ class RouteInstance
 				}
 				if(isset($map[$i]))
 				{
-					$this->setRequestDataPoint($map[$i]['entry'], $matches[$j]);
+					$this->set($map[$i]['entry'], $matches[$j]);
 					$j++;
 				}
 
@@ -315,8 +297,47 @@ class RouteInstance
 	 * Get a request URL variable extracted from the request.
 	 * @param string $point - The name of the variable to retrieve.
 	 * @return mixed - returns NULL if no such variable, or the variable's data.
+	 *
+	 * @deprecated since 1.2.0
 	 */
 	public function getRequestDataPoint($point)
+	{
+		trigger_error('\\OpenFlame\\Framework\\Router\\RouteInstance->getRequestDataPoint() is deprecated', E_USER_DEPRECATED);
+
+		if(isset($this->data[(string) $point]))
+		{
+			return $this->data[(string) $point];
+		}
+		else
+		{
+			return NULL;
+		}
+
+	}
+
+	/**
+	 * Set a request URL variable extracted from the current request.
+	 * @param string $point - The name of the variable to store this as.
+	 * @param mixed $data - The data to store.
+	 * @return \OpenFlame\Framework\Router\RouteInstance - Provides a fluent interface.
+	 *
+	 * @deprecated since 1.2.0
+	 */
+	public function setRequestDataPoint($point, $data)
+	{
+		trigger_error('\\OpenFlame\\Framework\\Router\\RouteInstance->setRequestDataPoint() is deprecated', E_USER_DEPRECATED);
+
+		$this->data[(string) $point] = $data;
+
+		return $this;
+	}
+
+	/**
+	 * Get a request URL variable extracted from the request.
+	 * @param string $point - The name of the variable to retrieve.
+	 * @return mixed - returns NULL if no such variable, or the variable's data.
+	 */
+	public function get($point)
 	{
 		if(isset($this->data[(string) $point]))
 		{
@@ -335,7 +356,7 @@ class RouteInstance
 	 * @param mixed $data - The data to store.
 	 * @return \OpenFlame\Framework\Router\RouteInstance - Provides a fluent interface.
 	 */
-	public function setRequestDataPoint($point, $data)
+	public function set($point, $data)
 	{
 		$this->data[(string) $point] = $data;
 
@@ -356,16 +377,22 @@ class RouteInstance
 			throw new \LogicException('Attempted to fire callback when no callback has been set');
 		}
 
-		if($callback['object'] === true && $callback['static'] !== true)
+		// Check to see if this is a route "alias"
+		if(substr($callback, 0, 2) == '::' && substr($callback, -2, 2) == '::')
 		{
-			return call_user_func(array(Core::getObject($callback['callback'][0]), $callback['callback'][1]), $this);
-		}
-		else
-		{
+			$injector = \OpenFlame\Framework\Dependency\Injector::getInstance();
+			$alias_router = $injector->get('alias_router');
 
-			return call_user_func($callback['callback'], $this);
+			$route_alias = substr($callback, 2, strlen($callback) - 4);
+			$_callback = $alias_router->resolveAlias($route_alias);
+			if(!is_callable($_callback))
+			{
+				throw new \LogicException('Nonexistant callback provided by route alias');
+			}
+			return call_user_func($_callback, $this);
 		}
 
+		return call_user_func($callback, $this);
 	}
 
 	/**

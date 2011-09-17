@@ -1,8 +1,9 @@
 <?php
 /**
  *
- * @package     OpenFlame Web Framework
- * @copyright   (c) 2010 OpenFlameCMS.com
+ * @package     openflame-framework
+ * @subpackage  cache
+ * @copyright   (c) 2010 - 2011 openflame-project.org
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
  * @link        https://github.com/OpenFlame/OpenFlame-Framework
  *
@@ -12,10 +13,8 @@
 namespace OpenFlame\Framework\Cache\Engine\File;
 use \OpenFlame\Framework\Core;
 
-if(!defined('OpenFlame\\ROOT_PATH')) exit;
-
 /**
- * OpenFlame Web Framework - File-based cache engine base class,
+ * OpenFlame Framework - File-based cache engine base class,
  * 		Cache engine prototype, provides some common methods for all file-based engines to use.
  *
  *
@@ -186,5 +185,29 @@ abstract class FileEngineBase
 	protected function deleteFile($file)
 	{
 		return @unlink($this->cache_path . basename($file));
+	}
+
+	abstract protected function getFileExtension();
+
+	/**
+	 * Garbage collection, goes through the cache and cleans up expired cache files
+	 * @param \OpenFlame\Framework\Event\Instance - Event instance (so this can be used as a listener)
+	 * @return void
+	 */
+	public function gc(\OpenFlame\Framework\Event\Instance $event = NULL)
+	{
+		$now = time();
+		$fileext = $this->getFileExtension();
+
+		foreach(glob("{$this->cache_path}*.{$fileext}.tmp") as $file)
+		{
+			$cache_name = substr(basename($file), 0, strlen($file) - strlen('.' . $fileext . '.tmp'));
+			$cache = $this->engineLoad($cache_name);
+
+			if(isset($cache['cache_expire']) && $cache['cache_expire'] != 0 && time() > $cache['cache_expire'])
+			{
+				$this->destroy($key);
+			}
+		}
 	}
 }

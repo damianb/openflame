@@ -1,8 +1,9 @@
 <?php
 /**
  *
- * @package     OpenFlame Web Framework
- * @copyright   (c) 2010 OpenFlameCMS.com
+ * @package     openflame-framework
+ * @subpackage  cache
+ * @copyright   (c) 2010 - 2011 openflame-project.org
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
  * @link        https://github.com/OpenFlame/OpenFlame-Framework
  *
@@ -12,10 +13,8 @@
 namespace OpenFlame\Framework\Cache;
 use \OpenFlame\Framework\Core;
 
-if(!defined('OpenFlame\\ROOT_PATH')) exit;
-
 /**
- * OpenFlame Web Framework - Cache interface class,
+ * OpenFlame Framework - Cache interface class,
  * 		Provides an easy-to-use object interface for interacting with the loaded cache engine.
  *
  *
@@ -106,14 +105,16 @@ class Driver
 			throw new \LogicException('Cache engine not loaded');
 		}
 
-		// build the cache, with data and ttl expiry included
-		$this->engine->store($index, $this->engine->build($data, $ttl));
+		// store the data in the cache
+		$this->engine->store($index, $data, $ttl);
 	}
 
 	/**
 	 * Public interface, destroys the specified cache index.
 	 * @param string $index - The cache index to destroy.
 	 * @return NULL
+	 *
+	 * @throws \LogicException
 	 */
 	public function destroyData($index)
 	{
@@ -125,5 +126,21 @@ class Driver
 		$this->engine->destroy($index);
 
 		return NULL;
+	}
+
+	/**
+	 * Public shared interface, garbage-collects the cache if the engine requires this (in case of a file-based cache engine)
+	 * @return void
+	 *
+	 * @throws \LogicException
+	 */
+	public function gc(\OpenFlame\Framework\Event\Instance $event = NULL)
+	{
+		if(empty($this->engine))
+		{
+			throw new \LogicException('Cache engine not loaded');
+		}
+
+		$this->engine->gc($event);
 	}
 }

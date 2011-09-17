@@ -1,8 +1,9 @@
 <?php
 /**
  *
- * @package     OpenFlame Web Framework
- * @copyright   (c) 2010 OpenFlameCMS.com
+ * @package     openflame-framework
+ * @subpackage  router
+ * @copyright   (c) 2010 - 2011 openflame-project.org
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
  * @link        https://github.com/OpenFlame/OpenFlame-Framework
  *
@@ -12,10 +13,8 @@
 namespace OpenFlame\Framework\Router;
 use OpenFlame\Framework\Core;
 
-if(!defined('OpenFlame\\ROOT_PATH')) exit;
-
 /**
- * OpenFlame Web Framework - Static URL router,
+ * OpenFlame Framework - Static URL router,
  * 	     A straightforward and powerful router, provides an alternative to the previous fluid URL handler.
  *
  *
@@ -251,11 +250,11 @@ class Router
 
 	/**
 	 * Take the (dirty) request url for the current request and return the route that matches it.
-	 * @param string $request_url - The requested local url.
+	 * @param string &$request_url - The requested local url.
 	 * @return \OpenFlame\Framework\Router\RouteInstance - The matching route instance.
 	 * @note This method will sanitize the URL before processing.
 	 */
-	public function processRequest($request_url)
+	public function processRequest(&$request_url)
 	{
 
 		// Get rid of the _GET stuff.
@@ -283,7 +282,7 @@ class Router
 		if(!isset($this->routes[$request_base]))
 		{
 			// 404 error
-			return $this->getErrorRoute()->setRequestDataPoint('code', 404);
+			return $this->getErrorRoute()->set('code', 404);
 		}
 
 		// We need to verify the request against the routes one by one, and go for the first one that works.
@@ -300,7 +299,7 @@ class Router
 		if($found !== true)
 		{
 			// 404 error
-			return $this->getErrorRoute()->setRequestDataPoint('code', 404);
+			return $this->getErrorRoute()->set('code', 404);
 		}
 
 		return $route;

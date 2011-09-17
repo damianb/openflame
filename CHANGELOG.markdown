@@ -15,6 +15,32 @@
  - 1.1.1 **maintenance** release
 	 - Fix minor bug with grabbing the commit ID from within the framework phar
  - 1.1.2 **maintenance** release
-	 - Fix bug with `Security\Seeder` component - all randomly generated strings will be returned of the requested length now.
+	 - Fix bug with `Security\Seeder` component - all randomly generated strings will be returned of the requested length now
  - 1.1.3 **maintenance** release
 	 - Fix bug with cache component - removed an old unneeded method from the engine interface
+ - 1.2.0 **minor** release
+	 - Add in new dependency injection component `Dependency\Injector` (ticket #57)
+	 - Refactored the cookie management code and split it out into its own component (ticket #55).
+	 - Made microoptimizations in component `Event\Dispatcher`
+	 - Added new method `triggerUntilReturn()` in component `Event\Dispatcher` (see commit id `d88453eaec` for details)
+	 - Refactor RouteInstance callback storage, simplify callback execution and remove ability to "call" methods of objects stored in the OpenFlame Framework core
+	 - Pass the `$request_url` parameter in method `processRequest()` the component `Router\Router` by reference to allow the end application to obtain the sanitized form without resanitizing it
+	 - Remove `OpenFlame\ROOT_PATH` constant check in every class file
+	 - Refactor the autoloader to not use the now-defunct `OpenFlame\ROOT_PATH` constant for autoloading; it must now be passed the autoload path upon instantiation
+	 - Add new component object `Router\AliasRouter` to expand upon current dynamic routing capabilities
+	 - Modify the `Router\RouteInstance` component object to add new route "aliases", which are resolved against the new component `Router\AliasRouter` for a usable callback
+	 - Refactor the cache component again internally, altered the interface and the file-cache engine base to remove the need for the "build" method  in all cache engines (makes an opcache-based engine much more viable)
+	 - Fix a bug in the `URL\BuilderProxy` class, which caused problems when the site root directory was used as the base URL (commit id `090993b42d`)
+	 - Convert the autoloader into a singleton class
+	 - Remove "magic" return functionality from `Event\Instance` component -- method `getReturns()` in `Event\Instance` will now always return an array
+	 - Remove `countReturns()` method from `Event\Instance` component, due to the changes in `getReturns()`
+	 - Protect ourselves from sentient code, added `CAN_BECOME_SKYNET` and `COST_TO_BECOME_SKYNET` class constants to the framework Core
+	 - Deprecated `dataPointExists()`, `getDataPoint()`, `setDataPoint()` in `Event\Instance` (use `exists()`, `get()`, `set()` respectively instead)
+	 - Deprecated `getRequestDataPoint()`, `setRequestDataPoint()` in `Router\RouteInstance` (use `get()`, `set()` respectively instead)
+	 - No longer throwing an exception on empty JSON files (which received NULL from `json_decode()` internally) in `Utility\JSON`
+	 - Change behavior of `__get()` method of `Header\Manager` to match that of `getSubmodule()`
+	 - Add new object `Event\Scheduler` for scheduling events to be triggered at regular intervals
+	 - Deprecated `triggerUntilReturn()` and `triggerUntilBreak()` in `Event\Dispatcher` (use method `trigger` and supply the second param with the `TRIGGER_NOBREAK`, `TRIGGER_MANUALBREAK`, `TRIGGER_RETURNBREAK` class constants instead)
+	 - Added method alias `triggerBreak()` (aliases to `breakTrigger()`) to `Event\Instance` to make it more intuitive
+	 - Added GC method to cache engine, drivers to allow file-based cache engines to clean up old entries
+	 - Added support for multiple twig loaders via `Twig_Loader_Chain` in `Twig\Wrapper`
