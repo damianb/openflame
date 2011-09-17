@@ -68,29 +68,6 @@ class Core
 	}
 
 	/**
-	 * Get the commit ID (if there is one known) for this packaging of the framework
-	 * @return string - The commit ID of the framework package, or an empty string if no commit ID could be determined
-	 */
-	public static function getCommit()
-	{
-		if(self::$commit === NULL)
-		{
-			$autoloader = \OpenFlame\Framework\Autoloader::getInstance();
-			$filepath = $autoloader->getFile('OF-F_COMMIT_ID');
-			if($filepath !== false)
-			{
-				self::$commit = rtrim(file_get_contents($filepath));
-			}
-			else
-			{
-				self::$commit = '';
-			}
-		}
-
-		return self::$commit;
-	}
-
-	/**
 	 * Get the version string for the current instance of the OpenFlame Framework
 	 * @return string - The framework's version.
 	 */
