@@ -32,7 +32,6 @@
 	 - Refactor the cache component again internally, altered the interface and the file-cache engine base to remove the need for the "build" method  in all cache engines (makes an opcache-based engine much more viable)
 	 - Fix a bug in the `URL\BuilderProxy` class, which caused problems when the site root directory was used as the base URL (commit id `090993b42d`)
 	 - Convert the autoloader into a singleton class
-	 - `Core::getCommit()` no longer relies on the `OpenFlame\ROOT_PATH` constant for obtaining the commit-id file
 	 - Remove "magic" return functionality from `Event\Instance` component -- method `getReturns()` in `Event\Instance` will now always return an array
 	 - Remove `countReturns()` method from `Event\Instance` component, due to the changes in `getReturns()`
 	 - Protect ourselves from sentient code, added `CAN_BECOME_SKYNET` and `COST_TO_BECOME_SKYNET` class constants to the framework Core
@@ -43,4 +42,5 @@
 	 - Add new object `Event\Scheduler` for scheduling events to be triggered at regular intervals
 	 - Deprecated `triggerUntilReturn()` and `triggerUntilBreak()` in `Event\Dispatcher` (use method `trigger` and supply the second param with the `TRIGGER_NOBREAK`, `TRIGGER_MANUALBREAK`, `TRIGGER_RETURNBREAK` class constants instead)
 	 - Added method alias `triggerBreak()` (aliases to `breakTrigger()`) to `Event\Instance` to make it more intuitive
-	 - Added GC method to cache engine, drivers to allow file-based cache engines to clean up old entries.
+	 - Added GC method to cache engine, drivers to allow file-based cache engines to clean up old entries
+	 - Added support for multiple twig loaders via `Twig_Loader_Chain` in `Twig\Wrapper`
