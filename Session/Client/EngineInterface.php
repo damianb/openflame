@@ -1,8 +1,9 @@
 <?php
 /**
  *
- * @package     OpenFlame Web Framework
- * @copyright   (c) 2010 OpenFlameCMS.com
+ * @package     openflame-framework
+ * @subpackage  session
+ * @copyright   (c) 2010 - 2011 openflame-project.org
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
  * @link        https://github.com/OpenFlame/OpenFlame-Framework
  *
@@ -12,10 +13,8 @@
 namespace OpenFlame\Framework\Session\Client;
 use \OpenFlame\Framework\Core;
 
-if(!defined('OpenFlame\\ROOT_PATH')) exit;
-
 /**
- * OpenFlame Web Framework - Session Client-side identification,
+ * OpenFlame Framework - Session Client-side identification,
  * 		Sessions client engine prototype
  *
  *
@@ -24,22 +23,23 @@ if(!defined('OpenFlame\\ROOT_PATH')) exit;
  */
 interface EngineInterface
 {
-	/**
-	 * Set options
-	 * @param array - Key/value pair array for all client-id level config options
-	 */
-	public function setOptions($options);
-
-	/**
-	 * Get params as they were accepted from the client
-	 * @return array - Structure: 'sid' => '', 'uid' => '', 'autologinkey' => ''
-	 */
-	public function getParams();
-
-	/**
-	 * Set params to be stored by the client
-	 * @param array - Structure: 'sid' => '', 'uid' => '', 'autologinkey' => ''
+	/*
+	 * Initialize the engine
+	 * @param array options - Associative array of options
 	 * @return void
 	 */
-	public function setParams($params);
+	public function init(array &$options);
+
+	/*
+	 * Get the SID of the current visitor
+	 * @return string - Session ID 
+	 */
+	public function getSID();
+
+	/*
+	 * Set an SID
+	 * @param string sid - Session ID to set
+	 * @return void
+	 */
+	public function setSID($sid);
 }

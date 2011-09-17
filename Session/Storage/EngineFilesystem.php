@@ -1,8 +1,9 @@
 <?php
 /**
  *
- * @package     OpenFlame Web Framework
- * @copyright   (c) 2010 OpenFlameCMS.com
+ * @package     openflame-framework
+ * @subpackage  session
+ * @copyright   (c) 2010 - 2011 openflame-project.org
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
  * @link        https://github.com/OpenFlame/OpenFlame-Framework
  *
@@ -12,11 +13,9 @@
 namespace OpenFlame\Framework\Session\Storage;
 use \OpenFlame\Framework\Core;
 
-if(!defined('OpenFlame\\ROOT_PATH')) exit;
-
 /**
- * OpenFlame Web Framework - Sessions over the Filesystem,
- * 		(re)impementes the PHP native sessions to be abstracted for OpenFlame framework.
+ * OpenFlame Framework - Sessions Engine interface,
+ * 		Sessions engine prototype, declares required methods that a sessions engine must define in order to be valid.
  *
  *
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
@@ -25,159 +24,113 @@ if(!defined('OpenFlame\\ROOT_PATH')) exit;
 class EngineFilesystem implements EngineInterface
 {
 	/*
-	 * Holds all configuration options
+	 * Configuration Options
 	 */
-	protected $options = array();
+	private $options;
 
 	/*
-	 * Holds session data prior to its departure into the driver
+	 * Initialized the engine
+	 * @param array options - Associative array of options
+	 * @return void
+	 * @throws \RuntimeException
 	 */
-	private $data = array();
+	public function init(array &$options)
+	{
+		$defaults = array(
+			'filesystem.savepath'	=> ini_get('session.save_path'),
+			'filesystem.prefix'		=> 'sess_',
+			'filesystem.maxfileage'	=> (int) $options['session.expire'],
+			'filesystem.ext'		=> 'tmp',
+		);
+
+		$this->options = array_merge($defaults, $options);
+
+		// Force trailing slash
+		$this->options['filesystem.savepath'] = rtrim($this->options['filesystem.savepath'], '/\\') . '/';
+
+		// Do some basic checks on our filesystem
+		if (!file_exists($this->options['filesystem.savepath']))
+		{
+			throw new \RuntimeException("The session file storage path does not exist.");
+		}
+		else if (!is_readable($this->options['filesystem.savepath']) || !is_writable($this->options['filesystem.savepath']))
+		{
+			throw new \RuntimeException("Could write to the session file storage directory.");
+		}
+	}
 
 	/*
-	 * Stores the session id
+	 * Load data associated with the SID
+	 * @param string sid - Session ID (Must be [a-z0-9])
+	 * @return mixed - Arbitrary data stored
 	 */
-	private $sid = '';
+	public function load($sid)
+	{
+		$filepath = $this->makeFilepath($sid);
+		$data = array();
+
+		if (is_file($filepath))
+		{
+			$data = unserialize(file_get_contents($filepath));
+		}
+
+		return $data;
+	}
 
 	/*
+	 * Store data associated with the session id
+	 * @param string sid - Session ID (Must be [a-z0-9])
+	 * @param mixed data - Arbitrary data to store
+	 * @return bool - true on success, false on failure
 	 */
-	protected $now = 0;
+	public function store($sid, $data)
+	{
+		$result = file_put_contents($this->makeFilepath($sid), serialize($data));
+
+		return ($result !== false) ? true : false;
+	}
 
 	/*
-	 * Init
-	 *
-	 * Called when the session object is created but before the session has started
+	 * Purge session object
+	 * Basically giving the Engine the signal to kill the data associated with
+	 * this session ID.
+	 * @param string sid
+	 */
+	public function purge($sid)
+	{
+		return unlink($this->makeFilepath($sid));
+	}
+
+	/*
+	 * Little shortcut to centralize the filename creation
+	 * @ignore
+	 */
+	private function makeFilepath($sid)
+	{
+		return $this->options['filesystem.savepath'] . $this->options['filesystem.prefix'] . $sid . '.' . $this->options['filesystem.ext'];
+	}
+
+	/*
+	 * Garbage Collection
+	 * Called at the end of each page load.
+	 * @param \OpenFlame\Framework\Event\Instance $event - Event instance (so this can be used as a listener)
 	 * @return void
 	 */
-	public function init($options)
+	public function gc(\OpenFlame\Framework\Event\Instance $event = NULL)
 	{
-		$this->options['file.savepath'] = isset($options['file.savepath']) ? $options['file.savepath'] : ini_get('upload_tmp_dir');
-		$this->options['file.prefix'] = isset($options['file.prefix']) ? $options['file.prefix'] : 'sess_';
-		$this->options['file.randseed'] = isset($options['file.randseed']) ? $options['file.randseed'] : chr(64 + mt_rand(1,26));
-		$this->options['file.gctime'] = isset($options['file.gctime']) ? (int) $options['file.gctime'] : $options['session.expiretime'];
-		
-		if(substr($this->options['file.savepath'], -1) != '/' || substr($this->options['file.savepath'], -1) != '\\')
+		$now = time();
+
+		foreach(glob("{$this->options['filesystem.savepath']}*.{$this->options['filesystem.ext']}") as $file)
 		{
-			$this->options['file.savepath'] .= '/';
-		}
-
-		$this->now = time();
-	}
-
-	/*
-	 * New Session
-	 *
-	 * Called when a new session needs to be created
-	 * @param bool - Clear the session data? Useful to set true when a session does not validate
-	 * @return string - New SID
-	 */
-	public function newSession($clearData = false)
-	{
-		if(empty($this->filename))
-		{
-			$this->filename = $this->options['file.savepath'] . $this->options['file.prefix'] . $this->sid . '.php';
-		}
-
-		$this->deleteSession();
-
-		$this->sid = hash('sha1', $this->filename . $this->options['file.randseed']);
-		$this->filename = $this->options['file.savepath'] . $this->options['file.prefix'] . $this->sid . '.php';
-
-		if($clearData)
-		{
-			$this->data = array();
-		}
-
-		return $this->sid;
-	}
-
-	/*
-	 * Delete Session
-	 *
-	 * Deletes the currently loaded session 
-	 * @return void
-	 */
-	public function deleteSession()
-	{
-		if(empty($this->filename))
-		{
-			$this->filename = $this->options['file.savepath'] . $this->options['file.prefix'] . $this->sid . '.php';
-		}
-
-		if(file_exists($this->filename))
-		{
-			unlink($this->filename);
-		}
-	}
-
-	/*
-	 * Session Data
-	 *
-	 * Load the session for use by the driver
-	 * @return bool - True if a session was found, false if not
-	 */
-	public function loadSession($sid)
-	{
-		$this->sid = $sid;
-		$this->filename = $this->options['file.savepath'] . $this->options['file.prefix'] . $this->sid . '.php';
-
-		if(file_exists($this->filename))
-		{
-			list($ts, $data) = explode("\n", file_get_contents($this->filename, NULL, NULL, 15));
-			$this->data = unserialize($data);
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-	}
-
-	/*
-	 * Load Data
-	 *
-	 * Get the current session data
-	 * @return array - complex array of identical structure to one being stored
-	 */
-	public function loadData()
-	{
-		return sizeof($this->data) ? $this->data : array();
-	}
-
-	/*
-	 * Store Session Data
-	 *
-	 * @param array - complex array
-	 * @return void
-	 */
-	public function storeData($data)
-	{
-		$this->data = $data;
-
-		file_put_contents($this->options['file.savepath'] . $this->options['file.prefix'] . $this->sid . '.php', 
-			"<?php exit; ?>\n{$this->now}\n" . serialize($this->data) . "\n");
-	}
-
-	/*
-	 * Garbage collection
-	 * Should be called periodically
-	 */
-	public function gc()
-	{
-		$files = scandir($this->options['file.savepath']);
-		$cutoff = time() - $this->options['file.gctime'];
-
-		foreach($files as $file)
-		{
-			$fullpath = $this->options['file.savepath'] . $file;
-
-			if (substr($file, 0, strlen($this->options['file.prefix'])) == $this->options['file.prefix'])
+			if ($this->options['filesystem.prefix'] != substr(basename($file), 0, strlen($this->options['filesystem.prefix'])))
 			{
-				// If the date in the older than the cutoff, /dev/null it goes. 
-				if(reset(explode("\n", file_get_contents($fullpath, NULL, NULL, 15))) < $cutoff)
-				{
-					unlink($fullpath);
-				}
+				continue;
+			}
+
+			if (filemtime($file) + $this->options['filesystem.maxfileage'] < $now)
+			{
+				// Taking out the trash
+				unlink($file);
 			}
 		}
 	}

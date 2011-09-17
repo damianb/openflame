@@ -1,8 +1,9 @@
 <?php
 /**
  *
- * @package     OpenFlame Web Framework
- * @copyright   (c) 2010 OpenFlameCMS.com
+ * @package     openflame-framework
+ * @subpackage  event
+ * @copyright   (c) 2010 - 2011 openflame-project.org
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
  * @link        https://github.com/OpenFlame/OpenFlame-Framework
  *
@@ -12,10 +13,8 @@
 namespace OpenFlame\Framework\Event;
 use OpenFlame\Framework\Core;
 
-if(!defined('OpenFlame\\ROOT_PATH')) exit;
-
 /**
- * OpenFlame Web Framework - Event object
+ * OpenFlame Framework - Event object
  * 	     Represents a dispatched event.
  *
  *
@@ -134,26 +133,73 @@ class Instance
 
 	/**
 	 * Check if a data point exists in this event.
-	 * @param string - The key for the data point to grab.
+	 * @param string $point - The key for the data point to grab.
 	 * @return boolean - Does the data point exist?
+	 *
+	 * @deprecated since 1.2.0
 	 */
 	public function dataPointExists($point)
 	{
-		return (bool) array_key_exists($point, $this->data);
+		trigger_error('\\OpenFlame\\Framework\\Event\\Instance->dataPointExists() is deprecated', E_USER_DEPRECATED);
+
+		return isset($this->data[$point]);
 	}
 
 	/**
 	 * Get a single point of data attached to this event.
-	 * @param string - The key for the data point to grab.
+	 * @param string $point - The key for the data point to grab.
 	 * @return mixed - The point of data we're looking for
 	 *
-	 * @throws \InvalidArgumentException
+	 * @deprecated since 1.2.0
 	 */
 	public function getDataPoint($point)
 	{
-		if(!$this->dataPointExists($point))
+		trigger_error('\\OpenFlame\\Framework\\Event\\Instance->getDataPoint() is deprecated', E_USER_DEPRECATED);
+
+		if(!isset($this->data[$point]))
 		{
-			throw new \InvalidArgumentException('Invalid event parameter specified');
+			return NULL;
+		}
+
+		return $this->data[$point];
+	}
+
+	/**
+	 * Attach a single point of data to this event
+	 * @param string $point - The key to attach the data under.
+	 * @param mixed $value - The data to attach.
+	 * @return \OpenFlame\Framework\Event\Instance - Provides a fluent interface.
+	 *
+	 * @deprecated since 1.2.0
+	 */
+	public function setDataPoint($point, $value)
+	{
+		trigger_error('\\OpenFlame\\Framework\\Event\\Instance->setDataPoint() is deprecated', E_USER_DEPRECATED);
+		$this->data[$point] = $value;
+
+		return $this;
+	}
+
+	/**
+	 * Check if a data point exists in this event.
+	 * @param string $point - The key for the data point to grab.
+	 * @return boolean - Does the data point exist?
+	 */
+	public function exists($point)
+	{
+		return isset($this->data[$point]);
+	}
+
+	/**
+	 * Get a single point of data attached to this event.
+	 * @param string $point - The key for the data point to grab.
+	 * @return mixed - The point of data we're looking for
+	 */
+	public function get($point)
+	{
+		if(!isset($this->data[$point]))
+		{
+			return NULL;
 		}
 
 		return $this->data[$point];
@@ -165,9 +211,61 @@ class Instance
 	 * @param mixed $value - The data to attach.
 	 * @return \OpenFlame\Framework\Event\Instance - Provides a fluent interface.
 	 */
-	public function setDataPoint($point, $value)
+	public function set($point, $value)
 	{
 		$this->data[$point] = $value;
+
+		return $this;
+	}
+
+	/**
+	 * Magic method alternative to \OpenFlame\Framework\Event\Instance->dataPointExists()
+	 * @param string $point - The key for the data point to grab.
+	 * @return boolean - Does the data point exist?
+	 */
+	public function __isset($point)
+	{
+		return $this->exists($point);
+	}
+
+	/**
+	 * Magic method alternative to \OpenFlame\Framework\Event\Instance->getDataPoint()
+	 * @param string $point - The key for the data point to grab.
+	 * @return mixed - The point of data we're looking for
+	 */
+	public function __get($point)
+	{
+		return $this->get($point);
+	}
+
+	/**
+	 * Magic method alternative to \OpenFlame\Framework\Event\Instance->setDataPoint()
+	 * @param string $point - The key to attach the data under.
+	 * @param mixed $value - The data to attach.
+	 * @return void
+	 */
+	public function __set($point, $value)
+	{
+		$this->set($point, $value);
+	}
+
+	/**
+	 * Magic method alternative to \OpenFlame\Framework\Event\Instance->setDataPoint()
+	 * @param string $point - The key to unset.
+	 * @return void
+	 */
+	public function __unset($point)
+	{
+		unset($this->data[$point]);
+	}
+
+	/**
+	 * Trigger a break of the event dispatch cycle.
+	 * @return \OpenFlame\Framework\Event\Instance - Provides a fluent interface.
+	 */
+	public function triggerBreak()
+	{
+		$this->trigger_break = true;
 
 		return $this;
 	}
@@ -193,33 +291,12 @@ class Instance
 	}
 
 	/**
-	 * Get the number of values returned.
-	 * @return integer - The number of values
-	 */
-	public function countReturns()
-	{
-		return sizeof($this->returns);
-	}
-
-	/**
 	 * Get the return values provided by the listeners.
-	 * @return mixed - Returns an array of returned data, the single piece of returned data, or NULL if no returned datta present.
+	 * @return array - Returns the array of returned data.
 	 */
 	public function getReturns()
 	{
-		$results = $this->countReturns();
-		if($results > 1)
-		{
-			return $this->returns;
-		}
-		elseif($results == 1)
-		{
-			return reset($this->returns);
-		}
-		else
-		{
-			return NULL;
-		}
+		return $this->returns;
 	}
 
 	/**

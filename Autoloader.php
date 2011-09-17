@@ -1,8 +1,9 @@
 <?php
 /**
  *
- * @package     OpenFlame Web Framework
- * @copyright   (c) 2010 OpenFlameCMS.com
+ * @package     openflame-framework
+ * @subpackage  core
+ * @copyright   (c) 2010 - 2011 openflame-project.org
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
  * @link        https://github.com/OpenFlame/OpenFlame-Framework
  *
@@ -11,10 +12,8 @@
 
 namespace OpenFlame\Framework;
 
-if(!defined('OpenFlame\\ROOT_PATH')) exit;
-
 /**
- * OpenFlame Web Framework - Autoloader object
+ * OpenFlame Framework - Autoloader object
  * 	     Provides just-in-time class autoloading functionality.
  *
  *
@@ -29,20 +28,27 @@ class Autoloader
 	private $paths = array();
 
 	/**
-	 * Constructor
-	 * @param array $paths - Extra paths to include in the autoload search
-	 * @return void
+	 * @var \OpenFlame\Framework\Autoloader - The singleton autoloader instance.
 	 */
-	public function __construct(array $paths = array())
-	{
-		$paths = array_merge($paths, array(
-			\OpenFlame\ROOT_PATH,
-		));
+	private static $instance;
 
-		foreach($paths as $path)
+	/**
+	 * @ignore
+	 */
+	private function __construct() { }
+
+	/**
+	 * Gets the singleton instance of the autoloader.
+	 * @param mixed $path - The path or array of paths to include in the autoload search.
+	 * @return \OpenFlame\Framework\Autoloader - The singleton autoloader instance.
+	 */
+	public static function getInstance()
+	{
+		if(self::$instance === NULL)
 		{
-			$this->setPath($path);
+			self::$instance = new self();
 		}
+		return self::$instance;
 	}
 
 	/**
@@ -62,7 +68,7 @@ class Autoloader
 			require $filepath;
 			if(!class_exists($class) && !interface_exists($class))
 			{
-				throw new \RuntimeException(sprintf('Invalid class contained within file %s', $filepath));
+				throw new \RuntimeException(sprintf('Invalid class contained within file "%s"', $filepath));
 			}
 			return;
 		}
@@ -131,12 +137,25 @@ class Autoloader
 
 	/**
 	 * Register this class as an autoloader within the autoloader stack.
-	 * @return \OpenFlame\Framework\Autoloader - The newly created autoloader instance.
+	 * @param mixed $path - The path or array of paths to register with the autoloader.
+	 * @return \OpenFlame\Framework\Autoloader - The autoloader instance.
 	 */
-	public static function register()
+	public static function register($path)
 	{
-		$self = new self();
-		spl_autoload_register(array($self, 'loadFile'));
-		return $self;
+		$autoloader = self::getInstance();
+		if(is_array($path))
+		{
+			foreach($path as $_path)
+			{
+				$autoloader->setPath($_path);
+			}
+		}
+		else
+		{
+			$autoloader->setPath($path);
+		}
+
+		spl_autoload_register(array($autoloader, 'loadFile'));
+		return $autoloader;
 	}
 }

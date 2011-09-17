@@ -1,8 +1,9 @@
 <?php
 /**
  *
- * @package     OpenFlame Web Framework
- * @copyright   (c) 2010 OpenFlameCMS.com
+ * @package     openflame-framework
+ * @subpackage  core
+ * @copyright   (c) 2010 - 2011 openflame-project.org
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
  * @link        https://github.com/OpenFlame/OpenFlame-Framework
  *
@@ -11,10 +12,8 @@
 
 namespace OpenFlame\Framework;
 
-if(!defined('OpenFlame\\ROOT_PATH')) exit;
-
 /**
- * OpenFlame Web Framework - Main class
+ * OpenFlame Framework - Main class
  * 	     Contains the objects that power the framework.
  *
  *
@@ -26,9 +25,16 @@ if(!defined('OpenFlame\\ROOT_PATH')) exit;
 class Core
 {
 	/**
+	 * DO NOT _EVER_ CHANGE THESE, FOR THE SAKE OF HUMANITY.
+	 * @link http://xkcd.com/534/
+	 */
+	const CAN_BECOME_SKYNET = false;
+	const COST_TO_BECOME_SKYNET = 999999999999;
+
+	/**
 	 * @var string - The version for the Framework
 	 */
-	private static $version = '1.1.3';
+	private static $version = '1.2.0';
 
 	/**
 	 * @var string - The commit ID for phar-packaged forms of the framework (considering "unstable" development builds)
@@ -59,20 +65,6 @@ class Core
 				self::setConfig($key, $value);
 			});
 		}
-	}
-
-	/**
-	 * Get the commit ID (if there is one known) for this packaging of the framework
-	 * @return string - The commit ID of the framework package, or an empty string if no commit ID could be determined
-	 */
-	public static function getCommit()
-	{
-		if(self::$commit === NULL)
-		{
-			self::$commit = (file_exists(\OpenFlame\ROOT_PATH . 'OF-F_COMMIT_ID')) ? rtrim(file_get_contents(\OpenFlame\ROOT_PATH . 'OF-F_COMMIT_ID')) : '';
-		}
-
-		return self::$commit;
 	}
 
 	/**
