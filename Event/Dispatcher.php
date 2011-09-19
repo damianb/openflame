@@ -82,7 +82,7 @@ class Dispatcher
 			// It's a closure!  <3
 			$listener_type = self::LISTENER_CLOSURE;
 		}
-		elseif(function_exists($listener))
+		elseif(!is_array($listener) && function_exists($listener))
 		{
 			$listener_type = self::LISTENER_FUNCTION;
 		}

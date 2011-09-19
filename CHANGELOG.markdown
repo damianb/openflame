@@ -44,3 +44,5 @@
 	 - Added method alias `triggerBreak()` (aliases to `breakTrigger()`) to `Event\Instance` to make it more intuitive
 	 - Added GC method to cache engine, drivers to allow file-based cache engines to clean up old entries
 	 - Added support for multiple twig loaders via `Twig_Loader_Chain` in `Twig\Wrapper`
+ - 1.2.1 **maintenance** release
+	 - Fix problem with `Event\Dispatcher` component when using object methods as listeners
