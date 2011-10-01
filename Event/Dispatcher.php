@@ -143,10 +143,18 @@ class Dispatcher
 
 		foreach($this->listeners[$event_name] as $priority => $priority_thread)
 		{
-			foreach($priority_thread as $listener_entry)
+			foreach($priority_thread as $listener_key => $listener_entry)
 			{
 				$listener = $listener_entry['listener'];
 				$listener_type = $listener_entry['type'];
+
+				// If the listener has disappeared on us, drop it and flag this set of listeners that they will be resorted.
+				if($listener === NULL)
+				{
+					unset($this->listeners[$event_name][$priority][$listener_key]);
+					$this->unsorted[$event_name] = true;
+					continue;
+				}
 
 				// Use faster, quicker methods than call_user_func() for triggering listeners if they're available
 				switch($listener_type)
