@@ -46,3 +46,4 @@
 	 - Added support for multiple twig loaders via `Twig_Loader_Chain` in `Twig\Wrapper`
  - 1.2.1 **maintenance** release
 	 - Fix problem with `Event\Dispatcher` component when using object methods as listeners
+	 - Drop nullified listeners from `Event\Dispatcher` component when triggering an event, in case they are objects nulled by reference down the road
