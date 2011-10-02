@@ -184,6 +184,11 @@ class Injector implements \ArrayAccess
 			$object = $this->fireInjector($name);
 		}
 
+		if($object instanceof \Closure)
+		{
+			return $object();
+		}
+
 		return $object;
 	}
 
