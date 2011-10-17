@@ -270,9 +270,9 @@ class Instance
 
 	/**
 	 * Binds the var to its final type
-	 * @param mixed $var - The var being bound
+	 * @param mixed &$var - The var being bound
 	 * @param mixed $default - Default value
-	 * @return string - Cleaned output
+	 * @return void
 	 */
 	protected function bindVar(&$var, $default)
 	{
