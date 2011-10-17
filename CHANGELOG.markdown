@@ -49,3 +49,4 @@
 	 - Drop nullified listeners from `Event\Dispatcher` component when triggering an event, in case they are objects nulled by reference down the road
  - 1.2.2 **maintenance** release
 	 - Provide support for "duplicators" in `Dependency\Injector` component by returning a closure within an injector.
+	 - Fix `Utility\JSON` parsing when the `#` character is used for things other than line comments.
