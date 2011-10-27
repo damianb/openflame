@@ -50,3 +50,4 @@
  - 1.2.2 **maintenance** release
 	 - Provide support for "duplicators" in `Dependency\Injector` component by returning a closure within an injector.
 	 - Fix `Utility\JSON` parsing when the `#` character is used for things other than line comments.
+	 - Add new functionality in `Event\Dispatcher` component to allow listeners to be designated as "timed", and have them automatically removed after being called a specified number of times.
