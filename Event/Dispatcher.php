@@ -55,9 +55,10 @@ class Dispatcher
 	 * @param string $event_name - The name of the event to attach the listener to.
 	 * @param integer $priority - The priority for the listener to be registered as, similar to *nix "nice" values for CPU processes (-20 top priority, 20 bottom priority)
 	 * @param callable $listener - The callable reference for the listener.
+	 * @param integer $limit - The number of times that the listener should be executed before being removed (or -1 to always run); defaults to -1.
 	 * @return \OpenFlame\Framework\Event\Dispatcher - Provides a fluent interface.
 	 */
-	public function register($event_name, $priority, $listener)
+	public function register($event_name, $priority, $listener, $limit = -1)
 	{
 		if(!isset($this->listeners[$event_name]) || !is_array($this->listeners[$event_name]))
 		{
@@ -73,6 +74,12 @@ class Dispatcher
 		elseif($priority < -20)
 		{
 			$priority = -20;
+		}
+
+		$limit = (int) $limit;
+		if($limit < -1)
+		{
+			$limit = -1;
 		}
 
 		// Check to see what type of listener we're dealing with here; this allows us to use some shortcuts down the road.
@@ -100,6 +107,7 @@ class Dispatcher
 		$this->listeners[$event_name][$priority][] = array(
 			'listener'		=> $listener,
 			'type'			=> $listener_type,
+			'limit'			=> $limit,
 		);
 
 		// Flag this event as needing a sort before the next event dispatch
@@ -141,15 +149,17 @@ class Dispatcher
 			unset($this->unsorted[$event_name]);
 		}
 
+		// Das loop.
 		foreach($this->listeners[$event_name] as $priority => $priority_thread)
 		{
 			foreach($priority_thread as $listener_key => $listener_entry)
 			{
 				$listener = $listener_entry['listener'];
 				$listener_type = $listener_entry['type'];
+				$limit =& $this->listeners[$event_name][$priority][$listener_key]['limit'];
 
-				// If the listener has disappeared on us, drop it and flag this set of listeners that they will be resorted.
-				if($listener === NULL)
+				// If the listener has reached its limit, drop it like it's hot!
+				if($limit == 0)
 				{
 					unset($this->listeners[$event_name][$priority][$listener_key]);
 					$this->unsorted[$event_name] = true;
@@ -175,16 +185,25 @@ class Dispatcher
 					break;
 				}
 
+				// Set the event return value.
 				if($return !== NULL)
 				{
 					$event->setReturn($return);
-					if($dispatch_type = self::TRIGGER_RETURNBREAK)
+				}
+
+				// Handle listener limiting, drop listeners once their time is up
+				if($limit > 0)
+				{
+					$limit--;
+					if($limit == 0)
 					{
-						return $event; // PHP 5.4 compat -- cannot use "break (int)" anymore, so we just return the $event
+						unset($this->listeners[$event_name][$priority][$listener_key]);
+						$this->unsorted[$event_name] = true;
 					}
 				}
 
-				if($dispatch_type = self::TRIGGER_MANUALBREAK && $event->wasBreakTriggered())
+				// Should we break?
+				if(($return !== NULL && $dispatch_type = self::TRIGGER_RETURNBREAK) || ($dispatch_type = self::TRIGGER_MANUALBREAK && $event->wasBreakTriggered()))
 				{
 					return $event; // PHP 5.4 compat -- cannot use "break (int)" anymore, so we just return the $event
 				}
