@@ -53,7 +53,7 @@ abstract class JSON
 			return NULL;
 		}
 
-		$data = json_decode(preg_replace("/(\n?)\s*#(.*)?\n/", '$1', $json), true);
+		$data = json_decode(preg_replace("/^[\t ]*#[^\n]*\n?/m", '', $json), true);
 
 		if($data === NULL)
 		{
