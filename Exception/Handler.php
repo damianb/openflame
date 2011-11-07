@@ -271,7 +271,7 @@ class Handler
 	 * @param string $page_format - The page format to use for this page.
 	 * @return void
 	 */
-	final protected function displayException($page_format)
+	protected function displayException($page_format)
 	{
 		$e = array(
 			'e_type'		=> get_class($this->exception),
@@ -316,7 +316,7 @@ EOD;
 	 * @param string $page_format - The page format to use for this page.
 	 * @return void
 	 */
-	final protected function badassError($page_format)
+	protected function badassError($page_format)
 	{
 		$e = array(
 			'e_type'		=> get_class($this->exception),
