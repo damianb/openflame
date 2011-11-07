@@ -61,7 +61,6 @@ class Handler
 	 * Create the exception handler instance and prepare to handle the page
 	 * @param \Exception $e - The exception we're handling.
 	 * @param array $options - The array of options to pass to the exception handler instance.
-	 * @return void
 	 *
 	 * @note: Script execution terminates at the end of the constructor.
 	 */
