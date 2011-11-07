@@ -29,30 +29,20 @@ class Handler
 	protected $exception;
 
 	/**
-	 * @var string - The HTML to use for the error page.
+	 * @var array - Array of options for the handler.
 	 */
-	protected static $page_format = NULL;
-
-	/**
-	 * @var boolean - Do we want to show debug info to everyone?
-	 */
-	protected static $use_debug = false;
-
-	/**
-	 * @var integer - The maximum number of exception layers to unwrap.
-	 */
-	protected static $unwrap_count = 0;
-
-	/**
-	 * @var \Closure - The closure to execute after displaying the exception message.
-	 */
-	protected static $closure;
+	protected static $options = array(
+		'format'		=> NULL,
+		'debug'			=> false,
+		'unwrap'		=> 0,
+		'closure'		=> NULL,
+	);
 
 	/**
 	 * Register the exception handler.
 	 * @return void
 	 */
-	final public static function register()
+	public static function register()
 	{
 		set_exception_handler('\\OpenFlame\\Framework\\Exception\\Handler::catcher');
 	}
@@ -62,28 +52,25 @@ class Handler
 	 * @param Exception $e - The exception to handle
 	 * @return void
 	 */
-	final public static function catcher(\Exception $e)
+	public static function catcher(\Exception $e)
 	{
-		$self = new static($e, static::getPageFormat(), static::getDebugState(), static::getUnwrapCount(), static::getTerminalFunction());
+		$self = new static($e, static::$options);
 	}
 
 	/**
 	 * Create the exception handler instance and prepare to handle the page
 	 * @param \Exception $e - The exception we're handling.
-	 * @param string $page_format - The format to use for the exception message.
-	 * @param boolean $use_debug - Should we display all exception information.
-	 * @param integer $unwrap_count - The number of layers to unwrap for our exceptions.
-	 * @param mixed $closure - Either an object of instance \Closure to run after displaying the exception message, or NULL if no closure provided.
+	 * @param array $options - The array of options to pass to the exception handler instance.
 	 * @return void
 	 *
 	 * @note: Script execution terminates at the end of the constructor.
 	 */
-	final protected function __construct(\Exception $e, $page_format, $use_debug, $unwrap_count, $closure)
+	protected function __construct(\Exception $e, array $options)
 	{
 		$exception = $e;
-		if((int) $unwrap_count > 0)
+		if((int) $options['unwrap'] > 0)
 		{
-			for($i = 0; $i < (int) $unwrap_count; $i++)
+			for($i = 0; $i < (int) $options['unwrap']; $i++)
 			{
 				$previous = $e->getPrevious();
 				if($previous === NULL)
@@ -95,18 +82,19 @@ class Handler
 		}
 		$this->exception = $e;
 
-		if((bool) $use_debug)
+		if((bool) $options['debug'])
 		{
-			$page = $this->displayException($page_format);
+			$page = $this->displayException($options['format']);
 		}
 		else
 		{
-			$page = $this->badassError($page_format);
+			$page = $this->badassError($options['format']);
 		}
 
 		// Dump the page back to the user.
 		echo $page;
 
+		$closure = $options['closure'];
 		if($closure !== NULL)
 		{
 			$closure($exception);
@@ -123,7 +111,7 @@ class Handler
 	 */
 	final public static function getDebugState()
 	{
-		return static::$use_debug;
+		return static::$options['debug'];
 	}
 
 	/**
@@ -132,7 +120,7 @@ class Handler
 	 */
 	final public static function enableDebug()
 	{
-		static::$use_debug = true;
+		static::$options['debug'] = true;
 	}
 
 	/**
@@ -141,7 +129,7 @@ class Handler
 	 */
 	final public static function disableDebug()
 	{
-		static::$use_debug = false;
+		static::$options['debug'] = false;
 	}
 
 	/**
@@ -150,7 +138,7 @@ class Handler
 	 */
 	final public static function getUnwrapCount()
 	{
-		return static::$unwrap_count;
+		return static::$options['unwrap'];
 	}
 
 	/**
@@ -165,7 +153,7 @@ class Handler
 			$unwrap_count = 0;
 		}
 
-		static::$unwrap_count = (int) $unwrap_count;
+		static::$options['unwrap'] = (int) $unwrap_count;
 	}
 
 	/**
@@ -174,9 +162,9 @@ class Handler
 	 */
 	final public static function getPageFormat()
 	{
-		if(static::$page_format === NULL)
+		if(static::$options['format'] === NULL)
 		{
-			static::$page_format = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+			static::$options['format'] = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 	<head>
 		<title>OpenFlame: Community Content Management</title>
@@ -234,7 +222,7 @@ class Handler
 </html>';
 		}
 
-		return static::$page_format;
+		return static::$options['format'];
 	}
 
 	/**
@@ -244,7 +232,7 @@ class Handler
 	 */
 	final public static function setPageFormat($page_format)
 	{
-		static::$page_format = $page_format;
+		static::$options['format'] = $page_format;
 	}
 
 	/**
@@ -254,7 +242,7 @@ class Handler
 	 */
 	final public static function setTerminalFunction(\Closure $closure)
 	{
-		static::$closure = $closure;
+		static::$options['closure'] = $closure;
 	}
 
 	/**
@@ -263,13 +251,13 @@ class Handler
 	 */
 	final public static function getTerminalFunction()
 	{
-		return static::$closure;
+		return static::$options['closure'];
 	}
 
 	/**
 	 * Displays a debug page showing full info on the exception thrown.
 	 * @param string $page_format - The page format to use for this page.
-	 * @return void
+	 * @return string - The HTML to display.
 	 */
 	protected function displayException($page_format)
 	{
@@ -314,7 +302,7 @@ EOD;
 	/**
 	 * Display a non-technical and obscure error message.
 	 * @param string $page_format - The page format to use for this page.
-	 * @return void
+	 * @return string - The HTML to display.
 	 */
 	protected function badassError($page_format)
 	{
