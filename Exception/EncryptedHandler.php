@@ -110,7 +110,7 @@ class EncryptedHandler extends Handler
 				'context'		=> implode('', $this->traceException($e->getFile(), $e->getLine(), 7)),
 				'file'			=> $e->getFile(),
 				'line'			=> $e->getLine(),
-				'trace'			=> $e->getTrace(),
+				//'trace'			=> $e->getTrace(),
 			),
 			'super'			=> array(
 				'server'		=> $_SERVER,
@@ -118,6 +118,11 @@ class EncryptedHandler extends Handler
 				'env'			=> $_ENV,
 			),
 		);
+
+		if(static::$options['context'])
+		{
+			$data['exception']['trace'] = $this->highlightTrace(implode('', $this->traceException($this->exception->getFile(), $this->exception->getLine(), 7)));
+		}
 
 		$e_encrypted_string = '';
 		$json = \OpenFlame\Framework\Utility\JSON::encode($data);
