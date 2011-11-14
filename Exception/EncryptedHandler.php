@@ -31,6 +31,7 @@ class EncryptedHandler extends Handler
 		'debug'			=> false,
 		'unwrap'		=> 0,
 		'closure'		=> NULL,
+		'context'		=> true,
 		'publickey'		=> NULL,
 	);
 
