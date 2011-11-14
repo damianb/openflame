@@ -293,6 +293,10 @@ class Handler
 		{
 			$e['trace'] = $this->highlightTrace(implode('', $this->traceException($this->exception->getFile(), $this->exception->getLine(), 7)));
 		}
+		else
+		{
+			$e['trace'] = 'No trace context available.';
+		}
 
 		if(!$e['stack'])
 		{
