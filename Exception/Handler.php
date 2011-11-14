@@ -36,6 +36,7 @@ class Handler
 		'debug'			=> false,
 		'unwrap'		=> 0,
 		'closure'		=> NULL,
+		'context'		=> true,
 	);
 
 	/**
@@ -129,6 +130,24 @@ class Handler
 	final public static function disableDebug()
 	{
 		static::$options['debug'] = false;
+	}
+
+	/**
+	 * Enable code context fetching for exception information output.
+	 * @return void
+	 */
+	final public static function enableCodeContext()
+	{
+		static::$options['context'] = true;
+	}
+
+	/**
+	 * Disable code context fetching for exception information output.
+	 * @return void
+	 */
+	final public static function disableCodeContext()
+	{
+		static::$options['context'] = false;
 	}
 
 	/**
@@ -264,11 +283,16 @@ class Handler
 			'e_type'		=> get_class($this->exception),
 			'message'		=> $this->exception->getMessage(),
 			'code'			=> $this->exception->getCode(),
-			'trace'			=> $this->highlightTrace(implode('', $this->traceException($this->exception->getFile(), $this->exception->getLine(), 7))),
+			//'trace'			=> $this->highlightTrace(implode('', $this->traceException($this->exception->getFile(), $this->exception->getLine(), 7))),
 			'file'			=> $this->exception->getFile(),
 			'line'			=> $this->exception->getLine(),
 			'stack'			=> $this->formatStackTrace(),
 		);
+
+		if(static::$options['context'])
+		{
+			$e['trace'] = $this->highlightTrace(implode('', $this->traceException($this->exception->getFile(), $this->exception->getLine(), 7)));
+		}
 
 		if(!$e['stack'])
 		{
