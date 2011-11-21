@@ -297,45 +297,6 @@ class RouteInstance
 	 * Get a request URL variable extracted from the request.
 	 * @param string $point - The name of the variable to retrieve.
 	 * @return mixed - returns NULL if no such variable, or the variable's data.
-	 *
-	 * @deprecated since 1.2.0
-	 */
-	public function getRequestDataPoint($point)
-	{
-		trigger_error('\\OpenFlame\\Framework\\Router\\RouteInstance->getRequestDataPoint() is deprecated', E_USER_DEPRECATED);
-
-		if(isset($this->data[(string) $point]))
-		{
-			return $this->data[(string) $point];
-		}
-		else
-		{
-			return NULL;
-		}
-
-	}
-
-	/**
-	 * Set a request URL variable extracted from the current request.
-	 * @param string $point - The name of the variable to store this as.
-	 * @param mixed $data - The data to store.
-	 * @return \OpenFlame\Framework\Router\RouteInstance - Provides a fluent interface.
-	 *
-	 * @deprecated since 1.2.0
-	 */
-	public function setRequestDataPoint($point, $data)
-	{
-		trigger_error('\\OpenFlame\\Framework\\Router\\RouteInstance->setRequestDataPoint() is deprecated', E_USER_DEPRECATED);
-
-		$this->data[(string) $point] = $data;
-
-		return $this;
-	}
-
-	/**
-	 * Get a request URL variable extracted from the request.
-	 * @param string $point - The name of the variable to retrieve.
-	 * @return mixed - returns NULL if no such variable, or the variable's data.
 	 */
 	public function get($point)
 	{
