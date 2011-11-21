@@ -51,3 +51,9 @@
 	 - Provide support for "duplicators" in `Dependency\Injector` component by returning a closure within an injector.
 	 - Fix `Utility\JSON` parsing when the `#` character is used for things other than line comments.
 	 - Add new functionality in `Event\Dispatcher` component to allow listeners to be designated as "timed", and have them automatically removed after being called a specified number of times.
+ - 1.3.0 **minor** release
+	 - Refactor `Exception\Handler` internally for easier configuration
+	 - Add ability to disable code-context obtainment in `Exception\Handler` (useful when using packed phars for storing PHP code)
+	 - Refactor `Utility\JSON` parsing again to actually fix the use of `#` character when decoding JSON strings.  Yes, it's really fixed this time.
+	 - Add new component `Exception\EncryptedHandler` which can use OpenSSL keys to encrypt exception data when not in debug mode, to provide full debug data without the risk of information exposure.
+	 - Add new component `Exception\EncryptHelper` which helps generate OpenSSL keys and decrypt exception data provided by the component `Exception\EncryptedHandler`.
