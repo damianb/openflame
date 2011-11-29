@@ -127,6 +127,6 @@ class Scheduler
 			$tasks_run[] = $task_name;
 		}
 
-		return $tasks;
+		return $tasks_run;
 	}
 }
