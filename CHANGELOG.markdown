@@ -59,4 +59,5 @@
 	 - Add new component `Exception\EncryptHelper` which helps generate OpenSSL keys and decrypt exception data provided by the component `Exception\EncryptedHandler`.
 	 - Removed previously deprecated methods  `dataPointExists()`, `getDataPoint()`, `setDataPoint()` in `Event\Instance`, `getRequestDataPoint()`, `setRequestDataPoint()` in `Router\RouteInstance`, `triggerUntilReturn()` and `triggerUntilBreak()` in `Event\Dispatcher`.
  - 1.3.1 **maintenance** release
-	 - Fix notice thrown in `Event\Scheduler`
+	 - Fix notice thrown in `Event\Scheduler`.
+	 - Fix exception message used in `Twig\Wrapper` to provide the actual path used when looking for the Twig autoloader.
