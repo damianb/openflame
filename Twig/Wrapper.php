@@ -89,7 +89,7 @@ class Wrapper
 		$twig_root_path = rtrim($twig_root_path, '/') . '/';
 		if(!is_file($twig_root_path . 'Autoloader.php'))
 		{
-			throw new \InvalidArgumentException(sprintf('Could not locate the Twig autoloader at "%1$s"', $twig_root_path . '/lib/Twig/Autoloader.php'));
+			throw new \InvalidArgumentException(sprintf('Could not locate the Twig autoloader at "%1$s"', $twig_root_path . 'Autoloader.php'));
 		}
 
 		$this->twig_root_path = $twig_root_path;
