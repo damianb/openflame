@@ -105,9 +105,26 @@ class Translator
 			// Handle group auth inheritance
 			if(!empty($this->groups_raw[$group_id]['inherit']) && isset($this->group_auth_cache[$this->groups_raw[$group_id]['inherit']]))
 			{
+				// Mark this group's parent.
+				$this->groups[$group_id]['parent'] = $this->groups_raw[$group_id]['inherit'];
+
 				// Mark this group as a child of the one we're inheriting auths from.
 				$this->groups[$this->groups_raw[$group_id]['inherit']]['children'][] = $group_id;
-				$this->groups[$group_id]['parent'] = $this->groups_raw[$group_id]['inherit'];
+
+				// Let's do it for ALL the ancestors - that way, a change upstream will result in a very easy invalidation of all children.
+				$inherit_tree = array();
+				$inherit_id = $this->groups[$group_id]['parent'];
+				while(true)
+				{
+					$inherit_id = $this->groups[$inherit_id]['parent'];
+					if(isset($inherit_tree[$inherit_id]))
+					{
+						throw new \RuntimeException('Recursive group inheritance detected, aborting');
+					}
+
+					$inherit_tree[$inherit_id] = true;
+					$this->groups[$inherit_id]['children'][] = $group_id;
+				}
 
 				// Grab the auths of the parent.
 				$auth_array = $this->group_auth_cache[$this->groups_raw[$group_id]['inherit']];
