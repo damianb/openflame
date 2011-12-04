@@ -122,11 +122,6 @@ class Seeder
 	public function buildSeedString($algo = 'md5', $pad_length = 46, array $extra = array())
 	{
 		$hash = hash($algo, implode('', array_merge(array($this->getSessionSeed(), $this->getApplicationSeed()), $extra)));
-		$str = '';
-		foreach(str_split($hash, 2) as $char)
-		{
-			$str .= hexdec($char);
-		}
-		return str_pad($str, (int) $pad_length, '0', STR_PAD_LEFT);
+		return str_pad(implode('', array_map('hexdec', str_split($hash, 2))), (int) $pad_length, '0', STR_PAD_LEFT);
 	}
 }
