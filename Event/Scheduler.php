@@ -121,7 +121,7 @@ class Scheduler
 
 		foreach($tasks_run as $task)
 		{
-			$dispatcher->triggerUntilBreak(\OpenFlame\Framework\Event\Instance::newEvent('task.' . $task_name));
+			$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('task.' . $task_name), \OpenFlame\Framework\Event\Dispatcher::TRIGGER_MANUALBREAK);
 			$this->last_run[$task_name] = $now;
 
 			$tasks_run[] = $task_name;
