@@ -64,3 +64,4 @@
 	 - Minor optimization in `Security\Seeder`
  - 1.3.2 **maintenance** release
 	 - Fix bug with `Event\Scheduler` calling previously deprecated and now removed `Event\Dispatcher` method
+	 - Fix bug with undefined variable notices in `Event\Scheduler`
