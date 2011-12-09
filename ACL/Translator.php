@@ -116,7 +116,11 @@ class Translator
 				$inherit_id = $this->groups[$group_id]['parent'];
 				while(true)
 				{
-					$inherit_id = $this->groups[$inherit_id]['parent'];
+					$inherit_id = isset($this->groups[$inherit_id]['parent']) ? $this->groups[$inherit_id]['parent'] : NULL;
+					if($inherit_id === NULL)
+					{
+						break;
+					}
 					if(isset($inherit_tree[$inherit_id]))
 					{
 						throw new \RuntimeException('Recursive group inheritance detected, aborting');
