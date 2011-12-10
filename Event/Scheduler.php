@@ -123,8 +123,6 @@ class Scheduler
 		{
 			$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('task.' . $task), \OpenFlame\Framework\Event\Dispatcher::TRIGGER_MANUALBREAK);
 			$this->last_run[$task] = $now;
-
-			$tasks_run[] = $task;
 		}
 
 		return $tasks_run;
