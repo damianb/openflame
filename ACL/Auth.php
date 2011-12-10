@@ -44,9 +44,9 @@ class Auth
 
 		if($group_data !== NULL)
 		{
-			foreach($this->group as $group_id => $data)
+			foreach($group_data as $group_id => $data)
 			{
-				$this->addGroupData($group_id, $group_data);
+				$this->addGroupData($group_id, $data);
 			}
 		}
 	}
