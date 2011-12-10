@@ -10,7 +10,7 @@
  * Minimum Requirement: PHP 5.3.0
  */
 
-namespace OpenFlame\Framework;
+namespace OpenFlame\Framework\Core;
 
 /**
  * OpenFlame Framework - Main class
@@ -34,12 +34,7 @@ class Core
 	/**
 	 * @var string - The version for the Framework
 	 */
-	private static $version = '1.4.0-dev';
-
-	/**
-	 * @var string - The commit ID for phar-packaged forms of the framework (considering "unstable" development builds)
-	 */
-	private static $commit = NULL;
+	private static $version = '2.0.0-dev';
 
 	/**
 	 * @var array - Array of settings we have loaded and stored
@@ -84,18 +79,7 @@ class Core
 	 */
 	public static function setConfig($config_name, $config_value)
 	{
-		// check to see if this is a namespaced config
-		$config_name = explode('.', $config_name, 2);
-		if(sizeof($config_name) > 1)
-		{
-			// it is namespaced, we need to store under said namespace
-			self::$config["_{$config_name[0]}"][$config_name[1]] = $config_value;
-		}
-		else
-		{
-			// if no namespace was declared, we store it in the global namespace
-			self::$config['global'][$config_name[0]] = $config_value;
-		}
+		self::$config[$config_name] = $config_value;
 	}
 
 	/**
@@ -105,54 +89,7 @@ class Core
 	 */
 	public static function getConfig($config_name)
 	{
-		// check to see if this is a namespaced config
-		$config_name_array = explode('.', $config_name, 2);
-		if(sizeof($config_name_array) > 1)
-		{
-			// it is namespaced, we need to grab from that specific namespace.
-			if(!isset(self::$config["_{$config_name_array[0]}"][$config_name_array[1]]))
-			{
-				return NULL;
-			}
-
-			return self::$config["_{$config_name_array[0]}"][$config_name_array[1]];
-		}
-		else
-		{
-			// not namespaced, so we use the global namespace for this. :)
-			if(!isset(self::$config['global'][$config_name]))
-			{
-				return NULL;
-			}
-
-			return self::$config['global'][$config_name];
-		}
-	}
-
-	/**
-	 * Get all configurations under a certain namespace.
-	 * @param string $namespace - The namespace to retrieve (or an empty string, to retrieve the global config namespace contents)
-	 * @return array - The array of configurations stored under the specified namespace.
-	 */
-	public static function getConfigNamespace($namespace)
-	{
-		// If an empty string is used as the namespace, we assume the global namespace.
-		if($namespace === '')
-		{
-			if(!isset(self::$config['global']))
-			{
-				return NULL;
-			}
-
-			return self::$config['global'];
-		}
-
-		if(!isset(self::$config["_{$namespace}"]))
-		{
-			return NULL;
-		}
-
-		return self::$config["_{$namespace}"];
+		return self::$config[$config_name];
 	}
 
 	/**
