@@ -61,3 +61,7 @@
  - 1.3.1 **maintenance** release
 	 - Fix notice thrown in `Event\Scheduler`.
 	 - Fix exception message used in `Twig\Wrapper` to provide the actual path used when looking for the Twig autoloader.
+	 - Minor optimization in `Security\Seeder`
+ - 1.3.2 **maintenance** release
+	 - Fix bug with `Event\Scheduler` calling previously deprecated and now removed `Event\Dispatcher` method
+	 - Fix bug with undefined variable notices in `Event\Scheduler`
