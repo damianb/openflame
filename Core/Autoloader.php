@@ -10,7 +10,7 @@
  * Minimum Requirement: PHP 5.3.0
  */
 
-namespace OpenFlame\Framework;
+namespace OpenFlame\Framework\Core;
 
 /**
  * OpenFlame Framework - Autoloader object
@@ -19,6 +19,8 @@ namespace OpenFlame\Framework;
  *
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
  * @link        https://github.com/OpenFlame/OpenFlame-Framework
+ *
+ * @note: Only SPL exceptions should be used in the autoloader.
  */
 class Autoloader
 {
@@ -28,7 +30,7 @@ class Autoloader
 	private $paths = array();
 
 	/**
-	 * @var \OpenFlame\Framework\Autoloader - The singleton autoloader instance.
+	 * @var \OpenFlame\Framework\Core\Autoloader - The singleton autoloader instance.
 	 */
 	private static $instance;
 
@@ -40,15 +42,15 @@ class Autoloader
 	/**
 	 * Gets the singleton instance of the autoloader.
 	 * @param mixed $path - The path or array of paths to include in the autoload search.
-	 * @return \OpenFlame\Framework\Autoloader - The singleton autoloader instance.
+	 * @return \OpenFlame\Framework\Core\Autoloader - The singleton autoloader instance.
 	 */
 	public static function getInstance()
 	{
-		if(self::$instance === NULL)
+		if(static::$instance === NULL)
 		{
-			self::$instance = new self();
+			static::$instance = new static();
 		}
-		return self::$instance;
+		return static::$instance;
 	}
 
 	/**
@@ -66,9 +68,9 @@ class Autoloader
 		if($filepath !== false)
 		{
 			require $filepath;
-			if(!class_exists($class) && !interface_exists($class))
+			if(!class_exists($class) && !interface_exists($class) && (!function_exists('trait_exsts') || !trait_exists($class)))
 			{
-				throw new \RuntimeException(sprintf('Invalid class contained within file "%s"', $filepath));
+				throw new \RuntimeException(sprintf('Invalid class, interface, or trait contained within file "%s"', $filepath));
 			}
 			return;
 		}
@@ -138,11 +140,11 @@ class Autoloader
 	/**
 	 * Register this class as an autoloader within the autoloader stack.
 	 * @param mixed $path - The path or array of paths to register with the autoloader.
-	 * @return \OpenFlame\Framework\Autoloader - The autoloader instance.
+	 * @return \OpenFlame\Framework\Core\Autoloader - The autoloader instance.
 	 */
 	public static function register($path)
 	{
-		$autoloader = self::getInstance();
+		$autoloader = static::getInstance();
 		if(is_array($path))
 		{
 			foreach($path as $_path)

@@ -10,8 +10,8 @@
  * Minimum Requirement: PHP 5.3.0
  */
 
-namespace OpenFlame\Framework\Dependency;
-use OpenFlame\Framework\Core;
+namespace OpenFlame\Framework\Core;
+use OpenFlame\Framework\Core\Core;
 
 /**
  * OpenFlame Framework - Dependency injector
@@ -21,7 +21,7 @@ use OpenFlame\Framework\Core;
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
  * @link        https://github.com/OpenFlame/OpenFlame-Framework
  */
-class Injector implements \ArrayAccess
+class DependencyInjector implements \ArrayAccess
 {
 	/**
 	 * @var array - Array of closures which prepare the requested instance on demand.
@@ -29,7 +29,7 @@ class Injector implements \ArrayAccess
 	protected $injectors = array();
 
 	/**
-	 * @var \OpenFlame\Framework\Dependency\Injector - Singleton instance of the dependency injector
+	 * @var \OpenFlame\Framework\Core\DependencyInjector - Singleton instance of the dependency injector
 	 */
 	protected static $instance;
 
@@ -159,7 +159,7 @@ class Injector implements \ArrayAccess
 
 	/**
 	 * Get the singleton instance of the dependency injector.
-	 * @return \OpenFlame\Framework\Dependency\Injector - Singleton instance of the dependency injector
+	 * @return \OpenFlame\Framework\Core\DependencyInjector - Singleton instance of the dependency injector
 	 */
 	public static function getInstance()
 	{
@@ -178,7 +178,7 @@ class Injector implements \ArrayAccess
 	 */
 	public function get($name)
 	{
-		$object = \OpenFlame\Framework\Core::getObject($name);
+		$object = Core::getObject($name);
 		if($object === NULL)
 		{
 			$object = $this->fireInjector($name);
@@ -196,7 +196,7 @@ class Injector implements \ArrayAccess
 	 * Register a new dependency injector closure.
 	 * @param string $name - The name of the dependency
 	 * @param \Closure $injector - The closure to use when injecting the dependency
-	 * @return \OpenFlame\Framework\Dependency\Injector - Provides a fluent interface.
+	 * @return \OpenFlame\Framework\Core\DependencyInjector - Provides a fluent interface.
 	 */
 	public function setInjector($name, \Closure $injector)
 	{
@@ -208,7 +208,7 @@ class Injector implements \ArrayAccess
 	/**
 	 * Removes the specified injector
 	 * @param string $name - The name of the dependency
-	 * @return \OpenFlame\Framework\Dependency\Injector - Provides a fluent interface.
+	 * @return \OpenFlame\Framework\Core\DependencyInjector - Provides a fluent interface.
 	 */
 	public function unsetInjector($name)
 	{
@@ -251,7 +251,7 @@ class Injector implements \ArrayAccess
 	protected function fireInjector($name)
 	{
 		$injector = $this->getInjector($name);
-		return \OpenFlame\Framework\Core::setObject($name, $injector());
+		return Core::setObject($name, $injector());
 	}
 
 	/**
