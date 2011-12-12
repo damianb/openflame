@@ -11,7 +11,7 @@
  */
 
 namespace OpenFlame\Framework\Utility;
-use OpenFlame\Framework\Core;
+use \OpenFlame\Framework\Core\Internal\JSONException;
 
 /**
  * OpenFlame Framework - JSON handling class,
@@ -29,10 +29,47 @@ abstract class JSON
 	 * Builds a JSON string based on input.
 	 * @param mixed $data - The data to cache.
 	 * @return string - JSON string.
+	 *
+	 * @throws JSONException
 	 */
 	public static function encode($data)
 	{
-		return json_encode($data);
+		if(empty($data))
+		{
+			return NULL;
+		}
+
+		$json = json_encode($data);
+
+		if($json === NULL)
+		{
+			switch(json_last_error())
+			{
+				case JSON_ERROR_NONE:
+					$error = 'No error';
+				break;
+
+				case JSON_ERROR_DEPTH:
+					$error = 'Maximum JSON recursion limit reached.';
+				break;
+
+				case JSON_ERROR_CTRL_CHAR:
+					$error = 'Control character error';
+				break;
+
+				case JSON_ERROR_SYNTAX:
+					$error = 'JSON syntax error';
+				break;
+
+				default:
+					$error = 'Unknown JSON error';
+				break;
+			}
+
+			throw new JSONException($error);
+		}
+
+		return $json;
 	}
 
 	/**
@@ -40,20 +77,23 @@ abstract class JSON
 	 * @param string $json - The JSON string or the path of the JSON file to decode.
 	 * @return array - The contents of the JSON string/file.
 	 *
-	 * @throws \RuntimeException
+	 * @throws JSONException
 	 */
 	public static function decode($json)
 	{
 		if(is_file($json))
+		{
 			$json = file_get_contents($json);
+		}
 
-		// Empty JSON file?  o_O
+		// Empty JSON data?  o_O
 		if(empty($json))
 		{
 			return NULL;
 		}
 
-		$data = json_decode(preg_replace("/^[\t ]*#[^\n]*\n?/m", '', $json), true);
+		$json = preg_replace("/^[\t ]*#[^\n]*\n?/m", '', $json);
+		$data = json_decode($json, true);
 
 		if($data === NULL)
 		{
@@ -80,7 +120,7 @@ abstract class JSON
 				break;
 			}
 
-			throw new \RuntimeException(sprintf('JSON error:"%1$s"', $error));
+			throw new JSONException($error);
 		}
 
 		return $data;
