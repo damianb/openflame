@@ -11,7 +11,6 @@
  */
 
 namespace OpenFlame\Framework\Event;
-use OpenFlame\Framework\Core;
 
 /**
  * OpenFlame Framework - Event dispatcher object
@@ -48,6 +47,7 @@ class Dispatcher
 	const TRIGGER_NOBREAK = 1;
 	const TRIGGER_MANUALBREAK = 2;
 	const TRIGGER_RETURNBREAK = 3;
+	const TRIGGER_MIXEDBREAK = 4;
 	/**#@-*/
 
 	/**
@@ -76,11 +76,7 @@ class Dispatcher
 			$priority = -20;
 		}
 
-		$limit = (int) $limit;
-		if($limit < -1)
-		{
-			$limit = -1;
-		}
+		$limit = ($limit >= -1) ? (int) $limit : -1;
 
 		// Check to see what type of listener we're dealing with here; this allows us to use some shortcuts down the road.
 		$listener_type = NULL;
@@ -203,7 +199,7 @@ class Dispatcher
 				}
 
 				// Should we break?
-				if(($return !== NULL && $dispatch_type = self::TRIGGER_RETURNBREAK) || ($dispatch_type = self::TRIGGER_MANUALBREAK && $event->wasBreakTriggered()))
+				if(($return !== NULL && ($dispatch_type == self::TRIGGER_RETURNBREAK || $dispatch_type == self::TRIGGER_MIXEDBREAK)) || (($dispatch_type == self::TRIGGER_MANUALBREAK || $dispatch_type == self::TRIGGER_MIXEDBREAK) && $event->wasBreakTriggered()))
 				{
 					return $event; // PHP 5.4 compat -- cannot use "break (int)" anymore, so we just return the $event
 				}
