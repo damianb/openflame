@@ -10,8 +10,7 @@
  * Minimum Requirement: PHP 5.3.0
  */
 
-namespace OpenFlame\Framework\Utility;
-use OpenFlame\Framework\Core;
+namespace OpenFlame\Framework\Twig\Helper\Timer;
 
 /**
  * OpenFlame Framework - Benchmarking class,
