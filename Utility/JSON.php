@@ -11,7 +11,7 @@
  */
 
 namespace OpenFlame\Framework\Utility;
-use \OpenFlame\Framework\Core\Internal\JSONException;
+use \OpenFlame\Framework\Utility\Internal\JSONException;
 
 /**
  * OpenFlame Framework - JSON handling class,

@@ -10,7 +10,8 @@
  * Minimum Requirement: PHP 5.3.0
  */
 
-namespace OpenFlame\Framework\Core\Internal;
+namespace OpenFlame\Framework\Utility\Internal;
+use OpenFlame\Framework\Core\Internal\OpenFlameException;
 
 /**
  * OpenFlame Framework - JSON exception class

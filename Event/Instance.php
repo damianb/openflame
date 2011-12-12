@@ -11,7 +11,7 @@
  */
 
 namespace OpenFlame\Framework\Event;
-use OpenFlame\Framework\Core\Internal\EventException;
+use OpenFlame\Framework\Event\Internal\EventException;
 
 /**
  * OpenFlame Framework - Event object
