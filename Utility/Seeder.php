@@ -10,8 +10,8 @@
  * Minimum Requirement: PHP 5.3.0
  */
 
-namespace OpenFlame\Framework\Security;
-use OpenFlame\Framework\Core;
+namespace OpenFlame\Framework\Utility;
+use \OpenFlame\Framework\Utility\Internal\SeederException;
 
 /**
  * OpenFlame Framework - Random string/seed generator
@@ -82,20 +82,20 @@ class Seeder
 	 * @param string $charset - The range of characters to use for the random string (will not modify character cases!)
 	 * @return string - A random string!
 	 *
-	 * @throws \InvalidArgumentException
+	 * @throws SeederException
 	 */
 	public function buildRandomString($length = 12, $seed = '', $charset = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')
 	{
 		if($length > 64)
 		{
-			throw new \InvalidArgumentException('Length specified for random string exceeds maximum allowed length of 64 characters');
+			throw new SeederException('Length specified for random string exceeds maximum allowed length of 64 characters');
 		}
 		elseif($length < 1)
 		{
 			return '';
 		}
 
-		$converter = \OpenFlame\Framework\Utility\BaseConverter::newInstance()
+		$converter = BaseConverter::newInstance()
 			->setCharsetTo($charset);
 
 		$seed_string = $this->buildSeedString('sha256', 88, array(mt_rand(), $seed));

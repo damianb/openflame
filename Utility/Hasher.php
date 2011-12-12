@@ -10,8 +10,7 @@
  * Minimum Requirement: PHP 5.3.0
  */
 
-namespace OpenFlame\Framework\Security;
-use OpenFlame\Framework\Core;
+namespace OpenFlame\Framework\Utility;
 
 /**
  * OpenFlame Framework - Hashing framework,
