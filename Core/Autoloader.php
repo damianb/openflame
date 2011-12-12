@@ -119,7 +119,7 @@ class Autoloader
 
 		foreach($this->paths as $path)
 		{
-			if(file_exists("{$path}{$name}.php"))
+			if(file_exists($path . $name . '.php'))
 			{
 				return true;
 			}
@@ -147,10 +147,7 @@ class Autoloader
 		$autoloader = static::getInstance();
 		if(is_array($path))
 		{
-			foreach($path as $_path)
-			{
-				$autoloader->setPath($_path);
-			}
+			array_map(array($autoloader, 'setPath'), $path);
 		}
 		else
 		{
