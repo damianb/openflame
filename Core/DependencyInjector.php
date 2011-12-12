@@ -12,6 +12,7 @@
 
 namespace OpenFlame\Framework\Core;
 use OpenFlame\Framework\Core\Core;
+use OpenFlame\Framework\Core\Internal\InjectorException;
 
 /**
  * OpenFlame Framework - Dependency injector
@@ -42,48 +43,32 @@ class DependencyInjector implements \ArrayAccess
 		$injector = $this;
 
 		// Define a bunch of injectors
-		$this->setInjector('router', function() {
-			return new \OpenFlame\Framework\Router\Router();
-		});
-
-		$this->setInjector('alias_router', function() {
-			return new \OpenFlame\Framework\Router\AliasRouter();
-		});
-
-		$this->setInjector('input', function() {
-			return new \OpenFlame\Framework\Input\Handler();
-		});
-
-		$this->setInjector('template', function() {
-			return new \OpenFlame\Framework\Twig\Variables();
-		});
-
-		$this->setInjector('form', function() {
-			return new \OpenFlame\Framework\Security\Form();
-		});
-
-		$this->setInjector('asset', function() {
-			return new \OpenFlame\Framework\Asset\Manager();
-		});
+		$this->setInjector('router', '\\OpenFlame\\Framework\\Router\\Router');
+		$this->setInjector('alias_router', '\\OpenFlame\\Framework\\Router\\AliasRouter');
+		$this->setInjector('input', '\\OpenFlame\\Framework\\Input\\Handler');
+		$this->setInjector('template', '\\OpenFlame\\Framework\\Twig\\Variables');
+		$this->setInjector('asset', '\\OpenFlame\\Framework\\Twig\\Helper\\Asset\\Manager');
+		$this->setInjector('form', '\\OpenFlame\\Framework\\Utility\\FormKey');
+		$this->setInjector('dispatcher', '\\OpenFlame\\Framework\\Event\\Dispatcher');
+		$this->setInjector('language', '\\OpenFlame\\Framework\\Language\\Handler');
+		$this->setInjector('hasher', '\OpenFlame\\Framework\\Utility\\Hasher');
+		$this->setInjector('url', '\\OpenFlame\\Framework\\Twig\\Helper\\URL\\Builder');
+		$this->setInjector('cookie', '\\OpenFlame\\Framework\\Cookie\\Manager');
+		$this->setInjector('seeder', '\\OpenFlame\\Framework\\Security\\Seeder');
+		$this->setInjector('timer', '\\OpenFlame\\Framework\\Twig\\Helper\\Timer\\Timer');
+		$this->setInjector('session_store_engine', '\\OpenFlame\\Framework\\Session\\Storage\\EngineFilesystem');
+		$this->setInjector('session_client_engine', '\\OpenFlame\\Framework\\Session\\Client\\EngineCookie');
 
 		$this->setInjector('asset_proxy', function() use($injector) {
-			return new \OpenFlame\Framework\Asset\Proxy($injector->get('asset'));
+			return new \OpenFlame\Framework\Twig\Helper\Asset\Proxy($injector->get('asset'));
 		});
 
-		$this->setInjector('dispatcher', function() {
-			return new \OpenFlame\Framework\Event\Dispatcher();
-		});
-
-		$this->setInjector('language', function() {
-			return new \OpenFlame\Framework\Language\Handler();
+		$this->setInjector('url_proxy', function() use($injector) {
+			return new \OpenFlame\Framework\Twig\Helper\URL\BuilderProxy($injector->get('url'));
 		});
 
 		$this->setInjector('language_proxy', function() use($injector) {
 			return new \OpenFlame\Framework\Language\Proxy($injector->get('language'));
-		});
-
-		$this->setInjector('cookie', function() {
-			return new \OpenFlame\Framework\Cookie\Manager();
 		});
 
 		$this->setInjector('header', function() use($injector) {
@@ -92,34 +77,6 @@ class DependencyInjector implements \ArrayAccess
 			$cookie->setCookieManager($injector->get('cookie'));
 
 			return $header;
-		});
-
-		$this->setInjector('url', function() {
-			return new \OpenFlame\Framework\URL\Builder();
-		});
-
-		$this->setInjector('url_proxy', function() use($injector) {
-			return new \OpenFlame\Framework\URL\BuilderProxy($injector->get('url'));
-		});
-
-		$this->setInjector('hasher', function() {
-			return new \OpenFlame\Framework\Security\Hasher();
-		});
-
-		$this->setInjector('seeder', function() {
-			return new \OpenFlame\Framework\Security\Seeder();
-		});
-
-		$this->setInjector('timer', function() {
-			return new \OpenFlame\Framework\Utility\Timer();
-		});
-
-		$this->setInjector('session_store_engine', function() {
-			return new \OpenFlame\Framework\Session\Storage\EngineFilesystem();
-		});
-
-		$this->setInjector('session_client_engine', function() {
-			return new \OpenFlame\Framework\Session\Client\EngineCookie();
 		});
 
 		$this->setInjector('session', function() use($injector) {
@@ -169,6 +126,17 @@ class DependencyInjector implements \ArrayAccess
 		}
 
 		return self::$instance;
+	}
+
+	/**
+	 * Allows quickly grabbing a dependency without using getInstance to fetch the currently stored static instance of the dependency injector (hybrid of self::getInstance() and self->get())
+	 * @param string $name - The name of the dependency to inject.
+	 * @return object - The object we are injecting.
+	 */
+	public static function grab($name)
+	{
+		$self = self::getInstance();
+		return $self->get($name);
 	}
 
 	/**
@@ -230,28 +198,36 @@ class DependencyInjector implements \ArrayAccess
 	/**
 	 * Get the injector closure.
 	 * @param string $name - The name of the component to grab the injector for.
-	 * @return \Closure - Returns the dependency injector closure to use.
+	 * @return mixed - Returns the dependency injector to use.
 	 *
-	 * @throws \LogicException
+	 * @throws InjectorException
 	 */
 	protected function getInjector($name)
 	{
 		if(!isset($this->injectors[$name]))
 		{
-			throw new \LogicException(sprintf('Cannot fetch dependency object "%s", no injector defined', $name));
+			throw new InjectorException(sprintf('Cannot fetch dependency object "%s", no injector defined', $name));
 		}
 		return $this->injectors[$name];
 	}
 
 	/**
-	 * Trigger the dependency injector and store a reference to the resulting object in the OpenFlame core
+	 * Trigger the dependency injector and store a reference to the resulting object in the OpenFlame Framework core
 	 * @param string $name - The name of the dependency to inject.
 	 * @return object - The object that we are injecting.
 	 */
 	protected function fireInjector($name)
 	{
 		$injector = $this->getInjector($name);
-		return Core::setObject($name, $injector());
+
+		if($injector instanceof \Closure)
+		{
+			return Core::setObject($name, $injector());
+		}
+		else
+		{
+			return Core::setObject($name, new $injector);
+		}
 	}
 
 	/**
