@@ -11,7 +11,9 @@
  */
 
 namespace OpenFlame\Framework\Event;
-use \OpenFlame\Framework\Core;
+use \OpenFlame\Framework\Core\DependencyInjector;
+use \OpenFlame\Framework\Event\Dispatcher;
+use \OpenFlame\Framework\Event\Instance as Event;
 
 /**
  * OpenFlame Framework - Event scheduler object, schedules tasks to be regularly triggered in the future.
@@ -114,14 +116,13 @@ class Scheduler
 	public function runTasks()
 	{
 		$now = time();
-		$injector = \OpenFlame\Framework\Dependency\Injector::getInstance();
-		$dispatcher = $injector->get('dispatcher');
+		$dispatcher = DependencyInjector::grab('dispatcher');
 
 		$tasks_run = $this->getScheduledTasks($now);
 
 		foreach($tasks_run as $task)
 		{
-			$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('task.' . $task), \OpenFlame\Framework\Event\Dispatcher::TRIGGER_MANUALBREAK);
+			$dispatcher->trigger(Event::newEvent('task.' . $task), Dispatcher::TRIGGER_MANUALBREAK);
 			$this->last_run[$task] = $now;
 		}
 
