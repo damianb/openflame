@@ -163,11 +163,16 @@ class DependencyInjector implements \ArrayAccess
 	/**
 	 * Register a new dependency injector closure.
 	 * @param string $name - The name of the dependency
-	 * @param \Closure $injector - The closure to use when injecting the dependency
+	 * @param mixed $injector - Either the closure or class to instantiate when injecting the dependency
 	 * @return \OpenFlame\Framework\Core\DependencyInjector - Provides a fluent interface.
 	 */
-	public function setInjector($name, \Closure $injector)
+	public function setInjector($name, $injector)
 	{
+		if(($injector instanceof \Closure))
+		{
+			$injector = (string) $injector;
+		}
+
 		$this->injectors[$name] = $injector;
 
 		return $this;
@@ -226,7 +231,7 @@ class DependencyInjector implements \ArrayAccess
 		}
 		else
 		{
-			return Core::setObject($name, new $injector);
+			return Core::setObject($name, new $injector());
 		}
 	}
 
