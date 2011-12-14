@@ -10,8 +10,7 @@
  * Minimum Requirement: PHP 5.3.0
  */
 
-namespace OpenFlame\Framework\Asset;
-use OpenFlame\Framework\Core;
+namespace OpenFlame\Framework\Twig\Helper\Asset;
 
 /**
  * OpenFlame Framework - Asset instance object
@@ -39,7 +38,7 @@ class AssetInstance
 	protected $url = '';
 
 	/**
-	 * @var \OpenFlame\Framework\Asset\Manager - The asset manager object.
+	 * @var \OpenFlame\Framework\Twig\Helper\Asset\Manager - The asset manager object.
 	 */
 	protected $manager;
 
@@ -50,7 +49,7 @@ class AssetInstance
 
 	/**
 	 * Get a new instance of this object.
-	 * @return \OpenFlame\Framework\Asset\AssetInstance - The newly created instance.
+	 * @return \OpenFlame\Framework\Twig\Helper\Asset\AssetInstance - The newly created instance.
 	 */
 	public static function newInstance()
 	{
@@ -59,9 +58,9 @@ class AssetInstance
 
 	/**
 	 * Link this object and the asset manager
-	 * @return \OpenFlame\Framework\Asset\AssetInstance - Provides a fluent interface.
+	 * @return \OpenFlame\Framework\Twig\Helper\Asset\AssetInstance - Provides a fluent interface.
 	 */
-	public function setManager(\OpenFlame\Framework\Asset\Manager $manager)
+	public function setManager(Manager $manager)
 	{
 		$this->manager = $manager;
 
@@ -80,7 +79,7 @@ class AssetInstance
 	/**
 	 * Set the asset type for this instance
 	 * @param string $name - The asset name to set.
-	 * @return \OpenFlame\Framework\Asset\AssetInstance - Provides a fluent interface.
+	 * @return \OpenFlame\Framework\Twig\Helper\Asset\AssetInstance - Provides a fluent interface.
 	 */
 	public function setName($name)
 	{
@@ -101,7 +100,7 @@ class AssetInstance
 	/**
 	 * Set the asset type for this instance
 	 * @param string $type - The asset type to set.
-	 * @return \OpenFlame\Framework\Asset\AssetInstance - Provides a fluent interface.
+	 * @return \OpenFlame\Framework\Twig\Helper\Asset\AssetInstance - Provides a fluent interface.
 	 */
 	public function setType($type)
 	{
@@ -122,7 +121,7 @@ class AssetInstance
 	/**
 	 * Set the relative asset URL for this instance
 	 * @param string - The relative asset URL to set.
-	 * @return \OpenFlame\Framework\Asset\AssetInstance - Provides a fluent interface.
+	 * @return \OpenFlame\Framework\Twig\Helper\Asset\AssetInstance - Provides a fluent interface.
 	 */
 	public function setURL($url)
 	{
@@ -150,7 +149,7 @@ class AssetInstance
 	 * Set an asset's property.
 	 * @param string $property - The name of the property to set.
 	 * @param mixed $value - The value to set for the property.
-	 * @return \OpenFlame\Framework\Asset\AssetInstance - Provides a fluent interface.
+	 * @return \OpenFlame\Framework\Twig\Helper\Asset\AssetInstance - Provides a fluent interface.
 	 */
 	public function setProperty($property, $value)
 	{
