@@ -11,7 +11,7 @@
  */
 
 namespace OpenFlame\Framework\Cookie;
-use OpenFlame\Framework\Core;
+use OpenFlame\Framework\Header\Helper\Cookie\Internal\CookieInstanceException;
 
 /**
  * OpenFlame Framework - Cookie instance object
@@ -47,10 +47,10 @@ class Instance
 
 	/**
 	 * Constructor
-	 * @param \OpenFlame\Framework\Cookie\Manager $manager - The cookie manager submodule.
+	 * @param \OpenFlame\Framework\Header\Helper\Cookie\Manager $manager - The cookie manager submodule.
 	 * @return void
 	 */
-	final protected function __construct(\OpenFlame\Framework\Cookie\Manager $manager)
+	final protected function __construct(Manager $manager)
 	{
 		$this->manager = $manager;
 		$this->expire_time = $this->manager->getDefaultCookieExpire();
@@ -58,10 +58,10 @@ class Instance
 
 	/**
 	 * Get a new instance of the cookie instance object
-	 * @param \OpenFlame\Framework\Cookie\Manager $manager - The cookie manager submodule.
-	 * @return \OpenFlame\Framework\Header\CookieInstance - The newly created cookie instance
+	 * @param \OpenFlame\Framework\Header\Helper\Cookie\Manager $manager - The cookie manager submodule.
+	 * @return \OpenFlame\Framework\Header\Helper\Cookie\Instance - The newly created cookie instance
 	 */
-	final public static function newInstance(\OpenFlame\Framework\Cookie\Manager $manager)
+	final public static function newInstance(Manager $manager)
 	{
 		return new static($manager);
 	}
@@ -87,7 +87,7 @@ class Instance
 	/**
 	 * Set how many seconds into the future this cookie will expire.
 	 * @param integer $expire_time - The time, in seconds, of how far into the future this cookie will expire.
-	 * @return \OpenFlame\Framework\Header\CookieInstance - Provides a fluent interface.
+	 * @return \OpenFlame\Framework\Header\Helper\Cookie\Instance - Provides a fluent interface.
 	 */
 	public function setExpireTime($expire_time = 0)
 	{
@@ -108,7 +108,7 @@ class Instance
 	/**
 	 * Set the cookie name for this instance.
 	 * @param string $cookie_name - The name to set for this cookie instance.
-	 * @return \OpenFlame\Framework\Header\CookieInstance - Provides a fluent interface.
+	 * @return \OpenFlame\Framework\Header\Helper\Cookie\Instance - Provides a fluent interface.
 	 */
 	public function setCookieName($cookie_name)
 	{
@@ -135,7 +135,7 @@ class Instance
 	/**
 	 * Attach a value to this cookie instance.
 	 * @param string $cookie_value - The value to attach to this cookie instance.
-	 * @return \OpenFlame\Framework\Header\CookieInstance - Provides a fluent interface.
+	 * @return \OpenFlame\Framework\Header\Helper\Cookie\Instance - Provides a fluent interface.
 	 */
 	public function setCookieValue($cookie_value)
 	{
@@ -148,13 +148,13 @@ class Instance
 	 * Get the full header string of this cookie's data.
 	 * @return string - The header string to send for this cookie.
 	 *
-	 * @throws \LogicException
+	 * @throws CookieInstanceException
 	 */
 	public function getFullCookieString()
 	{
 		if(empty($this->cookie_name))
 		{
-			throw new \LogicException('Attempted to generate cookie data string for a cookie without a cookie name set');
+			throw new CookieInstanceException('Attempted to generate cookie data string for a cookie without a cookie name set');
 		}
 
 		$path = $this->manager->getCookiePath();

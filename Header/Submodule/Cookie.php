@@ -11,7 +11,6 @@
  */
 
 namespace OpenFlame\Framework\Header\Submodule;
-use OpenFlame\Framework\Core;
 
 /**
  * OpenFlame Framework - Header manager object
@@ -29,7 +28,7 @@ class Cookie implements \OpenFlame\Framework\Header\Submodule\SubmoduleInterface
 	protected $manager;
 
 	/**
-	 * @var \OpenFlame\Framework\Cookie\Manager - The cookie manager object.
+	 * @var \OpenFlame\Framework\Header\Helper\Cookie\Manager - The cookie manager object.
 	 */
 	protected $cookie_manager;
 
@@ -62,10 +61,10 @@ class Cookie implements \OpenFlame\Framework\Header\Submodule\SubmoduleInterface
 
 	/**
 	 * Link in the cookie manager object
-	 * @param \OpenFlame\Framework\Cookie\Manager $manager - The cookie manager object.
+	 * @param \OpenFlame\Framework\Header\Helper\Cookie\Manager $manager - The cookie manager object.
 	 * @return \OpenFlame\Framework\Header\Submodule\Cookie - Provides a fluent interface.
 	 */
-	public function setCookieManager(\OpenFlame\Framework\Cookie\Manager $cookie_manager)
+	public function setCookieManager(\OpenFlame\Framework\Header\Helper\Cookie\Manager $cookie_manager)
 	{
 		$this->cookie_manager = $cookie_manager;
 

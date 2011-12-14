@@ -10,8 +10,7 @@
  * Minimum Requirement: PHP 5.3.0
  */
 
-namespace OpenFlame\Framework\Cookie;
-use OpenFlame\Framework\Core;
+namespace OpenFlame\Framework\Header\Helper\Cookie;
 
 /**
  * OpenFlame Framework - Cookie manager object
@@ -78,7 +77,7 @@ class Manager
 
 	/**
 	 * Set the current UNIX timestamp (calls time() and stores the output, does not accept input)
-	 * @return \OpenFlame\Framework\Cookie\Manager - Provides a fluent interface.
+	 * @return \OpenFlame\Framework\Header\Helper\Cookie\Manager - Provides a fluent interface.
 	 */
 	protected function setNowTime()
 	{
@@ -99,7 +98,7 @@ class Manager
 	/**
 	 * Set the cookie domain.
 	 * @param string $cookie_domain - The cookie domain to set.
-	 * @return \OpenFlame\Framework\Cookie\Manager - Provides a fluent interface.
+	 * @return \OpenFlame\Framework\Header\Helper\Cookie\Manager - Provides a fluent interface.
 	 */
 	public function setCookieDomain($cookie_domain)
 	{
@@ -121,7 +120,7 @@ class Manager
 	/**
 	 * Set the cookie path.
 	 * @param string $cookie_path - The cookie path to set.
-	 * @return \OpenFlame\Framework\Cookie\Manager - Provides a fluent interface.
+	 * @return \OpenFlame\Framework\Header\Helper\Cookie\Manager - Provides a fluent interface.
 	 */
 	public function setCookiePath($cookie_path)
 	{
@@ -143,7 +142,7 @@ class Manager
 	/**
 	 * Set the cookie prefix.
 	 * @param string $cookie_prefix - The cookie prefix to set.
-	 * @return \OpenFlame\Framework\Cookie\Manager - Provides a fluent interface.
+	 * @return \OpenFlame\Framework\Header\Helper\Cookie\Manager - Provides a fluent interface.
 	 */
 	public function setCookiePrefix($cookie_prefix)
 	{
@@ -163,7 +162,7 @@ class Manager
 
 	/**
 	 * Set all cookies generated to be marked as "secure" (for use with HTTPS).
-	 * @return \OpenFlame\Framework\Cookie\Manager - Provides a fluent interface.
+	 * @return \OpenFlame\Framework\Header\Helper\Cookie\Manager - Provides a fluent interface.
 	 */
 	public function enableSecureCookies()
 	{
@@ -174,7 +173,7 @@ class Manager
 
 	/**
 	 * Set all cookies generated to be not marked as "secure" (for use with HTTP).
-	 * @return \OpenFlame\Framework\Cookie\Manager - Provides a fluent interface.
+	 * @return \OpenFlame\Framework\Header\Helper\Cookie\Manager - Provides a fluent interface.
 	 */
 	public function disableSecureCookies()
 	{
@@ -231,7 +230,7 @@ class Manager
 	/**
 	 * Create a new cookie instance
 	 * @param string $cookie_name - The name for this cookie instance to use.
-	 * @return \OpenFlame\Framework\Cookie\Instance - The newly created cookie instance.
+	 * @return \OpenFlame\Framework\Header\Helper\Cookie\Instance - The newly created cookie instance.
 	 */
 	public function setCookie($cookie_name)
 	{
@@ -246,7 +245,7 @@ class Manager
 	/**
 	 * Remove a cookie that was previously going to be sent.
 	 * @param string $cookie_name - The name of the cookie to trash.
-	 * @return \OpenFlame\Framework\Cookie\Manager - Provides a fluent interface.
+	 * @return \OpenFlame\Framework\Header\Helper\Cookie\Manager - Provides a fluent interface.
 	 */
 	public function trashCookie($cookie_name)
 	{
@@ -258,7 +257,7 @@ class Manager
 	/**
 	 * Set a cookie as "expired".
 	 * @param string $cookie_name - The name of the cookie to expire.
-	 * @return \OpenFlame\Framework\Cookie\Manager - Provides a fluent interface.
+	 * @return \OpenFlame\Framework\Header\Helper\Cookie\Manager - Provides a fluent interface.
 	 */
 	public function expireCookie($cookie_name)
 	{
