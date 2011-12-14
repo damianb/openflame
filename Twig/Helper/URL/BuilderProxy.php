@@ -10,8 +10,7 @@
  * Minimum Requirement: PHP 5.3.0
  */
 
-namespace OpenFlame\Framework\URL;
-use OpenFlame\Framework\Core;
+namespace OpenFlame\Framework\Twig\Helper\URL;
 
 /**
  * OpenFlame Framework - Template proxy object for internal URL construction,
@@ -24,7 +23,7 @@ use OpenFlame\Framework\Core;
 class BuilderProxy
 {
 	/**
-	 * @var \OpenFlame\Framework\URL\Builder - The URL builder object.
+	 * @var \OpenFlame\Framework\Twig\Helper\URL\Builder - The URL builder object.
 	 */
 	protected $builder;
 
@@ -35,10 +34,9 @@ class BuilderProxy
 
 	/**
 	 * Constructor
-	 * @param \OpenFlame\Framework\URL\Builder $manager - The URL builder object.
-	 * @return void
+	 * @param \OpenFlame\Framework\Twig\Helper\URL\Builder $manager - The URL builder object.
 	 */
-	public function __construct(\OpenFlame\Framework\URL\Builder $builder)
+	public function __construct(\OpenFlame\Framework\Twig\Helper\URL\Builder $builder)
 	{
 		$this->builder = $builder;
 	}
