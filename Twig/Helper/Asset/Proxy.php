@@ -10,8 +10,8 @@
  * Minimum Requirement: PHP 5.3.0
  */
 
-namespace OpenFlame\Framework\Asset;
-use OpenFlame\Framework\Core;
+namespace OpenFlame\Framework\Twig\Helper\Asset;
+use OpenFlame\Framework\Twig\Helper\Asset\Internal\AssetProxyException;
 
 /**
  * OpenFlame Framework - Template proxy object
@@ -24,7 +24,7 @@ use OpenFlame\Framework\Core;
 class Proxy
 {
 	/**
-	 * @var \OpenFlame\Framework\Asset\Manager - The asset manager which handles all asset instances.
+	 * @var \OpenFlame\Framework\Twig\Helper\Asset\Manager - The asset manager which handles all asset instances.
 	 */
 	protected $manager;
 
@@ -35,15 +35,15 @@ class Proxy
 
 	/**
 	 * Constructor
-	 * @param \OpenFlame\Framework\Asset\Manager $manager - The template asset manager.
+	 * @param \OpenFlame\Framework\Twig\Helper\Asset\Manager $manager - The template asset manager.
 	 * @return void
 	 */
-	public function __construct(\OpenFlame\Framework\Asset\Manager $manager)
+	public function __construct(Manager $manager)
 	{
 		$this->manager = $manager;
 		foreach($this->manager->getAssetTypes() as $type)
 		{
-			$subproxy = \OpenFlame\Framework\Asset\Subproxy::newInstance($manager)
+			$subproxy = Subproxy::newInstance($manager)
 				->setType($type)
 				->populateAssetList();
 			$this->subproxies[$type] = $subproxy;
@@ -53,9 +53,9 @@ class Proxy
 	/**
 	 * Magic method, providing seamless access to asset data in Twig templates.
 	 * @param string $name - The type of the asset to grab.
-	 * @return \OpenFlame\Framework\Asset\Subproxy - The subproxy for the asset type that we want.
+	 * @return \OpenFlame\Framework\Twig\Helper\Asset\Subproxy - The subproxy for the asset type that we want.
 	 *
-	 * @throws \RuntimeException
+	 * @throws AssetProxyException
 	 */
 	public function __get($name)
 	{
@@ -63,7 +63,7 @@ class Proxy
 		{
 			if($this->manager->usingInvalidAssetExceptions())
 			{
-				throw new \RuntimeException(sprintf('Attempted to access invalid asset type "%1$s"', $name));
+				throw new AssetProxyException(sprintf('Attempted to access invalid asset type "%1$s"', $name));
 			}
 			else
 			{

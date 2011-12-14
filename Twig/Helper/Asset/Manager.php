@@ -10,8 +10,8 @@
  * Minimum Requirement: PHP 5.3.0
  */
 
-namespace OpenFlame\Framework\Asset;
-use OpenFlame\Framework\Core;
+namespace OpenFlame\Framework\Twig\Helper\Asset;
+use OpenFlame\Framework\Twig\Helper\Asset\Internal\AssetManagerException;
 
 /**
  * OpenFlame Framework - Asset mananger object
@@ -76,7 +76,7 @@ class Manager
 	/**
 	 * Set the "base URL" for this installation, which will be added to the beginning of all asset URLs.
 	 * @param string $base_url - The "base URL" which we're going to prepend.
-	 * @return \OpenFlame\Framework\Asset\Manager - Provides a fluent interface.
+	 * @return \OpenFlame\Framework\Twig\Helper\Asset\Manager - Provides a fluent interface.
 	 */
 	public function setBaseURL($base_url)
 	{
@@ -105,16 +105,16 @@ class Manager
 
 	/**
 	 * Use the external domain instead of the local base URL for the base of all asset URLs
-	 * @return \OpenFlame\Framework\Asset\Manager - Provides a fluent interface.
+	 * @return \OpenFlame\Framework\Twig\Helper\Asset\Manager - Provides a fluent interface.
 	 *
-	 * @throws \RuntimeException
+	 * @throws AssetManagerException
 	 */
 	public function enableExternalBase()
 	{
 		// If the external domain hasn't been set, we have a problem.
 		if(empty($this->external_domain))
 		{
-			throw new \RuntimeException('Cannot use an empty external domain as base URL');
+			throw new AssetManagerException('Cannot use an empty external domain as base URL');
 		}
 
 		$this->use_external_base = true;
@@ -124,7 +124,7 @@ class Manager
 
 	/**
 	 * Use the local base URL instead of the external domain for the base of all asset URLs
-	 * @return \OpenFlame\Framework\Asset\Manager - Provides a fluent interface.
+	 * @return \OpenFlame\Framework\Twig\Helper\Asset\Manager - Provides a fluent interface.
 	 */
 	public function disableExternalBase()
 	{
@@ -145,15 +145,15 @@ class Manager
 	/**
 	 * Set the external domain to use for the base URL.
 	 * @param string $base_url - The external domain to use.
-	 * @return \OpenFlame\Framework\Asset\Manager - Provides a fluent interface.
+	 * @return \OpenFlame\Framework\Twig\Helper\Asset\Manager - Provides a fluent interface.
 	 *
-	 * @throws \InvalidArgumentException
+	 * @throws AssetManagerException
 	 */
 	public function setExternalBase($base_url)
 	{
 		if(!filter_var($base_url, FILTER_VALIDATE_URL))
 		{
-			throw new \InvalidArgumentException('Invalid external domain specified for asset URL base');
+			throw new AssetManagerException('Invalid external domain specified for asset URL base');
 		}
 
 		$this->external_domain = $base_url;
@@ -172,7 +172,7 @@ class Manager
 
 	/**
 	 * Set the asset manager to throw exceptions when an invalid asset is accessed, instead of returning NULL.
-	 * @return \OpenFlame\Framework\Asset\Manager - Provides a fluent interface.
+	 * @return \OpenFlame\Framework\Twig\Helper\Asset\Manager - Provides a fluent interface.
 	 */
 	public function enableInvalidAssetExceptions()
 	{
@@ -182,7 +182,7 @@ class Manager
 
 	/**
 	 * Set the asset manager to return NULL when an invalid asset is accessed, instead of throwing exceptions.
-	 * @return \OpenFlame\Framework\Asset\Manager - Provides a fluent interface.
+	 * @return \OpenFlame\Framework\Twig\Helper\Asset\Manager - Provides a fluent interface.
 	 */
 	public function disableInvalidAssetExceptions()
 	{
@@ -193,12 +193,11 @@ class Manager
 	/**
 	 * Create a new asset instance.
 	 * @param string $asset_class - The class to instantiate for the AssetInstance object
-	 * @return \OpenFlame\Framework\Asset\AssetInstance - The newly created AssetInstance object.
+	 * @return AssetInstance - The newly created AssetInstance object.
 	 */
 	public function registerAsset()
 	{
-		// Require the use of the AssetInstanceInterface for the provided class
-		$asset = \OpenFlame\Framework\Asset\AssetInstance::newInstance();
+		$asset = AssetInstance::newInstance();
 		$asset->setManager($this);
 
 		return $asset;
@@ -206,10 +205,10 @@ class Manager
 
 	/**
 	 * Store the provided asset inside the manager.
-	 * @param \OpenFlame\Framework\Asset\AssetInstance $asset - The asset instance to store.
-	 * @return \OpenFlame\Framework\Asset\AssetInstance - The asset just stored.
+	 * @param AssetInstance $asset - The asset instance to store.
+	 * @return AssetInstance - The asset just stored.
 	 */
-	protected function storeAsset(\OpenFlame\Framework\Asset\AssetInstance $asset)
+	protected function storeAsset(AssetInstance $asset)
 	{
 		$this->assets[$asset->getType()][$asset->getName()] = $asset;
 
@@ -220,7 +219,7 @@ class Manager
 	 * Create a custom-type asset instance and store it in the manager.
 	 * @param string $type - The asset type (java, flash, etc.).
 	 * @param string $name - A unique name to refer to the asset.
-	 * @return \OpenFlame\Framework\Asset\AssetInstance - The newly created asset instance.
+	 * @return AssetInstance - The newly created asset instance.
 	 */
 	public function registerCustomAsset($type, $name)
 	{
@@ -230,7 +229,7 @@ class Manager
 	/**
 	 * Create a new javascript asset instance and store it in the manager.
 	 * @param string $name - A unique name to refer to the asset.
-	 * @return \OpenFlame\Framework\Asset\AssetInstance - The newly created asset instance.
+	 * @return AssetInstance - The newly created asset instance.
 	 */
 	public function registerJSAsset($name)
 	{
@@ -240,7 +239,7 @@ class Manager
 	/**
 	 * Create a new cascading-stylesheet asset instance and store it in the manager.
 	 * @param string $name - A unique name to refer to the asset.
-	 * @return \OpenFlame\Framework\Asset\AssetInstance - The newly created asset instance.
+	 * @return AssetInstance - The newly created asset instance.
 	 */
 	public function registerCSSAsset($name)
 	{
@@ -250,7 +249,7 @@ class Manager
 	/**
 	 * Create a new XML asset instance and store it in the manager.
 	 * @param string $name - A unique name to refer to the asset.
-	 * @return \OpenFlame\Framework\Asset\AssetInstance - The newly created asset instance.
+	 * @return AssetInstance - The newly created asset instance.
 	 */
 	public function registerXMLAsset($name)
 	{
@@ -260,7 +259,7 @@ class Manager
 	/**
 	 * Create a new image asset instance and store it in the manager.
 	 * @param string $name - A unique name to refer to the asset.
-	 * @return \OpenFlame\Framework\Asset\AssetInstance - The newly created asset instance.
+	 * @return AssetInstance - The newly created asset instance.
 	 */
 	public function registerImageAsset($name)
 	{
@@ -295,9 +294,9 @@ class Manager
 	 * Get a stored asset instance object
 	 * @param string $type - The asset type.
 	 * @param string $name - The asset name.
-	 * @return \OpenFlame\Framework\Asset\AssetInstance - The asset instance to grab.
+	 * @return AssetInstance - The asset instance to grab.
 	 *
-	 * @throws \RuntimeException
+	 * @throws AssetManagerException
 	 */
 	public function getAsset($type, $name)
 	{
@@ -305,7 +304,7 @@ class Manager
 		{
 			if($this->usingInvalidAssetExceptions())
 			{
-				throw new \RuntimeException(sprintf('Attempted to access invalid asset "%1$s.%2$s"', $type, $name));
+				throw new AssetManagerException(sprintf('Attempted to access invalid asset "%1$s.%2$s"', $type, $name));
 			}
 			else
 			{
