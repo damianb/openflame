@@ -11,7 +11,6 @@
  */
 
 namespace OpenFlame\Framework\Cache\Engine\File;
-use \OpenFlame\Framework\Core;
 
 /**
  * OpenFlame Framework - serialize() Cache engine,
@@ -21,7 +20,7 @@ use \OpenFlame\Framework\Core;
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
  * @link        https://github.com/OpenFlame/OpenFlame-Framework
  */
-class FileEngineSerialize extends \OpenFlame\Framework\Cache\Engine\File\FileEngineBase implements \OpenFlame\Framework\Cache\Engine\EngineInterface
+class FileEngineSerialize extends FileEngineBase implements \OpenFlame\Framework\Cache\Engine\EngineInterface
 {
 	/**
 	 * @const - The algorithm to use for checksum of the cache file's cache contents

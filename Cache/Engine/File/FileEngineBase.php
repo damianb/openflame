@@ -11,7 +11,9 @@
  */
 
 namespace OpenFlame\Framework\Cache\Engine\File;
-use \OpenFlame\Framework\Core;
+use \OpenFlame\Framework\Cache\Internal\EngineException;
+use \OpenFlame\Framework\Cache\Internal\FilesystemEngineException;
+use \OpenFlame\Framework\Event\Instance as Event;
 
 /**
  * OpenFlame Framework - File-based cache engine base class,
@@ -40,20 +42,19 @@ abstract class FileEngineBase
 	/**
 	 * Set the cache file's path.
 	 * @param string $path - The path to store cache files in.
-	 * @return OpenFlame\Framework\Cache\Engine\EngineFileBase - Provides a fluent interface.
+	 * @return OpenFlame\Framework\Cache\Engine\File\FileEngineBase - Provides a fluent interface.
 	 *
-	 * @throws \InvalidArgumentException
-	 * @throws \RuntimeException
+	 * @throws FilesystemEngineException
 	 */
 	public function setCachePath($path)
 	{
 		if(!is_dir($path))
 		{
-			throw new \InvalidArgumentException(sprintf('The cache path "%1$s" is not a directory or does not exist', $path));
+			throw new FilesystemEngineException(sprintf('The cache path "%1$s" is not a directory or does not exist', $path));
 		}
 		if(!is_readable($path) || !is_writable($path))
 		{
-			throw new \RuntimeException(sprintf('The cache path "%1$s" is not accessible', $path));
+			throw new FilesystemEngineException(sprintf('The cache path "%1$s" is not accessible', $path));
 		}
 
 		$this->cache_path = rtrim($path, '/') . '/'; // ensure that the path has a trailing slash
@@ -112,18 +113,18 @@ abstract class FileEngineBase
 	 * @param string $file - The file to read from.
 	 * @return string - The file's data
 	 *
-	 * @throws \RuntimeException
+	 * @throws FilesystemEngineException
 	 */
 	protected function readFile($file)
 	{
 		$file = $this->cache_path . basename($file);
 		if(!@is_readable($file))
 		{
-			throw new \RuntimeException(sprintf('Cache file "%1$s" is unreadable', $file));
+			throw new FilesystemEngineException(sprintf('Cache file "%1$s" is unreadable', $file));
 		}
 		if(!$f = @fopen($file, 'r'))
 		{
-			throw new \RuntimeException(sprintf('fopen() call failed for cache file "%1$s"', $file));
+			throw new FilesystemEngineException(sprintf('fopen() call failed for cache file "%1$s"', $file));
 		}
 
 		if(@flock($f, LOCK_EX))
@@ -133,7 +134,7 @@ abstract class FileEngineBase
 		}
 		else
 		{
-			throw new \RuntimeException(sprintf('flock() call failed for cache file "%1$s"', $file));
+			throw new FilesystemEngineException(sprintf('flock() call failed for cache file "%1$s"', $file));
 		}
 
 		@fclose($f);
@@ -147,18 +148,18 @@ abstract class FileEngineBase
 	 * @param string $data - The data to write to the cache file.
 	 * @return void
 	 *
-	 * @throws \RuntimeException
+	 * @throws FilesystemEngineException
 	 */
 	protected function writeFile($file, $data)
 	{
 		$file = $this->cache_path . basename($file);
 		if(@file_exists($file) && !@is_writable($file))
 		{
-			throw new \RuntimeException(sprintf('Cache file "%1$s" is unwritable', $file));
+			throw new FilesystemEngineException(sprintf('Cache file "%1$s" is unwritable', $file));
 		}
 		if(!$f = @fopen($file, 'w'))
 		{
-			throw new \RuntimeException(sprintf('fopen() call failed for cache file "%1$s"', $file));
+			throw new FilesystemEngineException(sprintf('fopen() call failed for cache file "%1$s"', $file));
 		}
 
 		if(@flock($f, LOCK_EX))
@@ -166,13 +167,13 @@ abstract class FileEngineBase
 			$length = @fwrite($f, $data);
 			if($length !== strlen($data))
 			{
-				throw new \RuntimeException(sprintf('fwrite() call failed for cache file "%1$s"', $file));
+				throw new FilesystemEngineException(sprintf('fwrite() call failed for cache file "%1$s"', $file));
 			}
 			@flock($f, LOCK_UN);
 		}
 		else
 		{
-			throw new \RuntimeException(sprintf('flock() call failed for cache file "%1$s"', $file));
+			throw new FilesystemEngineException(sprintf('flock() call failed for cache file "%1$s"', $file));
 		}
 		@fclose($f);
 	}
@@ -194,14 +195,14 @@ abstract class FileEngineBase
 	 * @param \OpenFlame\Framework\Event\Instance - Event instance (so this can be used as a listener)
 	 * @return void
 	 */
-	public function gc(\OpenFlame\Framework\Event\Instance $event = NULL)
+	public function gc(Event $event = NULL)
 	{
 		$now = time();
 		$fileext = $this->getFileExtension();
 
 		foreach(glob("{$this->cache_path}*.{$fileext}.tmp") as $file)
 		{
-			$cache_name = substr(basename($file), 0, strlen($file) - strlen('.' . $fileext . '.tmp'));
+			$cache_name = substr(basename($file), 0, strlen($file) - strlen(".$fileext.tmp"));
 			$cache = $this->engineLoad($cache_name);
 
 			if(isset($cache['cache_expire']) && $cache['cache_expire'] != 0 && time() > $cache['cache_expire'])
