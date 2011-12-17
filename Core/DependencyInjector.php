@@ -111,19 +111,16 @@ class DependencyInjector implements \ArrayAccess
 			return $cache;
 		});
 
-		// These injectors should be manually defined, as we do not expect any path constants to be defined in the OpenFlame Framework
-		/*
 		$this->setInjector('twig', function() {
 			$twig = new \OpenFlame\Framework\Twig\Wrapper();
-			$twig->setTwigRootPath(Core::getConfig('twig.lib_path') ?: '/vendor/Twig/lib/Twig/')
-				->setTwigCachePath((Core::getConfig('twig.cache_path') ?: '/cache/twig/'))
-				->setTemplatePath((Core::getConfig('twig.template_path') ?: '/data/template/'))
+			$twig->setTwigRootPath(Core::getConfig('twig.lib_path'))
+				->setTwigCachePath(Core::getConfig('twig.cache_path'))
+				->setTemplatePath(Core::getConfig('twig.template_path'))
 				->setTwigOption('debug', (Core::getConfig('twig.debug') ?: false));
 			$twig->initTwig();
 
 			return $twig;
 		});
-		*/
 	}
 
 	/**
