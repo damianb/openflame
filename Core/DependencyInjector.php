@@ -87,6 +87,30 @@ class DependencyInjector implements \ArrayAccess
 			return $session;
 		});
 
+		$this->setInjector('cache.engine', function() use($injector) {
+			return $injector::grab('cache.engine.' . (Core::getConfig('cache.engine') ?: 'serialize'));
+		});
+
+		$this->setInjector('cache.engine.json', function() use($injector) {
+			$engine = new \OpenFlame\Framework\Cache\Engine\File\FileEngineJSON();
+			$engine->setCachePath(Core::getConfig('cache.path'));
+			return $engine;
+		});
+
+		$this->setInjector('cache.engine.serialize', function() use($injector) {
+			$engine = new \OpenFlame\Framework\Cache\Engine\File\FileEngineSerialize();
+			$engine->setCachePath(Core::getConfig('cache.path'));
+			return $engine;
+		});
+
+		$this->setInjector('cache.engine.apc', '\\OpenFlame\\Framework\\Cache\\Engine\\APCEngine');
+
+		$this->setInjector('cache', function() use($injector) {
+			$cache = new \OpenFlame\Framework\Cache\Driver();
+			$cache->setEngine($injector->get('cache.engine'));
+			return $cache;
+		});
+
 		// These injectors should be manually defined, as we do not expect any path constants to be defined in the OpenFlame Framework
 		/*
 		$this->setInjector('twig', function() {
@@ -98,18 +122,6 @@ class DependencyInjector implements \ArrayAccess
 			$twig->initTwig();
 
 			return $twig;
-		});
-
-		$this->setInjector('cache_engine', function() {
-			$cache_engine = new \OpenFlame\Framework\Cache\Engine\File\FileEngineJSON();
-			$cache_engine->setCachePath('/cache/');
-			return $cache_engine;
-		});
-
-		$this->setInjector('cache', function() use($injector) {
-			$cache = new \OpenFlame\Framework\Cache\Driver();
-			$cache->setEngine($injector->get('cache_engine'));
-			return $cache;
 		});
 		*/
 	}

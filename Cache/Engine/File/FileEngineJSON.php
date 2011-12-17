@@ -11,7 +11,7 @@
  */
 
 namespace OpenFlame\Framework\Cache\Engine\File;
-use \OpenFlame\Framework\Core;
+use \OpenFlame\Framework\Utility\JSON;
 
 /**
  * OpenFlame Framework - JSON Cache engine,
@@ -21,7 +21,7 @@ use \OpenFlame\Framework\Core;
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
  * @link        https://github.com/OpenFlame/OpenFlame-Framework
  */
-class FileEngineJSON extends \OpenFlame\Framework\Cache\Engine\File\FileEngineBase implements \OpenFlame\Framework\Cache\Engine\EngineInterface
+class FileEngineJSON extends FileEngineBase implements \OpenFlame\Framework\Cache\Engine\EngineInterface
 {
 	/**
 	 * @const - The algorithm to use for checksum of the cache file's cache contents
@@ -53,7 +53,7 @@ class FileEngineJSON extends \OpenFlame\Framework\Cache\Engine\File\FileEngineBa
 	 */
 	protected function engineBuild($data)
 	{
-		$data = \OpenFlame\Framework\Utility\JSON::encode($data);
+		$data = JSON::encode($data);
 
 		return implode("\n", array(
 			'# OpenFlame Framework cache file - modify at your own risk!',
@@ -70,7 +70,7 @@ class FileEngineJSON extends \OpenFlame\Framework\Cache\Engine\File\FileEngineBa
 	 */
 	protected function engineLoad($key)
 	{
-		return \OpenFlame\Framework\Utility\JSON::decode($this->readFile("$key.json.tmp"));
+		return JSON::decode($this->readFile("$key.json.tmp"));
 	}
 
 	/**
