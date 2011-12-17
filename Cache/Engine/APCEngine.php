@@ -16,7 +16,7 @@ use \OpenFlame\Framework\Event\Instance as Event;
 
 /**
  * OpenFlame Framework - APC cache engine class,
- * 		Cache engine prototype, provides some common methods for all file-based engines to use.
+ * 		APC engine, provides streamlined access to apc cache storage.
  *
  *
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
