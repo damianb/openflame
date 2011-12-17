@@ -11,7 +11,9 @@
  */
 
 namespace OpenFlame\Framework\Session\Storage;
-use \OpenFlame\Framework\Core;
+use \OpenFlame\Framework\Session\Internal\SessionException;
+use \OpenFlame\Framework\Session\Internal\StorageEngineException;
+use \OpenFlame\Framework\Event\Instance as Event;
 
 /**
  * OpenFlame Framework - Sessions Engine interface,
@@ -32,7 +34,7 @@ class EngineFilesystem implements EngineInterface
 	 * Initialized the engine
 	 * @param array options - Associative array of options
 	 * @return void
-	 * @throws \RuntimeException
+	 * @throws StorageEngineException
 	 */
 	public function init(array &$options)
 	{
@@ -51,11 +53,11 @@ class EngineFilesystem implements EngineInterface
 		// Do some basic checks on our filesystem
 		if (!file_exists($this->options['filesystem.savepath']))
 		{
-			throw new \RuntimeException("The session file storage path does not exist.");
+			throw new StorageEngineException("The session file storage path does not exist.");
 		}
 		else if (!is_readable($this->options['filesystem.savepath']) || !is_writable($this->options['filesystem.savepath']))
 		{
-			throw new \RuntimeException("Could write to the session file storage directory.");
+			throw new StorageEngineException("Could write to the session file storage directory.");
 		}
 	}
 
@@ -116,7 +118,7 @@ class EngineFilesystem implements EngineInterface
 	 * @param \OpenFlame\Framework\Event\Instance $event - Event instance (so this can be used as a listener)
 	 * @return void
 	 */
-	public function gc(\OpenFlame\Framework\Event\Instance $event = NULL)
+	public function gc(Event $event = NULL)
 	{
 		$now = time();
 

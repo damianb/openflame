@@ -11,7 +11,7 @@
  */
 
 namespace OpenFlame\Framework\Session\Storage;
-use \OpenFlame\Framework\Core;
+use \OpenFlame\Framework\Event\Instance as Event;
 
 /**
  * OpenFlame Framework - Sessions Engine interface,
@@ -33,7 +33,7 @@ interface EngineInterface
 	/*
 	 * Load data associated with the SID
 	 * @param string sid - Session ID (Must be [a-z0-9])
-	 * @return mixed - Arbitrary data stored 
+	 * @return mixed - Arbitrary data stored
 	 */
 	public function load($sid);
 
@@ -47,7 +47,7 @@ interface EngineInterface
 
 	/*
 	 * Purge session object
-	 * Basically giving the Engine the que to kill the data associated with 
+	 * Basically giving the Engine the que to kill the data associated with
 	 * this session ID.
 	 * @param string sid
 	 */
@@ -59,5 +59,5 @@ interface EngineInterface
 	 * @param \OpenFlame\Framework\Event\Instance - The event instance, if using this method with the event dispatcher/scheduler.
 	 * @return void
 	 */
-	public function gc(\OpenFlame\Framework\Event\Instance $event = NULL);
+	public function gc(Event $event = NULL);
 }
