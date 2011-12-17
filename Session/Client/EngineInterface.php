@@ -11,7 +11,6 @@
  */
 
 namespace OpenFlame\Framework\Session\Client;
-use \OpenFlame\Framework\Core;
 
 /**
  * OpenFlame Framework - Session Client-side identification,
@@ -32,7 +31,7 @@ interface EngineInterface
 
 	/*
 	 * Get the SID of the current visitor
-	 * @return string - Session ID 
+	 * @return string - Session ID
 	 */
 	public function getSID();
 

@@ -11,8 +11,9 @@
  */
 
 namespace OpenFlame\Framework\Session;
-use OpenFlame\Framework\Core;
-use OpenFlame\Framework\Dependency\Injector;
+use \OpenFlame\Framework\Core\Core;
+use \OpenFlame\Framework\Core\DependencyInjector;
+use \OpenFlame\Framework\Event\Instance as Event;
 
 /**
  * OpenFlame Framework - Session Handler
@@ -50,27 +51,14 @@ class Driver
 	private $storage;
 
 	/*
-	 * @var client engine 
+	 * @var client engine
 	 */
 	private $client;
-
-	/*
-	 * @var Injector
-	 */
-	private $injector;
 
 	/*
 	 * @var array options
 	 */
 	private $options = array();
-
-	/*
-	 * Constructor
-	 */
-	public function __construct()
-	{
-		$this->injector = Injector::getInstance();
-	}
 
 	/*
 	 * Sets the session storage engine to be used
@@ -124,7 +112,7 @@ class Driver
 	public function start()
 	{
 		$now = time();
-		$input = $this->injector->get('input');
+		$input = DependencyInjector::grab('input');
 
 		// The SID the browser claims to have
 		$sid = $this->client->getSID();
@@ -140,7 +128,7 @@ class Driver
 			$data = $this->storage->load($sid);
 			$clear = true;
 
-			// Check for size in data and required fields 
+			// Check for size in data and required fields
 			if (sizeof($data) && isset($data['_lastclick']) && isset($data['_fingerprint']) && isset($data['_salt']))
 			{
 				$fingerprint = $this->makeFingerprint($data['_salt']);
@@ -183,8 +171,7 @@ class Driver
 	}
 
 	/*
-	 * Commit session data - Should be called after you're done modifying 
-	 * session data and before page output.
+	 * Commit session data - Should be called after you're done modifying session data and before page output.
 	 * @return void
 	 */
 	public function commit()
@@ -195,12 +182,12 @@ class Driver
 
 			if (!isset($this->data['_salt']))
 			{
-				$seeder = $this->injector->get('seeder');
+				$seeder = DependencyInjector::grab('seeder');
 				$this->data['_salt'] = $seeder->buildRandomString(10);
 			}
 
 			$this->data['_fingerprint'] = $this->makeFingerprint($this->data['_salt']);
-			
+
 			if (!isset($data['_lastclick']))
 			{
 				$this->data['_lastclick'] = time();
@@ -213,16 +200,14 @@ class Driver
 
 	/*
 	 * Get the SID
-	 * Unlike any other piece of data, this version of session handling is 
-	 * quite the couch-potato (i.e. lazy). It wont actually generate an SID
-	 * until it either needs it or the application needs it.
+	 * Unlike any other piece of data, this version of session handling is quite the couch-potato (i.e. lazy). It wont actually generate an SID until it either needs it or the application needs it.
 	 * @return string - sid
 	 */
 	public function getSid()
 	{
 		if (empty($this->sid) && sizeof($this->data))
 		{
-			$seeder = $this->injector->get('seeder');
+			$seeder = DependencyInjector::grab('seeder');
 			$this->sid = $seeder->buildRandomString(32);
 		}
 
@@ -240,10 +225,10 @@ class Driver
 
 	/*
 	 * Run Session-based garbage collectors
-	 * @param \OpenFlame\Framework\Event\Instance e - Event instance (so this can be used as a closure)
+	 * @param \OpenFlame\Framework\Event\Instance $e - Event instance (so this can be used as a listener)
 	 * @return void
 	 */
-	public function gc(\OpenFlame\Framework\Event\Instance $e = NULL)
+	public function gc(Event $e = NULL)
 	{
 		$this->storage->gc($e);
 	}
@@ -275,7 +260,7 @@ class Driver
 	 */
 	private function extractIp()
 	{
-		$input = $this->injector->get('input');
+		$input = DependencyInjector::grab('input');
 		$cleanip = '';
 
 		$ip = $input->getInput('SERVER::REMOTE_ADDR', '127.0.0.1');

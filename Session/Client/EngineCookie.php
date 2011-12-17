@@ -11,8 +11,7 @@
  */
 
 namespace OpenFlame\Framework\Session\Client;
-use \OpenFlame\Framework\Core;
-use OpenFlame\Framework\Dependency\Injector;
+use \OpenFlame\Framework\Core\DependencyInjector;
 
 /**
  * OpenFlame Framework - Session Client-side identification,
@@ -30,11 +29,6 @@ class EngineCookie implements EngineInterface
 	private $options;
 
 	/*
-	 * @var injector
-	 */
-	private $injector;
-
-	/*
 	 * @var the data read from the cookie (So we don't have to end up taking
 	 * inputs twice.)
 	 */
@@ -47,8 +41,7 @@ class EngineCookie implements EngineInterface
 	 */
 	public function init(array &$options)
 	{
-		$this->injector = Injector::getInstance();
-		$input = $this->injector->get('input');
+		$input = DependencyInjector::grab('input');
 
 		$defaults = array(
 			'cookie.expire'	=> 0,
@@ -62,7 +55,7 @@ class EngineCookie implements EngineInterface
 		$this->options = array_merge($defaults, $options);
 
 		// Set up our cookie
-		$cookie = $this->injector->get('cookie');
+		$cookie = DependencyInjector::grab('cookie');
 
 		$cookie->setCookieDomain($this->options['cookie.domain'])
 			->setCookiePath($this->options['cookie.path'])
@@ -82,7 +75,7 @@ class EngineCookie implements EngineInterface
 	{
 		if (empty($this->readCookie))
 		{
-			$input = $this->injector->get('input');
+			$input = DependencyInjector::grab('input');
 			$fullName = $this->options['cookie.prefix'] . $this->options['cookie.name'];
 
 			$this->readCookie = $input->getInput("COOKIE::$fullName", '')->getClean();
@@ -100,7 +93,7 @@ class EngineCookie implements EngineInterface
 	{
 		if ($sid != $this->getSID())
 		{
-			$cookie = $this->injector->get('cookie');
+			$cookie = DependencyInjector::grab('cookie');
 
 			if (empty($sid))
 			{
