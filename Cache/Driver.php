@@ -12,8 +12,6 @@
 
 namespace OpenFlame\Framework\Cache;
 use \OpenFlame\Framework\Core\Internal\RuntimeException;
-use \OpenFlame\Framework\Core\DependencyInjector;
-use \OpenFlame\Framework\Core\Core;
 use \OpenFlame\Framework\Event\Instance as Event;
 
 /**
