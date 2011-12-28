@@ -13,10 +13,10 @@
 namespace OpenFlame\Framework\Core\Internal;
 
 /**
- * OpenFlame Framework - Dependency Injector exception class
+ * OpenFlame Framework - Core exception class
  *
  *
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
  * @link        https://github.com/OpenFlame/OpenFlame-Framework
  */
-class InjectorException extends OpenFlameException {}
+class InvalidArgumentException extends \InvalidArgumentException implements OpenFlameException {}

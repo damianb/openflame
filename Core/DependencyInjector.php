@@ -12,7 +12,7 @@
 
 namespace OpenFlame\Framework\Core;
 use OpenFlame\Framework\Core\Core;
-use OpenFlame\Framework\Core\Internal\InjectorException;
+use OpenFlame\Framework\Core\Internal\LogicException;
 
 /**
  * OpenFlame Framework - Dependency injector
@@ -214,13 +214,13 @@ class DependencyInjector implements \ArrayAccess
 	 * @param string $name - The name of the component to grab the injector for.
 	 * @return mixed - Returns the dependency injector to use.
 	 *
-	 * @throws InjectorException
+	 * @throws LogicException
 	 */
 	protected function getInjector($name)
 	{
 		if(!isset($this->injectors[$name]))
 		{
-			throw new InjectorException(sprintf('Cannot fetch dependency object "%s", no injector defined', $name));
+			throw new LogicException(sprintf('Cannot fetch dependency object "%s", no injector defined', $name));
 		}
 		return $this->injectors[$name];
 	}

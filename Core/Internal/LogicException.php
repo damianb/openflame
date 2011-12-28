@@ -19,4 +19,4 @@ namespace OpenFlame\Framework\Core\Internal;
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
  * @link        https://github.com/OpenFlame/OpenFlame-Framework
  */
-class CoreException extends OpenFlameException {}
+class LogicException extends \LogicException implements OpenFlameException {}
