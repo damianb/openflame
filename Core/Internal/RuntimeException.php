@@ -13,11 +13,10 @@
 namespace OpenFlame\Framework\Core\Internal;
 
 /**
- * OpenFlame Framework - Base exception
- * 	     Base exception for all OpenFlame Framework exceptions.
+ * OpenFlame Framework - Core exception class
  *
  *
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
  * @link        https://github.com/OpenFlame/OpenFlame-Framework
  */
-interface OpenFlameException { }
+class RuntimeException extends \RuntimeException implements OpenFlameException {}
