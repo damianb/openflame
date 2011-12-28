@@ -11,7 +11,7 @@
  */
 
 namespace OpenFlame\Framework\Utility;
-use OpenFlame\Framework\Utility\Internal\FormKeyException;
+use \OpenFlame\Framework\Core\Internal\RuntimeException;
 
 /**
  * OpenFlame Framework - Form validation and CSRF protection
@@ -71,13 +71,13 @@ class Form
 	 * @return \OpenFlame\Framework\Security\Form - Provides a fluent interface.
 	 * @note WARNING, it is not possible to alter the form seed once it has been set!
 	 *
-	 * @throws FormKeyException
+	 * @throws RuntimeException
 	 */
 	final public function setFormSeed($seed)
 	{
 		if($this->lock_seed === true)
 		{
-			throw new FormKeyException('Cannot overwrite form seed, form seed is locked');
+			throw new RuntimeException('Cannot overwrite form seed, form seed is locked');
 		}
 
 		$this->seed = (string) $seed;

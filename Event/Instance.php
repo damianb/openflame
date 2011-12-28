@@ -11,7 +11,7 @@
  */
 
 namespace OpenFlame\Framework\Event;
-use OpenFlame\Framework\Event\Internal\EventException;
+use \OpenFlame\Framework\Core\Internal\RuntimeException;
 
 /**
  * OpenFlame Framework - Event object
@@ -96,13 +96,13 @@ class Instance
 	 * @param mixed $source - The source of the event, must be an object or NULL.
 	 * @return \OpenFlame\Framework\Event\Instance - Provides a fluent interface.
 	 *
-	 * @throws EventException
+	 * @throws RuntimeException
 	 */
 	public function setSource($source)
 	{
 		if($source !== NULL && !is_object($source))
 		{
-			throw new EventException('Source provided to event instance must be an object or NULL');
+			throw new RuntimeException('Source provided to event instance must be an object or NULL');
 		}
 
 		$this->source = $source;

@@ -11,7 +11,6 @@
  */
 
 namespace OpenFlame\Framework\Session;
-use \OpenFlame\Framework\Core\Core;
 use \OpenFlame\Framework\Core\DependencyInjector;
 use \OpenFlame\Framework\Event\Instance as Event;
 

@@ -11,7 +11,7 @@
  */
 
 namespace OpenFlame\Framework\Utility;
-use \OpenFlame\Framework\Utility\Internal\SeederException;
+use \OpenFlame\Framework\Core\Internal\RuntimeException;
 
 /**
  * OpenFlame Framework - Random string/seed generator
@@ -82,13 +82,13 @@ class Seeder
 	 * @param string $charset - The range of characters to use for the random string (will not modify character cases!)
 	 * @return string - A random string!
 	 *
-	 * @throws SeederException
+	 * @throws RuntimeException
 	 */
 	public function buildRandomString($length = 12, $seed = '', $charset = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')
 	{
 		if($length > 64)
 		{
-			throw new SeederException('Length specified for random string exceeds maximum allowed length of 64 characters');
+			throw new RuntimeException('Length specified for random string exceeds maximum allowed length of 64 characters');
 		}
 		elseif($length < 1)
 		{

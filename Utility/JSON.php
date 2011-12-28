@@ -11,7 +11,7 @@
  */
 
 namespace OpenFlame\Framework\Utility;
-use \OpenFlame\Framework\Utility\Internal\JSONException;
+use \OpenFlame\Framework\Core\Internal\RuntimeException;
 
 /**
  * OpenFlame Framework - JSON handling class,
@@ -30,7 +30,7 @@ abstract class JSON
 	 * @param mixed $data - The data to cache.
 	 * @return string - JSON string.
 	 *
-	 * @throws JSONException
+	 * @throws RuntimeException
 	 */
 	public static function encode($data)
 	{
@@ -66,7 +66,7 @@ abstract class JSON
 				break;
 			}
 
-			throw new JSONException($error);
+			throw new RuntimeException($error);
 		}
 
 		return $json;
@@ -77,7 +77,7 @@ abstract class JSON
 	 * @param string $json - The JSON string or the path of the JSON file to decode.
 	 * @return array - The contents of the JSON string/file.
 	 *
-	 * @throws JSONException
+	 * @throws RuntimeException
 	 */
 	public static function decode($json)
 	{
@@ -120,7 +120,7 @@ abstract class JSON
 				break;
 			}
 
-			throw new JSONException($error);
+			throw new RuntimeException($error);
 		}
 
 		return $data;
