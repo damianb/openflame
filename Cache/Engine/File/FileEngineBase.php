@@ -11,8 +11,8 @@
  */
 
 namespace OpenFlame\Framework\Cache\Engine\File;
-use \OpenFlame\Framework\Cache\Internal\EngineException;
-use \OpenFlame\Framework\Cache\Internal\FilesystemEngineException;
+use \OpenFlame\Framework\Core\Internal\DirectoryException;
+use \OpenFlame\Framework\Core\Internal\FileException;
 use \OpenFlame\Framework\Event\Instance as Event;
 
 /**
@@ -44,17 +44,17 @@ abstract class FileEngineBase
 	 * @param string $path - The path to store cache files in.
 	 * @return OpenFlame\Framework\Cache\Engine\File\FileEngineBase - Provides a fluent interface.
 	 *
-	 * @throws FilesystemEngineException
+	 * @throws DirectoryException
 	 */
 	public function setCachePath($path)
 	{
 		if(!is_dir($path))
 		{
-			throw new FilesystemEngineException(sprintf('The cache path "%1$s" is not a directory or does not exist', $path));
+			throw new DirectoryException(sprintf('The cache path "%1$s" is not a directory or does not exist', $path));
 		}
 		if(!is_readable($path) || !is_writable($path))
 		{
-			throw new FilesystemEngineException(sprintf('The cache path "%1$s" is not accessible', $path));
+			throw new DirectoryException(sprintf('The cache path "%1$s" is not accessible', $path));
 		}
 
 		$this->cache_path = rtrim($path, '/') . '/'; // ensure that the path has a trailing slash
@@ -113,18 +113,18 @@ abstract class FileEngineBase
 	 * @param string $file - The file to read from.
 	 * @return string - The file's data
 	 *
-	 * @throws FilesystemEngineException
+	 * @throws FileException
 	 */
 	protected function readFile($file)
 	{
 		$file = $this->cache_path . basename($file);
 		if(!@is_readable($file))
 		{
-			throw new FilesystemEngineException(sprintf('Cache file "%1$s" is unreadable', $file));
+			throw new FileException(sprintf('Cache file "%1$s" is unreadable', $file));
 		}
 		if(!$f = @fopen($file, 'r'))
 		{
-			throw new FilesystemEngineException(sprintf('fopen() call failed for cache file "%1$s"', $file));
+			throw new FileException(sprintf('fopen() call failed for cache file "%1$s"', $file));
 		}
 
 		if(@flock($f, LOCK_EX))
@@ -134,7 +134,7 @@ abstract class FileEngineBase
 		}
 		else
 		{
-			throw new FilesystemEngineException(sprintf('flock() call failed for cache file "%1$s"', $file));
+			throw new FileException(sprintf('flock() call failed for cache file "%1$s"', $file));
 		}
 
 		@fclose($f);
@@ -148,18 +148,18 @@ abstract class FileEngineBase
 	 * @param string $data - The data to write to the cache file.
 	 * @return void
 	 *
-	 * @throws FilesystemEngineException
+	 * @throws FileException
 	 */
 	protected function writeFile($file, $data)
 	{
 		$file = $this->cache_path . basename($file);
 		if(@file_exists($file) && !@is_writable($file))
 		{
-			throw new FilesystemEngineException(sprintf('Cache file "%1$s" is unwritable', $file));
+			throw new FileException(sprintf('Cache file "%1$s" is unwritable', $file));
 		}
 		if(!$f = @fopen($file, 'w'))
 		{
-			throw new FilesystemEngineException(sprintf('fopen() call failed for cache file "%1$s"', $file));
+			throw new FileException(sprintf('fopen() call failed for cache file "%1$s"', $file));
 		}
 
 		if(@flock($f, LOCK_EX))
@@ -167,13 +167,13 @@ abstract class FileEngineBase
 			$length = @fwrite($f, $data);
 			if($length !== strlen($data))
 			{
-				throw new FilesystemEngineException(sprintf('fwrite() call failed for cache file "%1$s"', $file));
+				throw new FileException(sprintf('fwrite() call failed for cache file "%1$s"', $file));
 			}
 			@flock($f, LOCK_UN);
 		}
 		else
 		{
-			throw new FilesystemEngineException(sprintf('flock() call failed for cache file "%1$s"', $file));
+			throw new FileException(sprintf('flock() call failed for cache file "%1$s"', $file));
 		}
 		@fclose($f);
 	}
@@ -200,7 +200,7 @@ abstract class FileEngineBase
 		$now = time();
 		$fileext = $this->getFileExtension();
 
-		foreach(glob("{$this->cache_path}*.{$fileext}.tmp") as $file)
+		foreach(glob($this->cache_path . '*.' . $fileext . '.tmp') as $file)
 		{
 			$cache_name = substr(basename($file), 0, strlen($file) - strlen(".$fileext.tmp"));
 			$cache = $this->engineLoad($cache_name);
