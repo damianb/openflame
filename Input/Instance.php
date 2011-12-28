@@ -11,7 +11,8 @@
  */
 
 namespace OpenFlame\Framework\Input;
-use OpenFlame\Framework\Core;
+use \OpenFlame\Framework\Core\Internal\LogicException;
+use \OpenFlame\Framework\Core\Internal\RuntimeException;
 
 /**
  * OpenFlame Framework - User Input Handler
@@ -54,19 +55,9 @@ class Instance
 	protected $field_name = '';
 
 	/**
-	 * @var sting - The "juggled" field name we're grabbing from, if we are using field juggling.
-	 */
-	protected $juggled_name = '';
-
-	/**
 	 * @var mixed - The default value to use for this instance (also validates/binds the format of the input to match the default value).
 	 */
 	protected $default_value;
-
-	/**
-	 * @var boolean - Do we want to use field juggling on this input?
-	 */
-	protected $use_juggling = true;
 
 	/**
 	 * @var boolean - Has this input instance been processed since it had its properties last set?
@@ -87,9 +78,10 @@ class Instance
 	 * @param \OpenFlame\Framework\Input\Handler $handler - The input handler.
 	 * @return \OpenFlame\Framework\Input\Instance - Provides a fluent interface.
 	 */
-	public function setHandler(\OpenFlame\Framework\Input\Handler $handler)
+	public function setHandler(Handler $handler)
 	{
 		$this->handler = $handler;
+
 		return $this;
 	}
 
@@ -111,7 +103,9 @@ class Instance
 	{
 		$global_type = '_' . ltrim($global_type, '_');
 		if(!in_array($global_type, array('_REQUEST', '_GET', '_POST', '_COOKIE', '_SERVER', '_FILES')))
+		{
 			$global_type = '_REQUEST';
+		}
 
 		$this->wipeInstance();
 		$this->global_type = $global_type;
@@ -136,6 +130,7 @@ class Instance
 	{
 		$this->wipeInstance();
 		$this->default_value = $default_value;
+
 		return $this;
 	}
 
@@ -157,59 +152,8 @@ class Instance
 	{
 		$this->wipeInstance();
 		$this->field_name = $name;
+
 		return $this;
-	}
-
-	/**
-	 * Get the juggled field name that this instance is attached to.
-	 * @return string - The juggled field name for this instance.
-	 */
-	public function getJuggledName()
-	{
-		return $this->juggled_name;
-	}
-
-	/**
-	 * Set the juggled field name that we want to attach this instance to.
-	 * @param string $name - The juggled field name to use for this instance.
-	 * @return \OpenFlame\Framework\Input\Instance - Provides a fluent interface.
-	 */
-	public function setJuggledName($name)
-	{
-		$this->wipeInstance();
-		$this->juggled_name = $name;
-		return $this;
-	}
-
-	/**
-	 * Set this instance to use field juggling (note, field juggling defaults to being enabled)
-	 * @return \OpenFlame\Framework\Input\Instance - Provides a fluent interface.
-	 */
-	public function enableFieldJuggling()
-	{
-		$this->wipeInstance();
-		$this->use_juggling = true;
-		return $this;
-	}
-
-	/**
-	 * Set this instance to not use field juggling (note, field juggling defaults to being enabled)
-	 * @return \OpenFlame\Framework\Input\Instance - Provides a fluent interface.
-	 */
-	public function disableFieldJuggling()
-	{
-		$this->wipeInstance();
-		$this->use_juggling = false;
-		return $this;
-	}
-
-	/**
-	 * Check to see if this input instance is to use field juggling
-	 * @return boolean - Do we want to use field juggling?
-	 */
-	public function useJuggling()
-	{
-		return $this->use_juggling;
 	}
 
 	/**
@@ -219,7 +163,10 @@ class Instance
 	public function getClean()
 	{
 		if(!$this->processed)
+		{
 			$this->processVar();
+		}
+
 		return $this->clean_value;
 	}
 
@@ -230,7 +177,10 @@ class Instance
 	public function getRaw()
 	{
 		if(!$this->processed)
+		{
 			$this->processVar();
+		}
+
 		return $this->raw_value;
 	}
 
@@ -241,7 +191,10 @@ class Instance
 	public function getWasSet()
 	{
 		if(!$this->processed)
+		{
 			$this->processVar();
+		}
+
 		return $this->was_set;
 	}
 
@@ -258,7 +211,9 @@ class Instance
 			list($_key_default, $_value_default) = each($default);
 
 			foreach($var as $key => $value)
+			{
 				$var[$this->bindVar($key, $_key_default)] = $this->cleanVar($value, $_value_default);
+			}
 		}
 		else
 		{
@@ -282,7 +237,9 @@ class Instance
 		if($type == 'string')
 		{
 			if(!mb_check_encoding($var))
+			{
 				$var = $default;
+			}
 
 			$var = trim(htmlspecialchars(str_replace(array("\r\n", "\r", "\0"), array("\n", "\n", ''), $var), ENT_COMPAT, 'UTF-8'));
 		}
@@ -292,31 +249,32 @@ class Instance
 	 * Internal method that processes the desired input var and loads its data (and sanitizes it)
 	 * @return void
 	 *
-	 * @throws \LogicException
+	 * @throws RuntimeException
+	 * @throws LogicException
 	 */
 	protected function processVar()
 	{
 		if($this->processed)
+		{
 			return;
+		}
 
 		if($this->getName() === NULL)
-			throw new \LogicException('No field name specified for input retrieval in \\OpenFlame\\Framework\\Input\\Instance');
+		{
+			throw new RuntimeException('No field name specified for input retrieval');
+		}
 
 		if($this->getDefault() === NULL)
-			throw new \LogicException('Cannot specify NULL as the default value for input in \\OpenFlame\\Framework\\Input\\Instance');
+		{
+			throw new LogicException('Cannot specify NULL as the default value for input');
+		}
 
-		// Check to see if we want to override the field name juggling feature
-		if($this->useJuggling())
-		{
-			$name = $this->getName();
-		}
-		else
-		{
-			$name = $this->getJuggledName() ?: $this->getName();
-		}
+		$name = $this->getName();
 
 		if($this->getType() == '_REQUEST' && isset($_COOKIE[$this->getName()]))
+		{
 			$_REQUEST[$this->getName()] = isset($_POST[$name]) ?: $_GET[$name];
+		}
 
 		$this->was_set = (!empty($GLOBALS[$this->getType()][$name])) ? true : false;
 
@@ -334,34 +292,12 @@ class Instance
 	protected function wipeInstance()
 	{
 		if(!$this->processed)
+		{
 			return;
+		}
 
 		$this->raw_value = $this->clean_value = NULL;
 		$this->processed = $this->was_set = false;
-	}
-
-	/**
-	 * Validate the contained data using a validator function registered in the input handler
-	 * @param string $type - The type of validator to use
-	 * @return boolean - Does the input validate?
-	 *
-	 * @throws \LogicException
-	 * @throws \RuntimeException
-	 */
-	protected function validate($type)
-	{
-		if(empty($this->handler))
-		{
-			throw new \LogicException('Cannot validate input instance as input handler has not been linked to the instance');
-		}
-
-		$validator = $this->handler->getValidator($type);
-		if($validator === false)
-		{
-			throw new \RuntimeException(sprintf('No validator registered for validation type "%1$s" in \\OpenFlame\\Framework\\Input\\Instance', $type));
-		}
-
-		return (bool) call_user_func($validator, $this->getClean());
 	}
 
 	/**
@@ -371,7 +307,10 @@ class Instance
 	public function __toString()
 	{
 		if(!$this->processed)
+		{
 			$this->processVar();
+		}
+
 		return $this->clean_value;
 	}
 }
