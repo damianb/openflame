@@ -11,7 +11,7 @@
  */
 
 namespace OpenFlame\Framework\Router;
-use OpenFlame\Framework\Core;
+use \OpenFlame\Framework\Core\Internal\RuntimeException;
 
 /**
  * OpenFlame Framework - Static URL router,
@@ -78,7 +78,7 @@ class Router
 	 */
 	public function newRoute($route_data, $route_callback)
 	{
-		$route = \OpenFlame\Framework\Router\RouteInstance::newInstance()
+		$route = RouteInstance::newInstance()
 			->loadRawRoute($route_data)
 			->setRouteCallback($route_callback);
 
@@ -92,7 +92,7 @@ class Router
 	 */
 	public function newCachedRoute($route_data)
 	{
-		$route = \OpenFlame\Framework\Router\RouteInstance::newInstance()
+		$route = RouteInstance::newInstance()
 			->loadSerializedRoute($route_data);
 
 		return $route;
@@ -134,7 +134,7 @@ class Router
 	 * @param boolean $prepend - Do we want to prepend the addition, to have the route encountered earlier?
 	 * @return \OpenFlame\Framework\Router\Router - Provides a fluent interface.
 	 */
-	public function storeRoute(\OpenFlame\Framework\Router\RouteInstance $route, $prepend = true)
+	public function storeRoute(RouteInstance $route, $prepend = true)
 	{
 		// Prepare the array in advance in case it's not there yet
 		if(!isset($this->routes[(string) $route->getRouteBase()]))
@@ -164,7 +164,7 @@ class Router
 	{
 		if($this->home_route === NULL)
 		{
-			throw new \RuntimeException('Failed to retrieve obtain "home" route; the route has not yet been defined');
+			throw new RuntimeException('Failed to retrieve obtain "home" route; the route has not yet been defined');
 		}
 
 		return $this->home_route;
@@ -175,7 +175,7 @@ class Router
 	 * @param \OpenFlame\Framework\Router\RouteInstance $route - The route to use as our "home" route.
 	 * @return \OpenFlame\Framework\Router\Router - Provides a fluent interface.
 	 */
-	public function setHomeRoute(\OpenFlame\Framework\Router\RouteInstance $route)
+	public function setHomeRoute(RouteInstance $route)
 	{
 		$this->home_route = $route;
 
@@ -192,7 +192,7 @@ class Router
 	{
 		if($this->error_route === NULL)
 		{
-			throw new \RuntimeException('Failed to retrieve obtain "error" route; the route has not yet been defined');
+			throw new RuntimeException('Failed to retrieve obtain "error" route; the route has not yet been defined');
 		}
 
 		return $this->error_route;
@@ -203,7 +203,7 @@ class Router
 	 * @param \OpenFlame\Framework\Router\RouteInstance $route - The route to use as our "error" route.
 	 * @return \OpenFlame\Framework\Router\Router - Provides a fluent interface.
 	 */
-	public function setErrorRoute(\OpenFlame\Framework\Router\RouteInstance $route)
+	public function setErrorRoute(RouteInstance $route)
 	{
 		$this->error_route = $route;
 
@@ -269,7 +269,10 @@ class Router
 		$request_url = '/' . ltrim($request_url, '/');
 
 		// Trim out the base URL.
-		$request_url = stripos($request_url, $this->getBaseURL()) === 0 ? substr($request_url, strlen($this->getBaseURL())) : $request_url;
+		if(stripos($request_url, $this->getBaseURL()) === 0)
+		{
+			$request_url = substr($request_url, strlen($this->getBaseURL()));
+		}
 
 		if($request_url == '/')
 		{
