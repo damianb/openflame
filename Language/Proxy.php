@@ -11,7 +11,6 @@
  */
 
 namespace OpenFlame\Framework\Language;
-use \OpenFlame\Framework\Core;
 
 /**
  * OpenFlame Framework - Language proxy object
@@ -33,7 +32,7 @@ class Proxy
 	 * @param OpenFlame\Framework\Language\Handler $handler - The language handler
 	 * @return void
 	 */
-	public function __construct(\OpenFlame\Framework\Language\Handler $handler)
+	public function __construct(Handler $handler)
 	{
 		$this->handler = $handler;
 	}
