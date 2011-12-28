@@ -65,3 +65,29 @@
  - 1.3.2 **maintenance** release
 	 - Fix bug with `Event\Scheduler` calling previously deprecated and now removed `Event\Dispatcher` method
 	 - Fix bug with undefined variable notices in `Event\Scheduler`
+ - 1.4.0 **minor** release
+	 - Added `ACL\Auth` and `ACL\Translator` components for handling permissions checks, group permissions and permission inheritance
+ - 2.0.0 **major** release
+	 - Refactored Autoloader internally for speed enhancements
+	 - Moved `Core` object and `Autoloader` object to new `Core\` namespace
+	 - Added core exceptions, from which all components will use
+	 - Created child classes of SPL exceptions in core exceptions, which implement the interface `Core\OpenFlameException` allowing all openflame-framework-specific exceptions to be caught independently of SPL exceptions
+	 - Refactored `Core\Autoloader` to support trait autoloading (PHP 5.4+)
+	 - Removed "config namespacing" functionality from `Core\Core`
+	 - Moved `Dependency\Injector` component to `Core\` namespace,
+	 - Refactored `Core\DependencyInjector` so that it will automatically generate instances of an object, given the name of the class to load (for easy lazy-loading)
+	 - Refactored `Event\Dispatcher`, added new break type `Event\Dispatcher::TRIGGER_MIXEDBREAK` which combines the functionality of `Event\Dispatcher::TRIGGER_RETURNBREAK` and `Event\Dispatcher::TRIGGER_MANUALBREAK`
+	 - Refactored `Utility\JSON` to add `json_encode()` error detection
+	 - Dissolved `Security\` namespace
+	 - Moved `Security\Form` to `Utility\FormKey`
+	 - Moved `Security\Hasher` to `Utility\Hasher`
+	 - Moved `Security\Seeder` to `Utility\Seeder`
+	 - Moved `Utility\Timer` to `Twig\Helper\Timer\Timer`
+	 - Moved `Asset\` namespace to `Twig\Helper\Asset\`
+	 - Refactored `Asset\` components to be twig helpers
+	 - Moved `URL\` namespace to `Twig\Helper\URL\`
+	 - Refactored `URL\` components to be twig helpers
+	 - Refactored cache component internally
+	 - Added new APC-based cache engine `Cache\Engine\APCEngine`
+	 - Added new dependency injectors for cache component and cache engines
+	 - Refactored `Input\Handler` and `Input\Instance`, removed "field juggling" code and refactored it into a child class of `Input\Handler`, the new `Input\Juggler` component
