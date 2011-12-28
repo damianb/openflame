@@ -11,7 +11,7 @@
  */
 
 namespace OpenFlame\Framework\Twig\Helper\Asset;
-use OpenFlame\Framework\Twig\Helper\Asset\Internal\AssetProxyException;
+use \OpenFlame\Framework\Core\Internal\RuntimeException;
 
 /**
  * OpenFlame Framework - Template proxy object
@@ -55,7 +55,7 @@ class Proxy
 	 * @param string $name - The type of the asset to grab.
 	 * @return \OpenFlame\Framework\Twig\Helper\Asset\Subproxy - The subproxy for the asset type that we want.
 	 *
-	 * @throws AssetProxyException
+	 * @throws RuntimeException
 	 */
 	public function __get($name)
 	{
@@ -63,7 +63,7 @@ class Proxy
 		{
 			if($this->manager->usingInvalidAssetExceptions())
 			{
-				throw new AssetProxyException(sprintf('Attempted to access invalid asset type "%1$s"', $name));
+				throw new RuntimeException(sprintf('Attempted to access invalid asset type "%1$s"', $name));
 			}
 			else
 			{

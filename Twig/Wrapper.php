@@ -11,7 +11,8 @@
  */
 
 namespace OpenFlame\Framework\Twig;
-use OpenFlame\Framework\Core;
+use \OpenFlame\Framework\Core\Internal\InvalidArgumentException;
+use \OpenFlame\Framework\Core\Internal\RuntimeException;
 
 /**
  * OpenFlame Framework - Twig management class
@@ -82,14 +83,14 @@ class Wrapper
 	 * @param string $twig_root_path - The root directory that contains Twig's include files (should directly contain the twig autoloader).
 	 * @return \OpenFlame\Framework\Template\Twig - Provides a fluent interface.
 	 *
-	 * @throws \InvalidArgumentException
+	 * @throws InvalidArgumentException
 	 */
 	public function setTwigRootPath($twig_root_path)
 	{
 		$twig_root_path = rtrim($twig_root_path, '/') . '/';
 		if(!is_file($twig_root_path . 'Autoloader.php'))
 		{
-			throw new \InvalidArgumentException(sprintf('Could not locate the Twig autoloader at "%1$s"', $twig_root_path . 'Autoloader.php'));
+			throw new InvalidArgumentException(sprintf('Could not locate the Twig autoloader at "%1$s"', $twig_root_path . 'Autoloader.php'));
 		}
 
 		$this->twig_root_path = $twig_root_path;
@@ -111,14 +112,14 @@ class Wrapper
 	 * @param string $twig_cache_path - The directory to use as the twig cache path.
 	 * @return \OpenFlame\Framework\Template\Twig - Provides a fluent interface.
 	 *
-	 * @throws \InvalidArgumentException
+	 * @throws InvalidArgumentException
 	 */
 	public function setTwigCachePath($twig_cache_path)
 	{
 		$twig_cache_path = rtrim($twig_cache_path, '/') . '/';
 		if(!is_dir($twig_cache_path))
 		{
-			throw new \InvalidArgumentException(sprintf('The specified Twig cache directory "%1$s" is invalid and either does not exist or is not a usable directory.', $twig_cache_path));
+			throw new InvalidArgumentException(sprintf('The specified Twig cache directory "%1$s" is invalid and either does not exist or is not a usable directory.', $twig_cache_path));
 		}
 
 		$this->twig_cache_path = $twig_cache_path;
@@ -171,13 +172,13 @@ class Wrapper
 	 * @param \Twig_LoaderInterface $loader - The loader to add to the loader chain.
 	 * @return \OpenFlame\Framework\Template\Twig - Provides a fluent interface.
 	 *
-	 * @throws \RuntimeException
+	 * @throws RuntimeException
 	 */
 	public function setTwigLoader(\Twig_LoaderInterface $loader)
 	{
 		if($this->twig_launched)
 		{
-			throw new \RuntimeException('Cannot add additional twig loaders once the Twig environment has been instantiated');
+			throw new RuntimeException('Cannot add additional twig loaders once the Twig environment has been instantiated');
 		}
 
 		$this->extra_twig_loaders[] = $loader;

@@ -11,7 +11,6 @@
  */
 
 namespace OpenFlame\Framework\Twig;
-use OpenFlame\Framework\Core;
 
 /**
  * OpenFlame Framework - Template variable management class,

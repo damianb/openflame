@@ -11,7 +11,7 @@
  */
 
 namespace OpenFlame\Framework\Twig\Helper\Asset;
-use OpenFlame\Framework\Twig\Helper\Asset\Internal\AssetManagerException;
+use \OpenFlame\Framework\Core\Internal\RuntimeException;
 
 /**
  * OpenFlame Framework - Asset mananger object
@@ -107,14 +107,14 @@ class Manager
 	 * Use the external domain instead of the local base URL for the base of all asset URLs
 	 * @return \OpenFlame\Framework\Twig\Helper\Asset\Manager - Provides a fluent interface.
 	 *
-	 * @throws AssetManagerException
+	 * @throws RuntimeException
 	 */
 	public function enableExternalBase()
 	{
 		// If the external domain hasn't been set, we have a problem.
 		if(empty($this->external_domain))
 		{
-			throw new AssetManagerException('Cannot use an empty external domain as base URL');
+			throw new RuntimeException('Cannot use an empty external domain as base URL');
 		}
 
 		$this->use_external_base = true;
@@ -147,13 +147,13 @@ class Manager
 	 * @param string $base_url - The external domain to use.
 	 * @return \OpenFlame\Framework\Twig\Helper\Asset\Manager - Provides a fluent interface.
 	 *
-	 * @throws AssetManagerException
+	 * @throws RuntimeException
 	 */
 	public function setExternalBase($base_url)
 	{
 		if(!filter_var($base_url, FILTER_VALIDATE_URL))
 		{
-			throw new AssetManagerException('Invalid external domain specified for asset URL base');
+			throw new RuntimeException('Invalid external domain specified for asset URL base');
 		}
 
 		$this->external_domain = $base_url;
@@ -296,7 +296,7 @@ class Manager
 	 * @param string $name - The asset name.
 	 * @return AssetInstance - The asset instance to grab.
 	 *
-	 * @throws AssetManagerException
+	 * @throws RuntimeException
 	 */
 	public function getAsset($type, $name)
 	{
@@ -304,7 +304,7 @@ class Manager
 		{
 			if($this->usingInvalidAssetExceptions())
 			{
-				throw new AssetManagerException(sprintf('Attempted to access invalid asset "%1$s.%2$s"', $type, $name));
+				throw new RuntimeException(sprintf('Attempted to access invalid asset "%1$s.%2$s"', $type, $name));
 			}
 			else
 			{
