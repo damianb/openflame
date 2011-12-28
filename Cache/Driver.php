@@ -11,7 +11,7 @@
  */
 
 namespace OpenFlame\Framework\Cache;
-use \OpenFlame\Framework\Cache\Internal\CacheException;
+use \OpenFlame\Framework\Core\Internal\RuntimeException;
 use \OpenFlame\Framework\Core\DependencyInjector;
 use \OpenFlame\Framework\Core\Core;
 use \OpenFlame\Framework\Event\Instance as Event;
@@ -57,13 +57,13 @@ class Driver
 	 * @param $index - The index to check.
 	 * @return boolean - Has the data been cached?
 	 *
-	 * @throws CacheException
+	 * @throws RuntimeException
 	 */
 	public function dataCached($index)
 	{
 		if(empty($this->engine))
 		{
-			throw new CacheException('Cache engine not loaded');
+			throw new RuntimeException('Cache engine not loaded');
 		}
 
 		return $this->engine->exists($index);
@@ -74,13 +74,13 @@ class Driver
 	 * @param string $index - The index to load cached data from.
 	 * @return mixed - The previously cached data.
 	 *
-	 * @throws CacheException
+	 * @throws RuntimeException
 	 */
 	public function loadData($index)
 	{
 		if(empty($this->engine))
 		{
-			throw new CacheException('Cache engine not loaded');
+			throw new RuntimeException('Cache engine not loaded');
 		}
 
 		// if data is not cached already, return NULL
@@ -99,13 +99,13 @@ class Driver
 	 * @param integer $ttl - The lifespan of the cached data, in seconds.  Leave empty or set as 0 to disable cache timeout.
 	 * @return void
 	 *
-	 * @throws CacheException
+	 * @throws RuntimeException
 	 */
 	public function storeData($index, $data, $ttl = 0)
 	{
 		if(empty($this->engine))
 		{
-			throw new CacheException('Cache engine not loaded');
+			throw new RuntimeException('Cache engine not loaded');
 		}
 
 		// store the data in the cache
@@ -117,13 +117,13 @@ class Driver
 	 * @param string $index - The cache index to destroy.
 	 * @return NULL
 	 *
-	 * @throws CacheException
+	 * @throws RuntimeException
 	 */
 	public function destroyData($index)
 	{
 		if(empty($this->engine))
 		{
-			throw new CacheException('Cache engine not loaded');
+			throw new RuntimeException('Cache engine not loaded');
 		}
 
 		$this->engine->destroy($index);
@@ -135,13 +135,13 @@ class Driver
 	 * Public shared interface, garbage-collects the cache if the engine requires this (in case of a file-based cache engine)
 	 * @return void
 	 *
-	 * @throws CacheException
+	 * @throws RuntimeException
 	 */
 	public function gc(Event $event = NULL)
 	{
 		if(empty($this->engine))
 		{
-			throw new CacheException('Cache engine not loaded');
+			throw new RuntimeException('Cache engine not loaded');
 		}
 
 		$this->engine->gc($event);

@@ -11,7 +11,7 @@
  */
 
 namespace OpenFlame\Framework\Cache\Engine;
-use \OpenFlame\Framework\Cache\Internal\EngineException;
+use \OpenFlame\Framework\Core\Internal\RequirementException;
 use \OpenFlame\Framework\Event\Instance as Event;
 
 /**
@@ -22,16 +22,16 @@ use \OpenFlame\Framework\Event\Instance as Event;
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
  * @link        https://github.com/OpenFlame/OpenFlame-Framework
  */
-class APCEngine implements \OpenFlame\Framework\Cache\Engine\EngineInterface
+class APCEngine implements EngineInterface
 {
 	/**
-	 * @throws EngineException
+	 * @throws RequirementException
 	 */
 	public function __construct()
 	{
 		if(!function_exists('apc_fetch'))
 		{
-			throw new EngineException('APC cache functions not available');
+			throw new RequirementException('APC cache functions not available');
 		}
 	}
 
