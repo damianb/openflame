@@ -11,7 +11,10 @@
  */
 
 namespace OpenFlame\Framework\Router;
-use OpenFlame\Framework\Core;
+use \OpenFlame\Framework\Core\DependencyInjector;
+use \OpenFlame\Framework\Core\Internal\InvalidArgumentException;
+use \OpenFlame\Framework\Core\Internal\LogicException;
+use \OpenFlame\Framework\Core\Internal\RuntimeException;
 
 /**
  * OpenFlame Framework - Static URL router route instance,
@@ -20,8 +23,6 @@ use OpenFlame\Framework\Core;
  *
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
  * @link        https://github.com/OpenFlame/OpenFlame-Framework
- *
- * @note Depends upon AliasRouter via dep injector if route aliases are used.
  */
 class RouteInstance
 {
@@ -152,20 +153,13 @@ class RouteInstance
 
 	/**
 	 * Assign a callback to this route instance.
-	 * @param callable $callback - The callback to assign to this route instance.
+	 * @param string $callback - The injector to assign to this route instance.
 	 * @return \OpenFlame\Framework\Router\RouteInstance - Provides a fluent interface.
-	 *
-	 * @throws \LogicException
 	 */
 	public function setRouteCallback($callback)
 	{
 		// reset the serialized route on any changes to the route...
 		$this->setSerializedRoute(NULL);
-
-		if(substr($callback, 0, 2) != '::' && substr($callback, -2, 2) != '::' && !is_callable($callback, true))
-		{
-			throw new \LogicException('Invalid callback provided for route instance');
-		}
 
 		$this->route_callback = $callback;
 
@@ -221,7 +215,7 @@ class RouteInstance
 	 */
 	public function loadRawRoute($route)
 	{
-		$route_data = explode('/', trim($route, '/'), \OpenFlame\Framework\Router\Router::EXPLODE_LIMIT);
+		$route_data = explode('/', trim($route, '/'), Router::EXPLODE_LIMIT);
 
 		$this->setRouteBase($route_data[0])
 			->setRouteMap($this->buildRouteMap($route_data))
@@ -235,7 +229,7 @@ class RouteInstance
 	 * @param string $route_string - The serialized route instance data to restore.
 	 * @return \OpenFlame\Framework\Router\RouteInstance - Provides a fluent interface.
 	 *
-	 * @throws \RuntimeException
+	 * @throws RuntimeException
 	 */
 	public function loadSerializedRoute($route_string)
 	{
@@ -244,7 +238,7 @@ class RouteInstance
 		// Protected against bunk data
 		if($route_data === false || !isset($route_data['route_base']) || !isset($route_data['route_map']) || !isset($route_data['route_regexp']) || !isset($route_data['route_callback']))
 		{
-			throw new \RuntimeException('Route unserialization failed, data extracted is invalid or incomplete');
+			throw new RuntimeException('Route unserialization failed, data extracted is invalid or incomplete');
 		}
 
 		// Load the route data seamlessly
@@ -325,35 +319,21 @@ class RouteInstance
 	}
 
 	/**
-	 * Trigger the route callback.
-	 * @return mixed - The returned data from the callback.
+	 * Get the assigned controller for the specified route.
+	 * @return mixed - The controller for this route.
 	 *
-	 * @throws \LogicException
+	 * @throws LogicException
 	 */
-	public function fireCallback()
+	public function getController()
 	{
 		$callback = $this->getRouteCallback();
+
 		if($callback === NULL)
 		{
-			throw new \LogicException('Attempted to fire callback when no callback has been set');
+			throw new LogicException('Attempted to fire callback when no callback has been set');
 		}
 
-		// Check to see if this is a route "alias"
-		if(substr($callback, 0, 2) == '::' && substr($callback, -2, 2) == '::')
-		{
-			$injector = \OpenFlame\Framework\Dependency\Injector::getInstance();
-			$alias_router = $injector->get('alias_router');
-
-			$route_alias = substr($callback, 2, strlen($callback) - 4);
-			$_callback = $alias_router->resolveAlias($route_alias);
-			if(!is_callable($_callback))
-			{
-				throw new \LogicException('Nonexistant callback provided by route alias');
-			}
-			return call_user_func($_callback, $this);
-		}
-
-		return call_user_func($callback, $this);
+		return DependencyInjector::grab($callback);
 	}
 
 	/**
@@ -361,7 +341,7 @@ class RouteInstance
 	 * @param array $route_data - The array of chunks extracted from the raw route path string.
 	 * @return array - The parsed array of route components that we've hammered out.
 	 *
-	 * @throws \InvalidArgumentException
+	 * @throws InvalidArgumentException
 	 */
 	protected function buildRouteMap(array $route_data)
 	{
@@ -389,7 +369,7 @@ class RouteInstance
 
 				if($type != 'none' && !$this->getTypeSupported($type))
 				{
-					throw new \InvalidArgumentException(sprintf('Unsupported route variable type "%1$s" specified', $type));
+					throw new InvalidArgumentException(sprintf('Unsupported route variable type "%1$s" specified', $type));
 				}
 
 				$route_map[$i] = array('entry' => $var, 'type' => $type);
@@ -405,7 +385,7 @@ class RouteInstance
 	 * @param array $route_map - The route map to use to build the regular expression.
 	 * @return string - The regular expression to use for this route instance.
 	 *
-	 * @throws \LogicException
+	 * @throws LogicException
 	 */
 	protected function buildRouteRegex($route_map)
 	{
@@ -438,7 +418,7 @@ class RouteInstance
 				break;
 
 				default:
-					throw new \LogicException(sprintf('Unsupported route type "%1$s" encountered during route regexp creation', $component['type']));
+					throw new LogicException(sprintf('Unsupported route type "%1$s" encountered during route regexp creation', $component['type']));
 				break;
 			}
 		}
