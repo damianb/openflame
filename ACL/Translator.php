@@ -11,7 +11,7 @@
  */
 
 namespace OpenFlame\Framework\ACL;
-use \OpenFlame\Framework\Core;
+use \OpenFlame\Framework\Core\Internal\RuntimeException;
 
 /**
  * OpenFlame Framework - ACL binary auth compiler object
@@ -23,6 +23,10 @@ use \OpenFlame\Framework\Core;
  */
 class Translator
 {
+	const YES = 1;
+	const NO = 0;
+	const NEVER = -1;
+
 	/**
 	 * @var array - Array containing the finished, processed group data after resolveAuths() is run
 	 */
@@ -85,6 +89,8 @@ class Translator
 	 * @return array - An array containing two entries, a "groups" subarray containing the "inherit" and "auths" strings, and potentially the unique identifiers of any child groups (under "children") and the unique identifier of the parent group (under "parent")
 	 *
 	 * @note if the group's data is not loaded with this->setGroup() the group's auth data will not be computed.
+	 *
+	 * @throws RuntimeException
 	 */
 	public function buildGroupAuths($group_id_set)
 	{
@@ -123,7 +129,7 @@ class Translator
 					}
 					if(isset($inherit_tree[$inherit_id]))
 					{
-						throw new \RuntimeException('Recursive group inheritance detected, aborting');
+						throw new RuntimeException('Recursive group inheritance detected, aborting');
 					}
 
 					$inherit_tree[$inherit_id] = true;
@@ -173,6 +179,10 @@ class Translator
 	 */
 	public function blender(&$item, $key, $merge)
 	{
+		// Typecast both to integer.
+		$item = (int) $item;
+		$merge[$key] = (int) $merge[$key];
+
 		/**
 		 * assume:
 		 * 1  = 'yes'
@@ -206,7 +216,7 @@ class Translator
 		 *
 		 * this structure allows "never" to always, ALWAYS work.
 		 */
-		if(isset($merge[$key]) && $merge[$key] != 0 && $item != -1)
+		if(empty($merge[$key]) && $item != -1)
 		{
 			$item = $merge[$key];
 		}
