@@ -11,7 +11,6 @@
  */
 
 namespace OpenFlame\Framework\ACL;
-use \OpenFlame\Framework\Core;
 
 /**
  * OpenFlame Framework - ACL binary auth interpreter object
