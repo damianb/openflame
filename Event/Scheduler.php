@@ -12,7 +12,6 @@
 
 namespace OpenFlame\Framework\Event;
 use \OpenFlame\Framework\Core\DependencyInjector;
-use \OpenFlame\Framework\Event\Dispatcher;
 use \OpenFlame\Framework\Event\Instance as Event;
 
 /**
