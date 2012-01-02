@@ -11,6 +11,7 @@
  */
 
 namespace OpenFlame\Framework\Header\Helper\Cookie;
+use \OpenFlame\Framework\Header\Helper\Cookie\Instance as CookieInstance;
 
 /**
  * OpenFlame Framework - Cookie manager object
@@ -234,7 +235,7 @@ class Manager
 	 */
 	public function setCookie($cookie_name)
 	{
-		$cookie = \OpenFlame\Framework\Cookie\Instance::newInstance($this);
+		$cookie = CookieInstance::newInstance($this);
 		$cookie->setCookieName((string) $cookie_name);
 
 		$this->cookies[(string) $cookie_name] = $cookie;
@@ -272,7 +273,7 @@ class Manager
 		}
 
 		$cookie->setCookieValue('')
-			->setExpireTime(-15000);
+			->setExpireTime(-150000);
 
 		return $this;
 	}
