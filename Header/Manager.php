@@ -11,7 +11,8 @@
  */
 
 namespace OpenFlame\Framework\Header;
-use OpenFlame\Framework\Core;
+use \OpenFlame\Framework\Core\DependencyInjector;
+use \OpenFlame\Framework\Core\Internal\LogicException;
 
 /**
  * OpenFlame Framework - Header manager object
@@ -132,7 +133,7 @@ class Manager
 	 * Get the current HTTP status header code.
 	 * @return string - The current HTTP status code in the full HTTP header format.
 	 *
-	 * @throw \LogicException
+	 * @throw LogicException
 	 */
 	public function getHTTPStatusHeader()
 	{
@@ -164,7 +165,7 @@ class Manager
 		// Make sure we know what to use for this HTTP status.
 		if(!isset($server_errors[$this->http_status]))
 		{
-			throw new \LogicException(sprintf('Unrecognized HTTP status code "%d"', $this->http_status));
+			throw new LogicException(sprintf('Unrecognized HTTP status code "%d"', $this->http_status));
 		}
 
 		return sprintf('HTTP/1.0 %1$d %2$s', $this->http_status, $server_errors[$this->http_status]);
@@ -231,81 +232,5 @@ class Manager
 		$this->headers_sent = true;
 
 		return $this;
-	}
-
-	/**
-	 * Is a header management submodule loaded?
-	 * @param string $submodule - The submodule to check.
-	 * @return boolean - Is the specified submodule currently loaded?
-	 */
-	public function isSubmoduleLoaded($submodule)
-	{
-		return (bool) isset($this->submodules[$submodule]);
-	}
-
-	/**
-	 * Get a loaded header management submodule
-	 * @param string $submodule - The name of the submodule to grab.
-	 * @return \OpenFlame\Framework\Header\Submodule\SubmoduleInterface - The submodule requested.
-	 */
-	public function getSubmodule($submodule)
-	{
-		if(!isset($this->submodules[$submodule]))
-		{
-			return $this->loadSubmodule($submodule);
-		}
-
-		return $this->submodules[$submodule];
-	}
-
-	/**
-	 * Load a header management submodule
-	 * @param string $submodule - The submodule to load.
-	 * @return \OpenFlame\Framework\Header\Submodule\SubmoduleInterface - The submodule just loaded.
-	 *
-	 * @throws \RuntimeException
-	 * @throws \LogicException
-	 */
-	public function loadSubmodule($submodule)
-	{
-		$submodule_class = "\\OpenFlame\Framework\\Header\\Submodule\\$submodule";
-
-		// Check to see if the submodule actually does exist
-		if(!class_exists($submodule_class, true))
-		{
-			throw new \RuntimeException(sprintf('Failed to load header management submodule "%1$s"; submodule does not exist', $submodule_class));
-		}
-
-		$submodule_object = $submodule_class::newInstance();
-		if(!($submodule_object instanceof \OpenFlame\Framework\Header\Submodule\SubmoduleInterface))
-		{
-			throw new \LogicException(sprintf('Header management submodule "%1$s" does not implement \\OpenFlame\\Framework\\Header\\Submodule\\SubmoduleInterface as required.'));
-		}
-
-		// Store the header manager in the submodule, and store the submodule.
-		$submodule_object->setManager($this);
-		$this->submodules[$submodule] = $submodule_object;
-
-		return $this->submodules[$submodule];
-	}
-
-	/**
-	 * Is a header management submodule loaded?
-	 * @param string $submodule - The submodule to check.
-	 * @return boolean - Is the specified submodule currently loaded?
-	 */
-	public function __isset($submodule)
-	{
-		return (bool) isset($this->submodules[$submodule]);
-	}
-
-	/**
-	 * Get a loaded header management submodule
-	 * @param string $submodule - The name of the submodule to grab.
-	 * @return \OpenFlame\Framework\Header\Submodule\SubmoduleInterface - The submodule requested.
-	 */
-	public function __get($submodule)
-	{
-		return $this->getSubmodule($submodule);
 	}
 }
