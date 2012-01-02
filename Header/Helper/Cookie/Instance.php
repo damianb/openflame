@@ -10,8 +10,8 @@
  * Minimum Requirement: PHP 5.3.0
  */
 
-namespace OpenFlame\Framework\Cookie;
-use OpenFlame\Framework\Header\Helper\Cookie\Internal\CookieInstanceException;
+namespace OpenFlame\Framework\Header\Helper\Cookie;
+use OpenFlame\Framework\Core\Internal\RuntimeException;
 
 /**
  * OpenFlame Framework - Cookie instance object
@@ -39,7 +39,7 @@ class Instance
 	protected $expire_time = -1;
 
 	/**
-	 * @var \OpenFlame\Framework\Cookie\Manager - The cookie manager submodule
+	 * @var \OpenFlame\Framework\Header\Helper\Cookie\Manager - The cookie manager submodule
 	 */
 	protected $manager;
 
@@ -117,8 +117,7 @@ class Instance
 		 * It may not apply to us since we set cookies via header() instead of setcookie(), but better safe than sorry.
 		 * @see: http://www.php.net/manual/en/function.setcookie.php#99845
 		 */
-		$cookie_name = str_replace('.', '_', (string) $cookie_name);
-		$this->cookie_name = $cookie_name;
+		$this->cookie_name = str_replace('.', '_', (string) $cookie_name);
 
 		return $this;
 	}
@@ -148,13 +147,13 @@ class Instance
 	 * Get the full header string of this cookie's data.
 	 * @return string - The header string to send for this cookie.
 	 *
-	 * @throws CookieInstanceException
+	 * @throws RuntimeException
 	 */
 	public function getFullCookieString()
 	{
 		if(empty($this->cookie_name))
 		{
-			throw new CookieInstanceException('Attempted to generate cookie data string for a cookie without a cookie name set');
+			throw new RuntimeException('Attempted to generate cookie data string for a cookie without a cookie name set');
 		}
 
 		$path = $this->manager->getCookiePath();
@@ -163,6 +162,7 @@ class Instance
 
 		$cookie_data = array();
 		$cookie_data[] = rawurlencode($this->manager->getCookiePrefix() . $this->cookie_name) . '=' . rawurlencode($this->cookie_value);
+
 		if($this->expire_time !== 0)
 		{
 			$cookie_data[] = 'expires=' . $this->getRFCExpireTime();
@@ -182,6 +182,7 @@ class Instance
 		$cookie_data[] = 'HttpOnly';
 
 		$cookie_string = implode('; ', $cookie_data);
+
 		return $cookie_string;
 	}
 }
