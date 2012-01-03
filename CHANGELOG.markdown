@@ -91,3 +91,7 @@
 	 - Added new APC-based cache engine `Cache\Engine\APCEngine`
 	 - Added new dependency injectors for cache component and cache engines
 	 - Refactored `Input\Handler` and `Input\Instance`, removed "field juggling" code and refactored it into a child class of `Input\Handler`, the new `Input\Juggler` component
+	 - Refactored `Router\RouteInstance` to use `Core\DependencyInjector` instead of storing callbacks
+	 - Added class constants `YES`, `NO`, `NEVER` to `ACL\Translator`
+	 - Refactored `Header\Manager` component, removed submodules
+	 - Changed `Cookie\` namespace to a `Header\` component helper
