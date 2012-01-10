@@ -34,7 +34,7 @@ class Core
 	/**
 	 * @var string - The version for the Framework
 	 */
-	private static $version = '2.0.0-dev';
+	private static $version = '2.0.0-rc2';
 
 	/**
 	 * @var array - Array of settings we have loaded and stored
