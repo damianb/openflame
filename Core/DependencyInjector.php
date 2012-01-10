@@ -58,6 +58,7 @@ class DependencyInjector implements \ArrayAccess
 		$this->setInjector('timer', '\\OpenFlame\\Framework\\Twig\\Helper\\Timer\\Timer');
 		$this->setInjector('session_store_engine', '\\OpenFlame\\Framework\\Session\\Storage\\EngineFilesystem');
 		$this->setInjector('session_client_engine', '\\OpenFlame\\Framework\\Session\\Client\\EngineCookie');
+		$this->setInjector('header', '\\OpenFlame\\Framework\\Header\\Manager');
 
 		$this->setInjector('asset_proxy', function() use($injector) {
 			return new \OpenFlame\Framework\Twig\Helper\Asset\Proxy($injector->get('asset'));
@@ -69,14 +70,6 @@ class DependencyInjector implements \ArrayAccess
 
 		$this->setInjector('language_proxy', function() use($injector) {
 			return new \OpenFlame\Framework\Language\Proxy($injector->get('language'));
-		});
-
-		$this->setInjector('header', function() use($injector) {
-			$header = new \OpenFlame\Framework\Header\Manager();
-			$cookie = $header->getSubmodule('Cookie');
-			$cookie->setCookieManager($injector->get('cookie'));
-
-			return $header;
 		});
 
 		$this->setInjector('session', function() use($injector) {
