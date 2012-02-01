@@ -11,7 +11,7 @@
  */
 
 namespace OpenFlame\Framework\Cache\Engine\File;
-use \OpenFlame\Framework\Utility\JSON;
+use \OpenFlame\Framework\Core\Utility\JSON;
 
 /**
  * OpenFlame Framework - JSON Cache engine,

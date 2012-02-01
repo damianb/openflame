@@ -10,7 +10,7 @@
  * Minimum Requirement: PHP 5.3.0
  */
 
-namespace OpenFlame\Framework\Utility;
+namespace OpenFlame\Framework\Core\Utility;
 use \OpenFlame\Framework\Core\Internal\RuntimeException;
 
 /**
