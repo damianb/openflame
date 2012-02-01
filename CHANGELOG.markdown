@@ -97,3 +97,4 @@
 	 - Changed `Cookie\` namespace to a `Header\` component helper
 	 - Removed `Utility\Hasher` - use PHP's crypt() function instead
 	 - Removed `Utility\Config`
+	 - Moved `Utility\*` namespace under `Core\` namespace

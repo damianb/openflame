@@ -48,10 +48,9 @@ class DependencyInjector implements \ArrayAccess
 		$this->setInjector('input', '\\OpenFlame\\Framework\\Input\\Handler');
 		$this->setInjector('template', '\\OpenFlame\\Framework\\Twig\\Variables');
 		$this->setInjector('asset', '\\OpenFlame\\Framework\\Twig\\Helper\\Asset\\Manager');
-		$this->setInjector('form', '\\OpenFlame\\Framework\\Utility\\FormKey');
+		$this->setInjector('form', '\\OpenFlame\\Framework\\Core\\Utility\\FormKey');
 		$this->setInjector('dispatcher', '\\OpenFlame\\Framework\\Event\\Dispatcher');
 		$this->setInjector('language', '\\OpenFlame\\Framework\\Language\\Handler');
-		$this->setInjector('hasher', '\OpenFlame\\Framework\\Utility\\Hasher');
 		$this->setInjector('url', '\\OpenFlame\\Framework\\Twig\\Helper\\URL\\Builder');
 		$this->setInjector('cookie', '\\OpenFlame\\Framework\\Cookie\\Manager');
 		$this->setInjector('seeder', '\\OpenFlame\\Framework\\Security\\Seeder');
