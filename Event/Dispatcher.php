@@ -3,14 +3,14 @@
  *
  * @package     openflame-framework
  * @subpackage  event
- * @copyright   (c) 2010 - 2011 openflame-project.org
+ * @copyright   (c) 2010 - 2012 emberlabs.org
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
- * @link        https://github.com/OpenFlame/OpenFlame-Framework
+ * @link        https://github.com/emberlabs/openflame
  *
  * Minimum Requirement: PHP 5.3.0
  */
 
-namespace OpenFlame\Framework\Event;
+namespace emberlabs\openflame\Event;
 
 /**
  * OpenFlame Framework - Event dispatcher object
@@ -18,7 +18,7 @@ namespace OpenFlame\Framework\Event;
  *
  *
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
- * @link        https://github.com/OpenFlame/OpenFlame-Framework
+ * @link        https://github.com/emberlabs/openflame
  */
 class Dispatcher
 {
@@ -56,7 +56,7 @@ class Dispatcher
 	 * @param integer $priority - The priority for the listener to be registered as, similar to *nix "nice" values for CPU processes (-20 top priority, 20 bottom priority)
 	 * @param callable $listener - The callable reference for the listener.
 	 * @param integer $limit - The number of times that the listener should be executed before being removed (or -1 to always run); defaults to -1.
-	 * @return \OpenFlame\Framework\Event\Dispatcher - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Event\Dispatcher - Provides a fluent interface.
 	 */
 	public function register($event_name, $priority, $listener, $limit = -1)
 	{
@@ -124,11 +124,11 @@ class Dispatcher
 
 	/**
 	 * Dispatch an event to registered listeners
-	 * @param \OpenFlame\Framework\Event\Instance $event - The event to dispatch.
+	 * @param \emberlabs\openflame\Event\Instance $event - The event to dispatch.
 	 * @param integer $dispatch_type - The type of dispatch method to use (run all listeners, allow listeners to trigger break, break on a non-NULL return value)
-	 * @return \OpenFlame\Framework\Event\Instance - The event dispatched.
+	 * @return \emberlabs\openflame\Event\Instance - The event dispatched.
 	 */
-	public function trigger(\OpenFlame\Framework\Event\Instance $event, $dispatch_type = self::TRIGGER_NOBREAK)
+	public function trigger(\emberlabs\openflame\Event\Instance $event, $dispatch_type = self::TRIGGER_NOBREAK)
 	{
 		$event_name = $event->getName();
 

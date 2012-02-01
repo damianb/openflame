@@ -3,16 +3,16 @@
  *
  * @package     openflame-framework
  * @subpackage  twig
- * @copyright   (c) 2010 - 2011 openflame-project.org
+ * @copyright   (c) 2010 - 2012 emberlabs.org
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
- * @link        https://github.com/OpenFlame/OpenFlame-Framework
+ * @link        https://github.com/emberlabs/openflame
  *
  * Minimum Requirement: PHP 5.3.0
  */
 
-namespace OpenFlame\Framework\Twig;
-use \OpenFlame\Framework\Core\Internal\InvalidArgumentException;
-use \OpenFlame\Framework\Core\Internal\RuntimeException;
+namespace emberlabs\openflame\Twig;
+use \emberlabs\openflame\Core\Internal\InvalidArgumentException;
+use \emberlabs\openflame\Core\Internal\RuntimeException;
 
 /**
  * OpenFlame Framework - Twig management class
@@ -20,7 +20,7 @@ use \OpenFlame\Framework\Core\Internal\RuntimeException;
  *
  *
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
- * @link        https://github.com/OpenFlame/OpenFlame-Framework
+ * @link        https://github.com/emberlabs/openflame
  */
 class Wrapper
 {
@@ -81,7 +81,7 @@ class Wrapper
 	/**
 	 * Set the root directory for Twig's include files.
 	 * @param string $twig_root_path - The root directory that contains Twig's include files (should directly contain the twig autoloader).
-	 * @return \OpenFlame\Framework\Template\Twig - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Template\Twig - Provides a fluent interface.
 	 *
 	 * @throws InvalidArgumentException
 	 */
@@ -110,7 +110,7 @@ class Wrapper
 	/**
 	 * Set the cache path to use with twig.
 	 * @param string $twig_cache_path - The directory to use as the twig cache path.
-	 * @return \OpenFlame\Framework\Template\Twig - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Template\Twig - Provides a fluent interface.
 	 *
 	 * @throws InvalidArgumentException
 	 */
@@ -158,7 +158,7 @@ class Wrapper
 	 * Set a twig environment option (only use before calling initTwig())
 	 * @param string $option - The name of the option to set.
 	 * @param mixed $value - The value to set for the option.
-	 * @return \OpenFlame\Framework\Template\Twig - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Template\Twig - Provides a fluent interface.
 	 */
 	public function setTwigOption($option, $value)
 	{
@@ -170,7 +170,7 @@ class Wrapper
 	/**
 	 * Add another loader for use with twig.
 	 * @param \Twig_LoaderInterface $loader - The loader to add to the loader chain.
-	 * @return \OpenFlame\Framework\Template\Twig - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Template\Twig - Provides a fluent interface.
 	 *
 	 * @throws RuntimeException
 	 */
@@ -198,7 +198,7 @@ class Wrapper
 	/**
 	 * Set a new template path for use with Twig.
 	 * @param string $template_path - The template path to add.
-	 * @return \OpenFlame\Framework\Template\Twig - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Template\Twig - Provides a fluent interface.
 	 */
 	public function setTemplatePath($template_path)
 	{
@@ -212,7 +212,7 @@ class Wrapper
 
 	/**
 	 * Update the template paths if twig's been launched.
-	 * @return \OpenFlame\Framework\Template\Twig - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Template\Twig - Provides a fluent interface.
 	 */
 	public function updateTemplatePaths()
 	{

@@ -3,15 +3,15 @@
  *
  * @package     openflame-framework
  * @subpackage  router
- * @copyright   (c) 2010 - 2011 openflame-project.org
+ * @copyright   (c) 2010 - 2012 emberlabs.org
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
- * @link        https://github.com/OpenFlame/OpenFlame-Framework
+ * @link        https://github.com/emberlabs/openflame
  *
  * Minimum Requirement: PHP 5.3.0
  */
 
-namespace OpenFlame\Framework\Router;
-use \OpenFlame\Framework\Core\Internal\RuntimeException;
+namespace emberlabs\openflame\Router;
+use \emberlabs\openflame\Core\Internal\RuntimeException;
 
 /**
  * OpenFlame Framework - Static URL router,
@@ -19,13 +19,13 @@ use \OpenFlame\Framework\Core\Internal\RuntimeException;
  *
  *
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
- * @link        https://github.com/OpenFlame/OpenFlame-Framework
+ * @link        https://github.com/emberlabs/openflame
  */
 class Router
 {
 	/**
 	 * @const - Just to make sure no one sends stupidly long url requests for this to process
-	 * @note - Changes to this setting also affect behavior in OpenFlame\Framework\Router\RouteInstance
+	 * @note - Changes to this setting also affect behavior in emberlabs\openflame\Router\RouteInstance
 	 */
 	const EXPLODE_LIMIT = 15;
 
@@ -40,12 +40,12 @@ class Router
 	protected $routes = array();
 
 	/**
-	 * @var \OpenFlame\Framework\Router\RouteInstance - The route to return if this is the default landing page.
+	 * @var \emberlabs\openflame\Router\RouteInstance - The route to return if this is the default landing page.
 	 */
 	protected $home_route;
 
 	/**
-	 * @var \OpenFlame\Framework\Router\RouteInstance - The route to return if no matching route is found.
+	 * @var \emberlabs\openflame\Router\RouteInstance - The route to return if no matching route is found.
 	 */
 	protected $error_route;
 
@@ -61,7 +61,7 @@ class Router
 	/**
 	 * Set the "base URL" for this installation, which will be stripped from the beginning of all requests.
 	 * @param string $base_url - The "base URL" which we're going to strip
-	 * @return \OpenFlame\Framework\Router\Router - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Router\Router - Provides a fluent interface.
 	 */
 	public function setBaseURL($base_url)
 	{
@@ -74,7 +74,7 @@ class Router
 	 * Create a new route with a specific route path to cover, and a callback to assign to the route on match
 	 * @param string $route_data - The formatted route path to use for this route.
 	 * @param callable $route_callback - The callback to use when we've got the right route.
-	 * @return \OpenFlame\Framework\Router\RouteInstance - The newly created route.
+	 * @return \emberlabs\openflame\Router\RouteInstance - The newly created route.
 	 */
 	public function newRoute($route_data, $route_callback)
 	{
@@ -88,7 +88,7 @@ class Router
 	/**
 	 * Recreate a previously constructed route using the serialized data cache of the route.
 	 * @param string $route_data - The serialized cache data to use to regenerate the route.
-	 * @return \OpenFlame\Framework\Router\RouteInstance - The newly created route.
+	 * @return \emberlabs\openflame\Router\RouteInstance - The newly created route.
 	 */
 	public function newCachedRoute($route_data)
 	{
@@ -99,9 +99,9 @@ class Router
 	}
 
 	/**
-	 * Define a batch of new routes (using \OpenFlame\Framework\Router\Router->newRoute()).
+	 * Define a batch of new routes (using \emberlabs\openflame\Router\Router->newRoute()).
 	 * @param array $routes - The array of routes to create.
-	 * @return \OpenFlame\Framework\Router\Router - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Router\Router - Provides a fluent interface.
 	 */
 	public function newRoutes(array $routes)
 	{
@@ -114,9 +114,9 @@ class Router
 	}
 
 	/**
-	 * Restore a batch of previously generated routes  (using \OpenFlame\Framework\Router\Router->newCachedRoute()).
+	 * Restore a batch of previously generated routes  (using \emberlabs\openflame\Router\Router->newCachedRoute()).
 	 * @param array $routes - The array of routes to restore.
-	 * @return \OpenFlame\Framework\Router\Router - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Router\Router - Provides a fluent interface.
 	 */
 	public function newCachedRoutes(array $routes)
 	{
@@ -130,9 +130,9 @@ class Router
 
 	/**
 	 * Store a generated route in the router.
-	 * @param \OpenFlame\Framework\Router\RouteInstance $route - The route to store.
+	 * @param \emberlabs\openflame\Router\RouteInstance $route - The route to store.
 	 * @param boolean $prepend - Do we want to prepend the addition, to have the route encountered earlier?
-	 * @return \OpenFlame\Framework\Router\Router - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Router\Router - Provides a fluent interface.
 	 */
 	public function storeRoute(RouteInstance $route, $prepend = true)
 	{
@@ -156,7 +156,7 @@ class Router
 
 	/**
 	 * Get the currently defined "home" route.
-	 * @return \OpenFlame\Framework\Router\RouteInstance $route - The currently defined "home" route.
+	 * @return \emberlabs\openflame\Router\RouteInstance $route - The currently defined "home" route.
 	 *
 	 * @throws \RuntimeException
 	 */
@@ -172,8 +172,8 @@ class Router
 
 	/**
 	 * Set a route to be used as the "home" route.
-	 * @param \OpenFlame\Framework\Router\RouteInstance $route - The route to use as our "home" route.
-	 * @return \OpenFlame\Framework\Router\Router - Provides a fluent interface.
+	 * @param \emberlabs\openflame\Router\RouteInstance $route - The route to use as our "home" route.
+	 * @return \emberlabs\openflame\Router\Router - Provides a fluent interface.
 	 */
 	public function setHomeRoute(RouteInstance $route)
 	{
@@ -184,7 +184,7 @@ class Router
 
 	/**
 	 * Get the currently defined "error" route.
-	 * @return \OpenFlame\Framework\Router\RouteInstance $route - The currently defined "error" route.
+	 * @return \emberlabs\openflame\Router\RouteInstance $route - The currently defined "error" route.
 	 *
 	 * @throws \RuntimeException
 	 */
@@ -200,8 +200,8 @@ class Router
 
 	/**
 	 * Set a route to be used as the "error" route.
-	 * @param \OpenFlame\Framework\Router\RouteInstance $route - The route to use as our "error" route.
-	 * @return \OpenFlame\Framework\Router\Router - Provides a fluent interface.
+	 * @param \emberlabs\openflame\Router\RouteInstance $route - The route to use as our "error" route.
+	 * @return \emberlabs\openflame\Router\Router - Provides a fluent interface.
 	 */
 	public function setErrorRoute(RouteInstance $route)
 	{
@@ -235,9 +235,9 @@ class Router
 	}
 
 	/**
-	 * Load previously cached routes en masse (must be used with the exact data provided by \OpenFlame\Framework\Router\Router->getFullRouteCache()).
-	 * @param array $cache_array - The array returned by \OpenFlame\Framework\Router\Router->getFullRouteCache()
-	 * @return \OpenFlame\Framework\Router\Router - Provides a fluent interface.
+	 * Load previously cached routes en masse (must be used with the exact data provided by \emberlabs\openflame\Router\Router->getFullRouteCache()).
+	 * @param array $cache_array - The array returned by \emberlabs\openflame\Router\Router->getFullRouteCache()
+	 * @return \emberlabs\openflame\Router\Router - Provides a fluent interface.
 	 */
 	public function loadFromFullRouteCache(array $cache_array)
 	{
@@ -251,7 +251,7 @@ class Router
 	/**
 	 * Take the (dirty) request url for the current request and return the route that matches it.
 	 * @param string &$request_url - The requested local url.
-	 * @return \OpenFlame\Framework\Router\RouteInstance - The matching route instance.
+	 * @return \emberlabs\openflame\Router\RouteInstance - The matching route instance.
 	 * @note This method will sanitize the URL before processing.
 	 */
 	public function processRequest(&$request_url)

@@ -3,15 +3,15 @@
  *
  * @package     openflame-framework
  * @subpackage  ACL
- * @copyright   (c) 2010 - 2011 openflame-project.org
+ * @copyright   (c) 2010 - 2012 emberlabs.org
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
- * @link        https://github.com/OpenFlame/OpenFlame-Framework
+ * @link        https://github.com/emberlabs/openflame
  *
  * Minimum Requirement: PHP 5.3.0
  */
 
-namespace OpenFlame\Framework\ACL;
-use \OpenFlame\Framework\Core\Internal\RuntimeException;
+namespace emberlabs\openflame\ACL;
+use \emberlabs\openflame\Core\Internal\RuntimeException;
 
 /**
  * OpenFlame Framework - ACL binary auth compiler object
@@ -19,7 +19,7 @@ use \OpenFlame\Framework\Core\Internal\RuntimeException;
  *
  *
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
- * @link        https://github.com/OpenFlame/OpenFlame-Framework
+ * @link        https://github.com/emberlabs/openflame
  */
 class Translator
 {
@@ -53,7 +53,7 @@ class Translator
 	 * @param array $group_flags - The array of flags to use for this group.
 	 * @param mixed $inherit_id - The identifier of the group that this group inherits auths from, if any.
 	 * @param string $auth_cache - The previously generated 'inherit' string, if available (a string comprised of just the character set 0, 1, and 2)
-	 * @return \OpenFlame\Framework\ACL\Translator - Provides a fluent interface.
+	 * @return \emberlabs\openflame\ACL\Translator - Provides a fluent interface.
 	 */
 	public function setGroup($group_id, array $group_flags, $inherit_id = NULL, $auth_cache = NULL)
 	{
@@ -74,7 +74,7 @@ class Translator
 	/**
 	 * Load in the array of auths in use in the application.
 	 * @param array $auth_flags - Array of all the ACL flags in the application. (DO NOT OMIT ANY FLAGS WHATSOEVER)
-	 * @return \OpenFlame\Framework\ACL\Translator - Provides a fluent interface.
+	 * @return \emberlabs\openflame\ACL\Translator - Provides a fluent interface.
 	 *
 	 * @note If any flags are added, removed, or their order changes, all compiled ACL flag strings must be recomputed.
 	 */

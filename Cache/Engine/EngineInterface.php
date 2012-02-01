@@ -3,15 +3,15 @@
  *
  * @package     openflame-framework
  * @subpackage  cache
- * @copyright   (c) 2010 - 2011 openflame-project.org
+ * @copyright   (c) 2010 - 2012 emberlabs.org
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
- * @link        https://github.com/OpenFlame/OpenFlame-Framework
+ * @link        https://github.com/emberlabs/openflame
  *
  * Minimum Requirement: PHP 5.3.0
  */
 
-namespace OpenFlame\Framework\Cache\Engine;
-use \OpenFlame\Framework\Event\Instance as Event;
+namespace emberlabs\openflame\Cache\Engine;
+use \emberlabs\openflame\Event\Instance as Event;
 
 /**
  * OpenFlame Framework - Cache Engine interface,
@@ -19,7 +19,7 @@ use \OpenFlame\Framework\Event\Instance as Event;
  *
  *
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
- * @link        https://github.com/OpenFlame/OpenFlame-Framework
+ * @link        https://github.com/emberlabs/openflame
  */
 interface EngineInterface
 {

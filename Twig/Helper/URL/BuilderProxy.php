@@ -3,14 +3,14 @@
  *
  * @package     openflame-framework
  * @subpackage  url
- * @copyright   (c) 2010 - 2011 openflame-project.org
+ * @copyright   (c) 2010 - 2012 emberlabs.org
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
- * @link        https://github.com/OpenFlame/OpenFlame-Framework
+ * @link        https://github.com/emberlabs/openflame
  *
  * Minimum Requirement: PHP 5.3.0
  */
 
-namespace OpenFlame\Framework\Twig\Helper\URL;
+namespace emberlabs\openflame\Twig\Helper\URL;
 
 /**
  * OpenFlame Framework - Template proxy object for internal URL construction,
@@ -18,12 +18,12 @@ namespace OpenFlame\Framework\Twig\Helper\URL;
  *
  *
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
- * @link        https://github.com/OpenFlame/OpenFlame-Framework
+ * @link        https://github.com/emberlabs/openflame
  */
 class BuilderProxy
 {
 	/**
-	 * @var \OpenFlame\Framework\Twig\Helper\URL\Builder - The URL builder object.
+	 * @var \emberlabs\openflame\Twig\Helper\URL\Builder - The URL builder object.
 	 */
 	protected $builder;
 
@@ -34,9 +34,9 @@ class BuilderProxy
 
 	/**
 	 * Constructor
-	 * @param \OpenFlame\Framework\Twig\Helper\URL\Builder $manager - The URL builder object.
+	 * @param \emberlabs\openflame\Twig\Helper\URL\Builder $manager - The URL builder object.
 	 */
-	public function __construct(\OpenFlame\Framework\Twig\Helper\URL\Builder $builder)
+	public function __construct(\emberlabs\openflame\Twig\Helper\URL\Builder $builder)
 	{
 		$this->builder = $builder;
 	}

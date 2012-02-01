@@ -3,15 +3,15 @@
  *
  * @package     openflame-framework
  * @subpackage  asset
- * @copyright   (c) 2010 - 2011 openflame-project.org
+ * @copyright   (c) 2010 - 2012 emberlabs.org
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
- * @link        https://github.com/OpenFlame/OpenFlame-Framework
+ * @link        https://github.com/emberlabs/openflame
  *
  * Minimum Requirement: PHP 5.3.0
  */
 
-namespace OpenFlame\Framework\Twig\Helper\Asset;
-use \OpenFlame\Framework\Core\Internal\RuntimeException;
+namespace emberlabs\openflame\Twig\Helper\Asset;
+use \emberlabs\openflame\Core\Internal\RuntimeException;
 
 /**
  * OpenFlame Framework - Asset mananger object
@@ -19,7 +19,7 @@ use \OpenFlame\Framework\Core\Internal\RuntimeException;
  *
  *
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
- * @link        https://github.com/OpenFlame/OpenFlame-Framework
+ * @link        https://github.com/emberlabs/openflame
  */
 class Manager
 {
@@ -76,7 +76,7 @@ class Manager
 	/**
 	 * Set the "base URL" for this installation, which will be added to the beginning of all asset URLs.
 	 * @param string $base_url - The "base URL" which we're going to prepend.
-	 * @return \OpenFlame\Framework\Twig\Helper\Asset\Manager - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Twig\Helper\Asset\Manager - Provides a fluent interface.
 	 */
 	public function setBaseURL($base_url)
 	{
@@ -105,7 +105,7 @@ class Manager
 
 	/**
 	 * Use the external domain instead of the local base URL for the base of all asset URLs
-	 * @return \OpenFlame\Framework\Twig\Helper\Asset\Manager - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Twig\Helper\Asset\Manager - Provides a fluent interface.
 	 *
 	 * @throws RuntimeException
 	 */
@@ -124,7 +124,7 @@ class Manager
 
 	/**
 	 * Use the local base URL instead of the external domain for the base of all asset URLs
-	 * @return \OpenFlame\Framework\Twig\Helper\Asset\Manager - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Twig\Helper\Asset\Manager - Provides a fluent interface.
 	 */
 	public function disableExternalBase()
 	{
@@ -145,7 +145,7 @@ class Manager
 	/**
 	 * Set the external domain to use for the base URL.
 	 * @param string $base_url - The external domain to use.
-	 * @return \OpenFlame\Framework\Twig\Helper\Asset\Manager - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Twig\Helper\Asset\Manager - Provides a fluent interface.
 	 *
 	 * @throws RuntimeException
 	 */
@@ -172,7 +172,7 @@ class Manager
 
 	/**
 	 * Set the asset manager to throw exceptions when an invalid asset is accessed, instead of returning NULL.
-	 * @return \OpenFlame\Framework\Twig\Helper\Asset\Manager - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Twig\Helper\Asset\Manager - Provides a fluent interface.
 	 */
 	public function enableInvalidAssetExceptions()
 	{
@@ -182,7 +182,7 @@ class Manager
 
 	/**
 	 * Set the asset manager to return NULL when an invalid asset is accessed, instead of throwing exceptions.
-	 * @return \OpenFlame\Framework\Twig\Helper\Asset\Manager - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Twig\Helper\Asset\Manager - Provides a fluent interface.
 	 */
 	public function disableInvalidAssetExceptions()
 	{

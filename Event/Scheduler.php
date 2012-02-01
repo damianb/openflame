@@ -3,23 +3,23 @@
  *
  * @package     openflame-framework
  * @subpackage  event
- * @copyright   (c) 2010 - 2011 openflame-project.org
+ * @copyright   (c) 2010 - 2012 emberlabs.org
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
- * @link        https://github.com/OpenFlame/OpenFlame-Framework
+ * @link        https://github.com/emberlabs/openflame
  *
  * Minimum Requirement: PHP 5.3.0
  */
 
-namespace OpenFlame\Framework\Event;
-use \OpenFlame\Framework\Core\DependencyInjector;
-use \OpenFlame\Framework\Event\Instance as Event;
+namespace emberlabs\openflame\Event;
+use \emberlabs\openflame\Core\DependencyInjector;
+use \emberlabs\openflame\Event\Instance as Event;
 
 /**
  * OpenFlame Framework - Event scheduler object, schedules tasks to be regularly triggered in the future.
  *
  *
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
- * @link        https://github.com/OpenFlame/OpenFlame-Framework
+ * @link        https://github.com/emberlabs/openflame
  */
 class Scheduler
 {
@@ -37,7 +37,7 @@ class Scheduler
 	 * Define a new task to be triggered.
 	 * @param string $task_name - The name of the task to trigger.
 	 * @param integer $interval - The interval in seconds that this task should be triggered.
-	 * @return \OpenFlame\Framework\Event\Scheduler - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Event\Scheduler - Provides a fluent interface.
 	 */
 	public function newTask($task_name, $interval)
 	{
@@ -48,7 +48,7 @@ class Scheduler
 
 	/**
 	 * Remove a task from the schedule.
-	 * @return \OpenFlame\Framework\Event\Scheduler - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Event\Scheduler - Provides a fluent interface.
 	 */
 	public function deleteTask($task_name)
 	{
@@ -69,7 +69,7 @@ class Scheduler
 	/**
 	 * Load a task schedule from cache.
 	 * @param array $cache - The cached task schedule to load.
-	 * @return \OpenFlame\Framework\Event\Scheduler - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Event\Scheduler - Provides a fluent interface.
 	 */
 	public function loadScheduleCache(array $cache)
 	{

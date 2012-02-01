@@ -3,16 +3,16 @@
  *
  * @package     openflame-framework
  * @subpackage  cache
- * @copyright   (c) 2010 - 2011 openflame-project.org
+ * @copyright   (c) 2010 - 2012 emberlabs.org
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
- * @link        https://github.com/OpenFlame/OpenFlame-Framework
+ * @link        https://github.com/emberlabs/openflame
  *
  * Minimum Requirement: PHP 5.3.0
  */
 
-namespace OpenFlame\Framework\Cache;
-use \OpenFlame\Framework\Core\Internal\RuntimeException;
-use \OpenFlame\Framework\Event\Instance as Event;
+namespace emberlabs\openflame\Cache;
+use \emberlabs\openflame\Core\Internal\RuntimeException;
+use \emberlabs\openflame\Event\Instance as Event;
 
 /**
  * OpenFlame Framework - Cache interface class,
@@ -20,18 +20,18 @@ use \OpenFlame\Framework\Event\Instance as Event;
  *
  *
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
- * @link        https://github.com/OpenFlame/OpenFlame-Framework
+ * @link        https://github.com/emberlabs/openflame
  */
 class Driver
 {
 	/**
-	 * @var \OpenFlame\Framework\Cache\Engine\EngineInterface - The cache engine we are using.
+	 * @var \emberlabs\openflame\Cache\Engine\EngineInterface - The cache engine we are using.
 	 */
 	protected $engine;
 
 	/**
 	 * Get the cache engine currently in use.
-	 * @return \OpenFlame\Framework\Cache\Engine\EngineInterface - The cache engine in use.
+	 * @return \emberlabs\openflame\Cache\Engine\EngineInterface - The cache engine in use.
 	 */
 	public function getEngine()
 	{
@@ -40,10 +40,10 @@ class Driver
 
 	/**
 	 * Dependency injection method, sets the cache engine to be used
-	 * @param \OpenFlame\Framework\Cache\Engine\EngineInterface - The cache engine to use.
-	 * @return \OpenFlame\Framework\Cache\Driver - Provides a fluent interface.
+	 * @param \emberlabs\openflame\Cache\Engine\EngineInterface - The cache engine to use.
+	 * @return \emberlabs\openflame\Cache\Driver - Provides a fluent interface.
 	 */
-	public function setEngine(\OpenFlame\Framework\Cache\Engine\EngineInterface $engine)
+	public function setEngine(\emberlabs\openflame\Cache\Engine\EngineInterface $engine)
 	{
 		$this->engine = $engine;
 

@@ -3,15 +3,15 @@
  *
  * @package     openflame-framework
  * @subpackage  session
- * @copyright   (c) 2010 - 2011 openflame-project.org
+ * @copyright   (c) 2010 - 2012 emberlabs.org
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
- * @link        https://github.com/OpenFlame/OpenFlame-Framework
+ * @link        https://github.com/emberlabs/openflame
  *
  * Minimum Requirement: PHP 5.3.0
  */
 
-namespace OpenFlame\Framework\Session\Client;
-use \OpenFlame\Framework\Core\DependencyInjector;
+namespace emberlabs\openflame\Session\Client;
+use \emberlabs\openflame\Core\DependencyInjector;
 
 /**
  * OpenFlame Framework - Session Client-side identification,
@@ -19,7 +19,7 @@ use \OpenFlame\Framework\Core\DependencyInjector;
  *
  *
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
- * @link        https://github.com/OpenFlame/OpenFlame-Framework
+ * @link        https://github.com/emberlabs/openflame
  */
 class EngineCookie implements EngineInterface
 {

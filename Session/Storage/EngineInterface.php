@@ -3,15 +3,15 @@
  *
  * @package     openflame-framework
  * @subpackage  session
- * @copyright   (c) 2010 - 2011 openflame-project.org
+ * @copyright   (c) 2010 - 2012 emberlabs.org
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
- * @link        https://github.com/OpenFlame/OpenFlame-Framework
+ * @link        https://github.com/emberlabs/openflame
  *
  * Minimum Requirement: PHP 5.3.0
  */
 
-namespace OpenFlame\Framework\Session\Storage;
-use \OpenFlame\Framework\Event\Instance as Event;
+namespace emberlabs\openflame\Session\Storage;
+use \emberlabs\openflame\Event\Instance as Event;
 
 /**
  * OpenFlame Framework - Sessions Engine interface,
@@ -19,7 +19,7 @@ use \OpenFlame\Framework\Event\Instance as Event;
  *
  *
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
- * @link        https://github.com/OpenFlame/OpenFlame-Framework
+ * @link        https://github.com/emberlabs/openflame
  */
 interface EngineInterface
 {
@@ -56,7 +56,7 @@ interface EngineInterface
 	/*
 	 * Garbage Collection
 	 * Called at the end of each page load.
-	 * @param \OpenFlame\Framework\Event\Instance - The event instance, if using this method with the event dispatcher/scheduler.
+	 * @param \emberlabs\openflame\Event\Instance - The event instance, if using this method with the event dispatcher/scheduler.
 	 * @return void
 	 */
 	public function gc(Event $event = NULL);

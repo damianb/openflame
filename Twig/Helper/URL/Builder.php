@@ -3,14 +3,14 @@
  *
  * @package     openflame-framework
  * @subpackage  url
- * @copyright   (c) 2010 - 2011 openflame-project.org
+ * @copyright   (c) 2010 - 2012 emberlabs.org
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
- * @link        https://github.com/OpenFlame/OpenFlame-Framework
+ * @link        https://github.com/emberlabs/openflame
  *
  * Minimum Requirement: PHP 5.3.0
  */
 
-namespace OpenFlame\Framework\Twig\Helper\URL;
+namespace emberlabs\openflame\Twig\Helper\URL;
 
 /**
  * OpenFlame Framework - URL abstraction and construction object,
@@ -18,7 +18,7 @@ namespace OpenFlame\Framework\Twig\Helper\URL;
  *
  *
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
- * @link        https://github.com/OpenFlame/OpenFlame-Framework
+ * @link        https://github.com/emberlabs/openflame
  */
 class Builder
 {
@@ -49,7 +49,7 @@ class Builder
 	/**
 	 * Set the "base URL" for this installation, which will be added to all URLs.
 	 * @param string $base_url - The "base URL" which we're going to strip
-	 * @return \OpenFlame\Framework\Twig\Helper\URL\Builder - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Twig\Helper\URL\Builder - Provides a fluent interface.
 	 */
 	public function setBaseURL($base_url)
 	{
@@ -71,7 +71,7 @@ class Builder
 	 * Define a new GET data element to append to all generated URLs.
 	 * @param string $name - The name of the data element to add
 	 * @param string $value - The value to use for the data.
-	 * @return \OpenFlame\Framework\Twig\Helper\URL\Builder - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Twig\Helper\URL\Builder - Provides a fluent interface.
 	 */
 	public function addGlobalGetVar($name, $value)
 	{
@@ -84,7 +84,7 @@ class Builder
 	 * Define a new printf() compatible pattern to use for internal URL generation.
 	 * @param string $pattern_name - The name to give this pattern.
 	 * @param string $pattern - The printf() compatible pattern to use.
-	 * @return \OpenFlame\Framework\Twig\Helper\URL\Builder - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Twig\Helper\URL\Builder - Provides a fluent interface.
 	 */
 	public function newPattern($pattern_name, $pattern)
 	{
@@ -96,7 +96,7 @@ class Builder
 	/**
 	 * Define a set of printf() compatible patterns to use for internal URL generation.
 	 * @param array $patterns - An array of patterns to use, with the keys for each element being the pattern names for each pattern.
-	 * @return \OpenFlame\Framework\Twig\Helper\URL\Builder - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Twig\Helper\URL\Builder - Provides a fluent interface.
 	 */
 	public function newPatterns(array $patterns)
 	{
