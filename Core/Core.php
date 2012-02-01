@@ -89,6 +89,11 @@ class Core
 	 */
 	public static function getConfig($config_name)
 	{
+		if(!isset(self::$config[$config_name]))
+		{
+			return NULL;
+		}
+
 		return self::$config[$config_name];
 	}
 
