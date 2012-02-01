@@ -3,15 +3,15 @@
  *
  * @package     openflame-framework
  * @subpackage  exception
- * @copyright   (c) 2010 - 2011 openflame-project.org
+ * @copyright   (c) 2010 - 2012 emberlabs.org
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
- * @link        https://github.com/OpenFlame/OpenFlame-Framework
+ * @link        https://github.com/emberlabs/openflame
  *
  * Minimum Requirement: PHP 5.3.0
  */
 
-namespace OpenFlame\Framework\Exception;
-use OpenFlame\Framework\Core;
+namespace emberlabs\openflame\Exception;
+use \emberlabs\openflame\Core;
 
 /**
  * OpenFlame Framework - Encrypted exception handler class,
@@ -19,7 +19,7 @@ use OpenFlame\Framework\Core;
  *
  *
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
- * @link        https://github.com/OpenFlame/OpenFlame-Framework
+ * @link        https://github.com/emberlabs/openflame
  */
 class EncryptedHandler extends Handler
 {
@@ -46,7 +46,7 @@ class EncryptedHandler extends Handler
 	 */
 	public static function register()
 	{
-		set_exception_handler('\\OpenFlame\\Framework\\Exception\\EncryptedHandler::catcher');
+		set_exception_handler('\\emberlabs\\openflame\\Exception\\EncryptedHandler::catcher');
 	}
 
 	/**
@@ -126,7 +126,7 @@ class EncryptedHandler extends Handler
 		}
 
 		$e_encrypted_string = '';
-		$json = \OpenFlame\Framework\Utility\JSON::encode($data);
+		$json = \emberlabs\openflame\Utility\JSON::encode($data);
 		$res = openssl_public_encrypt($json, $e_encrypted_string, $this->public_key);
 
 		$message = <<<EOD

@@ -3,15 +3,15 @@
  *
  * @package     openflame-framework
  * @subpackage  event
- * @copyright   (c) 2010 - 2011 openflame-project.org
+ * @copyright   (c) 2010 - 2012 emberlabs.org
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
- * @link        https://github.com/OpenFlame/OpenFlame-Framework
+ * @link        https://github.com/emberlabs/openflame
  *
  * Minimum Requirement: PHP 5.3.0
  */
 
-namespace OpenFlame\Framework\Event;
-use \OpenFlame\Framework\Core\Internal\RuntimeException;
+namespace emberlabs\openflame\Event;
+use \emberlabs\openflame\Core\Internal\RuntimeException;
 
 /**
  * OpenFlame Framework - Event object
@@ -19,7 +19,7 @@ use \OpenFlame\Framework\Core\Internal\RuntimeException;
  *
  *
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
- * @link        https://github.com/OpenFlame/OpenFlame-Framework
+ * @link        https://github.com/emberlabs/openflame
  */
 class Instance
 {
@@ -51,7 +51,7 @@ class Instance
 	/**
 	 * Create a new event, used as a one-line shortcut for quickly dispatching events.
 	 * @param string $name - The event's name.
-	 * @return \OpenFlame\Framework\Event\Instance - The event created.
+	 * @return \emberlabs\openflame\Event\Instance - The event created.
 	 */
 	public static function newEvent($name)
 	{
@@ -73,7 +73,7 @@ class Instance
 	/**
 	 * Set the name for the event.
 	 * @param string $name - The name to set.
-	 * @return \OpenFlame\Framework\Event\Instance - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Event\Instance - Provides a fluent interface.
 	 */
 	public function setName($name)
 	{
@@ -94,7 +94,7 @@ class Instance
 	/**
 	 * Set the source of the event.
 	 * @param mixed $source - The source of the event, must be an object or NULL.
-	 * @return \OpenFlame\Framework\Event\Instance - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Event\Instance - Provides a fluent interface.
 	 *
 	 * @throws RuntimeException
 	 */
@@ -122,7 +122,7 @@ class Instance
 	/**
 	 * Set the array of data to attach to this event.
 	 * @param array $data - The array of data to attach.
-	 * @return \OpenFlame\Framework\Event\Instance - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Event\Instance - Provides a fluent interface.
 	 */
 	public function setData(array $data = array())
 	{
@@ -160,7 +160,7 @@ class Instance
 	 * Attach a single point of data to this event
 	 * @param string $point - The key to attach the data under.
 	 * @param mixed $value - The data to attach.
-	 * @return \OpenFlame\Framework\Event\Instance - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Event\Instance - Provides a fluent interface.
 	 */
 	public function set($point, $value)
 	{
@@ -170,7 +170,7 @@ class Instance
 	}
 
 	/**
-	 * Magic method alternative to \OpenFlame\Framework\Event\Instance->dataPointExists()
+	 * Magic method alternative to \emberlabs\openflame\Event\Instance->dataPointExists()
 	 * @param string $point - The key for the data point to grab.
 	 * @return boolean - Does the data point exist?
 	 */
@@ -180,7 +180,7 @@ class Instance
 	}
 
 	/**
-	 * Magic method alternative to \OpenFlame\Framework\Event\Instance->getDataPoint()
+	 * Magic method alternative to \emberlabs\openflame\Event\Instance->getDataPoint()
 	 * @param string $point - The key for the data point to grab.
 	 * @return mixed - The point of data we're looking for
 	 */
@@ -190,7 +190,7 @@ class Instance
 	}
 
 	/**
-	 * Magic method alternative to \OpenFlame\Framework\Event\Instance->setDataPoint()
+	 * Magic method alternative to \emberlabs\openflame\Event\Instance->setDataPoint()
 	 * @param string $point - The key to attach the data under.
 	 * @param mixed $value - The data to attach.
 	 * @return void
@@ -201,7 +201,7 @@ class Instance
 	}
 
 	/**
-	 * Magic method alternative to \OpenFlame\Framework\Event\Instance->setDataPoint()
+	 * Magic method alternative to \emberlabs\openflame\Event\Instance->setDataPoint()
 	 * @param string $point - The key to unset.
 	 * @return void
 	 */
@@ -212,7 +212,7 @@ class Instance
 
 	/**
 	 * Trigger a break of the event dispatch cycle.
-	 * @return \OpenFlame\Framework\Event\Instance - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Event\Instance - Provides a fluent interface.
 	 */
 	public function triggerBreak()
 	{
@@ -223,7 +223,7 @@ class Instance
 
 	/**
 	 * Trigger a break of the event dispatch cycle.
-	 * @return \OpenFlame\Framework\Event\Instance - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Event\Instance - Provides a fluent interface.
 	 */
 	public function breakTrigger()
 	{
@@ -253,7 +253,7 @@ class Instance
 	/**
 	 * Set a "return" value from a listener.
 	 * @param mixed $return - The value to set as the "return value" provided.
-	 * @return \OpenFlame\Framework\Event\Instance - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Event\Instance - Provides a fluent interface.
 	 */
 	public function setReturn($return)
 	{

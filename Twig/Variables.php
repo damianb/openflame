@@ -3,14 +3,14 @@
  *
  * @package     openflame-framework
  * @subpackage  twig
- * @copyright   (c) 2010 - 2011 openflame-project.org
+ * @copyright   (c) 2010 - 2012 emberlabs.org
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
- * @link        https://github.com/OpenFlame/OpenFlame-Framework
+ * @link        https://github.com/emberlabs/openflame
  *
  * Minimum Requirement: PHP 5.3.0
  */
 
-namespace OpenFlame\Framework\Twig;
+namespace emberlabs\openflame\Twig;
 
 /**
  * OpenFlame Framework - Template variable management class,
@@ -18,7 +18,7 @@ namespace OpenFlame\Framework\Twig;
  *
  *
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
- * @link        https://github.com/OpenFlame/OpenFlame-Framework
+ * @link        https://github.com/emberlabs/openflame
  */
 class Variables implements \ArrayAccess
 {

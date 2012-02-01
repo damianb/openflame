@@ -3,16 +3,16 @@
  *
  * @package     openflame-framework
  * @subpackage  input
- * @copyright   (c) 2010 - 2011 openflame-project.org
+ * @copyright   (c) 2010 - 2012 emberlabs.org
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
- * @link        https://github.com/OpenFlame/OpenFlame-Framework
+ * @link        https://github.com/emberlabs/openflame
  *
  * Minimum Requirement: PHP 5.3.0
  */
 
-namespace OpenFlame\Framework\Input;
-use \OpenFlame\Framework\Core\Internal\LogicException;
-use \OpenFlame\Framework\Core\Internal\RuntimeException;
+namespace emberlabs\openflame\Input;
+use \emberlabs\openflame\Core\Internal\LogicException;
+use \emberlabs\openflame\Core\Internal\RuntimeException;
 
 /**
  * OpenFlame Framework - User Input Handler
@@ -20,12 +20,12 @@ use \OpenFlame\Framework\Core\Internal\RuntimeException;
  *
  *
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
- * @link        https://github.com/OpenFlame/OpenFlame-Framework
+ * @link        https://github.com/emberlabs/openflame
  */
 class Instance
 {
 	/**
-	 * @var \OpenFlame\Framework\Input\Handler - The input handler.
+	 * @var \emberlabs\openflame\Input\Handler - The input handler.
 	 */
 	protected $handler;
 
@@ -66,7 +66,7 @@ class Instance
 
 	/**
 	 * Get a new input instance.
-	 * @return \OpenFlame\Framework\Input\Instance - The newly created input instance.
+	 * @return \emberlabs\openflame\Input\Instance - The newly created input instance.
 	 */
 	final public static function newInstance()
 	{
@@ -75,8 +75,8 @@ class Instance
 
 	/**
 	 * Link the input handler to this input instance
-	 * @param \OpenFlame\Framework\Input\Handler $handler - The input handler.
-	 * @return \OpenFlame\Framework\Input\Instance - Provides a fluent interface.
+	 * @param \emberlabs\openflame\Input\Handler $handler - The input handler.
+	 * @return \emberlabs\openflame\Input\Instance - Provides a fluent interface.
 	 */
 	public function setHandler(Handler $handler)
 	{
@@ -97,7 +97,7 @@ class Instance
 	/**
 	 * Set the superglobal to grab the input from.
 	 * @param string $global_type - The superglobal to grab from.
-	 * @return \OpenFlame\Framework\Input\Instance - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Input\Instance - Provides a fluent interface.
 	 */
 	public function setType($global_type)
 	{
@@ -124,7 +124,7 @@ class Instance
 	/**
 	 * Set the default value for this input instance.
 	 * @param mixed - The default value to use for this input instance.
-	 * @return \OpenFlame\Framework\Input\Instance - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Input\Instance - Provides a fluent interface.
 	 */
 	public function setDefault($default_value)
 	{
@@ -146,7 +146,7 @@ class Instance
 	/**
 	 * Set the field name that we want to attach this instance to.
 	 * @param string $name - The field name to use for this instance.
-	 * @return \OpenFlame\Framework\Input\Instance - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Input\Instance - Provides a fluent interface.
 	 */
 	public function setName($name)
 	{

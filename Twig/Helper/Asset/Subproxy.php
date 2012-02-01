@@ -3,15 +3,15 @@
  *
  * @package     openflame-framework
  * @subpackage  asset
- * @copyright   (c) 2010 - 2011 openflame-project.org
+ * @copyright   (c) 2010 - 2012 emberlabs.org
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
- * @link        https://github.com/OpenFlame/OpenFlame-Framework
+ * @link        https://github.com/emberlabs/openflame
  *
  * Minimum Requirement: PHP 5.3.0
  */
 
-namespace OpenFlame\Framework\Twig\Helper\Asset;
-use \OpenFlame\Framework\Core\Internal\RuntimeException;
+namespace emberlabs\openflame\Twig\Helper\Asset;
+use \emberlabs\openflame\Core\Internal\RuntimeException;
 
 /**
  * OpenFlame Framework - Template subproxy object
@@ -19,12 +19,12 @@ use \OpenFlame\Framework\Core\Internal\RuntimeException;
  *
  *
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
- * @link        https://github.com/OpenFlame/OpenFlame-Framework
+ * @link        https://github.com/emberlabs/openflame
  */
 class Subproxy
 {
 	/**
-	 * @var \OpenFlame\Framework\Twig\Helper\Asset\Manager - The asset manager which handles all asset instances.
+	 * @var \emberlabs\openflame\Twig\Helper\Asset\Manager - The asset manager which handles all asset instances.
 	 */
 	protected $manager;
 
@@ -40,7 +40,7 @@ class Subproxy
 
 	/**
 	 * Constructor
-	 * @param \OpenFlame\Framework\Twig\Helper\Asset\Manager $manager - The template asset manager.
+	 * @param \emberlabs\openflame\Twig\Helper\Asset\Manager $manager - The template asset manager.
 	 * @return void
 	 */
 	public function __construct(Manager $manager)
@@ -50,8 +50,8 @@ class Subproxy
 
 	/**
 	 * Grab a new instance of the subproxy
-	 * @param \OpenFlame\Framework\Twig\Helper\Asset\Manager $manager - The template asset manager.
-	 * @return \OpenFlame\Framwork\Twig\Helper\Asset\Subproxy - The newly created instance.
+	 * @param \emberlabs\openflame\Twig\Helper\Asset\Manager $manager - The template asset manager.
+	 * @return \emberlabs\openflame\Twig\Helper\Asset\Subproxy - The newly created instance.
 	 */
 	public static function newInstance(Manager $manager)
 	{
@@ -70,7 +70,7 @@ class Subproxy
 	/**
 	 * Set the asset type for this subproxy
 	 * @param string $type - The asset type to set.
-	 * @return \OpenFlame\Framwork\Twig\Helper\Asset\Subproxy - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Twig\Helper\Asset\Subproxy - Provides a fluent interface.
 	 */
 	public function setType($type)
 	{
@@ -80,7 +80,7 @@ class Subproxy
 
 	/**
 	 * Populate the internal cache list of asset instances that this subproxy can access.
-	 * @return \OpenFlame\Framwork\Twig\Helper\Asset\Subproxy - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Twig\Helper\Asset\Subproxy - Provides a fluent interface.
 	 */
 	public function populateAssetList()
 	{
@@ -91,7 +91,7 @@ class Subproxy
 	/**
 	 * Magic method, providing seamless access to asset data in Twig templates.
 	 * @param string $name - The name of the asset to grab.
-	 * @return \OpenFlame\Framework\Twig\Helper\Asset\AssetInstance - The asset instance for the asset that we want.
+	 * @return \emberlabs\openflame\Twig\Helper\Asset\AssetInstance - The asset instance for the asset that we want.
 	 *
 	 * @throws RuntimeException
 	 */

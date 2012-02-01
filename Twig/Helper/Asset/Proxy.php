@@ -3,15 +3,15 @@
  *
  * @package     openflame-framework
  * @subpackage  asset
- * @copyright   (c) 2010 - 2011 openflame-project.org
+ * @copyright   (c) 2010 - 2012 emberlabs.org
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
- * @link        https://github.com/OpenFlame/OpenFlame-Framework
+ * @link        https://github.com/emberlabs/openflame
  *
  * Minimum Requirement: PHP 5.3.0
  */
 
-namespace OpenFlame\Framework\Twig\Helper\Asset;
-use \OpenFlame\Framework\Core\Internal\RuntimeException;
+namespace emberlabs\openflame\Twig\Helper\Asset;
+use \emberlabs\openflame\Core\Internal\RuntimeException;
 
 /**
  * OpenFlame Framework - Template proxy object
@@ -19,12 +19,12 @@ use \OpenFlame\Framework\Core\Internal\RuntimeException;
  *
  *
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
- * @link        https://github.com/OpenFlame/OpenFlame-Framework
+ * @link        https://github.com/emberlabs/openflame
  */
 class Proxy
 {
 	/**
-	 * @var \OpenFlame\Framework\Twig\Helper\Asset\Manager - The asset manager which handles all asset instances.
+	 * @var \emberlabs\openflame\Twig\Helper\Asset\Manager - The asset manager which handles all asset instances.
 	 */
 	protected $manager;
 
@@ -35,7 +35,7 @@ class Proxy
 
 	/**
 	 * Constructor
-	 * @param \OpenFlame\Framework\Twig\Helper\Asset\Manager $manager - The template asset manager.
+	 * @param \emberlabs\openflame\Twig\Helper\Asset\Manager $manager - The template asset manager.
 	 * @return void
 	 */
 	public function __construct(Manager $manager)
@@ -53,7 +53,7 @@ class Proxy
 	/**
 	 * Magic method, providing seamless access to asset data in Twig templates.
 	 * @param string $name - The type of the asset to grab.
-	 * @return \OpenFlame\Framework\Twig\Helper\Asset\Subproxy - The subproxy for the asset type that we want.
+	 * @return \emberlabs\openflame\Twig\Helper\Asset\Subproxy - The subproxy for the asset type that we want.
 	 *
 	 * @throws RuntimeException
 	 */

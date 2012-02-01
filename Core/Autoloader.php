@@ -3,14 +3,14 @@
  *
  * @package     openflame-framework
  * @subpackage  core
- * @copyright   (c) 2010 - 2011 openflame-project.org
+ * @copyright   (c) 2010 - 2012 emberlabs.org
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
- * @link        https://github.com/OpenFlame/OpenFlame-Framework
+ * @link        https://github.com/emberlabs/openflame
  *
  * Minimum Requirement: PHP 5.3.0
  */
 
-namespace OpenFlame\Framework\Core;
+namespace emberlabs\openflame\Core;
 
 /**
  * OpenFlame Framework - Autoloader object
@@ -18,7 +18,7 @@ namespace OpenFlame\Framework\Core;
  *
  *
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
- * @link        https://github.com/OpenFlame/OpenFlame-Framework
+ * @link        https://github.com/emberlabs/openflame
  *
  * @note: Only SPL exceptions should be used in the autoloader.
  */
@@ -30,7 +30,7 @@ class Autoloader
 	private $paths = array();
 
 	/**
-	 * @var \OpenFlame\Framework\Core\Autoloader - The singleton autoloader instance.
+	 * @var \emberlabs\openflame\Core\Autoloader - The singleton autoloader instance.
 	 */
 	private static $instance;
 
@@ -42,7 +42,7 @@ class Autoloader
 	/**
 	 * Gets the singleton instance of the autoloader.
 	 * @param mixed $path - The path or array of paths to include in the autoload search.
-	 * @return \OpenFlame\Framework\Core\Autoloader - The singleton autoloader instance.
+	 * @return \emberlabs\openflame\Core\Autoloader - The singleton autoloader instance.
 	 */
 	public static function getInstance()
 	{
@@ -140,7 +140,7 @@ class Autoloader
 	/**
 	 * Register this class as an autoloader within the autoloader stack.
 	 * @param mixed $path - The path or array of paths to register with the autoloader.
-	 * @return \OpenFlame\Framework\Core\Autoloader - The autoloader instance.
+	 * @return \emberlabs\openflame\Core\Autoloader - The autoloader instance.
 	 */
 	public static function register($path)
 	{

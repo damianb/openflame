@@ -3,16 +3,16 @@
  *
  * @package     openflame-framework
  * @subpackage  session
- * @copyright   (c) 2010 - 2011 openflame-project.org
+ * @copyright   (c) 2010 - 2012 emberlabs.org
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
- * @link        https://github.com/OpenFlame/OpenFlame-Framework
+ * @link        https://github.com/emberlabs/openflame
  *
  * Minimum Requirement: PHP 5.3.0
  */
 
-namespace OpenFlame\Framework\Session;
-use \OpenFlame\Framework\Core\DependencyInjector;
-use \OpenFlame\Framework\Event\Instance as Event;
+namespace emberlabs\openflame\Session;
+use \emberlabs\openflame\Core\DependencyInjector;
+use \emberlabs\openflame\Event\Instance as Event;
 
 /**
  * OpenFlame Framework - Session Handler
@@ -20,7 +20,7 @@ use \OpenFlame\Framework\Event\Instance as Event;
  *
  *
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
- * @link        https://github.com/OpenFlame/OpenFlame-Framework
+ * @link        https://github.com/emberlabs/openflame
  */
 class Driver
 {
@@ -61,10 +61,10 @@ class Driver
 
 	/*
 	 * Sets the session storage engine to be used
-	 * @param \OpenFlame\Framework\Session\Storage\EngineInterface - The Session engine to use.
-	 * @return \OpenFlame\Framework\Session\Driver - Provides a fluent interface.
+	 * @param \emberlabs\openflame\Session\Storage\EngineInterface - The Session engine to use.
+	 * @return \emberlabs\openflame\Session\Driver - Provides a fluent interface.
 	 */
-	public function setStorageEngine(\OpenFlame\Framework\Session\Storage\EngineInterface $e)
+	public function setStorageEngine(\emberlabs\openflame\Session\Storage\EngineInterface $e)
 	{
 		$this->storage = $e;
 
@@ -73,10 +73,10 @@ class Driver
 
 	/**
 	 * Sets the Session Client-side identification engine
-	 * @param \OpenFlame\Framework\Session\Client\EngineInterface - The Session engine to use.
-	 * @return \OpenFlame\Framework\Session\Driver - Provides a fluent interface.
+	 * @param \emberlabs\openflame\Session\Client\EngineInterface - The Session engine to use.
+	 * @return \emberlabs\openflame\Session\Driver - Provides a fluent interface.
 	 */
-	public function setClientEngine(\OpenFlame\Framework\Session\Client\EngineInterface $e)
+	public function setClientEngine(\emberlabs\openflame\Session\Client\EngineInterface $e)
 	{
 		$this->client = $e;
 
@@ -86,7 +86,7 @@ class Driver
 	/*
 	 * Set options for the session and its related engines
 	 * @param array options - Associatvie array of options
-	 * @return \OpenFlame\Framework\Session\Driver - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Session\Driver - Provides a fluent interface.
 	 */
 	public function setOptions($options)
 	{
@@ -224,7 +224,7 @@ class Driver
 
 	/*
 	 * Run Session-based garbage collectors
-	 * @param \OpenFlame\Framework\Event\Instance $e - Event instance (so this can be used as a listener)
+	 * @param \emberlabs\openflame\Event\Instance $e - Event instance (so this can be used as a listener)
 	 * @return void
 	 */
 	public function gc(Event $e = NULL)

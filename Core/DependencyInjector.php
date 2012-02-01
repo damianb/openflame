@@ -3,16 +3,17 @@
  *
  * @package     openflame-framework
  * @subpackage  dependency
- * @copyright   (c) 2010 - 2011 openflame-project.org
+ * @copyright   (c) 2010 - 2012 emberlabs.org
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
- * @link        https://github.com/OpenFlame/OpenFlame-Framework
+ * @link        https://github.com/emberlabs/openflame
  *
  * Minimum Requirement: PHP 5.3.0
  */
 
-namespace OpenFlame\Framework\Core;
-use OpenFlame\Framework\Core\Core;
-use OpenFlame\Framework\Core\Internal\LogicException;
+namespace emberlabs\openflame\Core;
+use \emberlabs\openflame\Core\Core;
+use \emberlabs\openflame\Core\Internal\LogicException;
+use \ArrayAccess;
 
 /**
  * OpenFlame Framework - Dependency injector
@@ -20,9 +21,9 @@ use OpenFlame\Framework\Core\Internal\LogicException;
  *
  *
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
- * @link        https://github.com/OpenFlame/OpenFlame-Framework
+ * @link        https://github.com/emberlabs/openflame
  */
-class DependencyInjector implements \ArrayAccess
+class DependencyInjector implements ArrayAccess
 {
 	/**
 	 * @var array - Array of closures which prepare the requested instance on demand.
@@ -30,7 +31,7 @@ class DependencyInjector implements \ArrayAccess
 	protected $injectors = array();
 
 	/**
-	 * @var \OpenFlame\Framework\Core\DependencyInjector - Singleton instance of the dependency injector
+	 * @var \emberlabs\openflame\Core\DependencyInjector - Singleton instance of the dependency injector
 	 */
 	protected static $instance;
 
@@ -43,36 +44,36 @@ class DependencyInjector implements \ArrayAccess
 		$injector = $this;
 
 		// Define a bunch of injectors
-		$this->setInjector('router', '\\OpenFlame\\Framework\\Router\\Router');
-		$this->setInjector('alias_router', '\\OpenFlame\\Framework\\Router\\AliasRouter');
-		$this->setInjector('input', '\\OpenFlame\\Framework\\Input\\Handler');
-		$this->setInjector('template', '\\OpenFlame\\Framework\\Twig\\Variables');
-		$this->setInjector('asset', '\\OpenFlame\\Framework\\Twig\\Helper\\Asset\\Manager');
-		$this->setInjector('form', '\\OpenFlame\\Framework\\Core\\Utility\\FormKey');
-		$this->setInjector('dispatcher', '\\OpenFlame\\Framework\\Event\\Dispatcher');
-		$this->setInjector('language', '\\OpenFlame\\Framework\\Language\\Handler');
-		$this->setInjector('url', '\\OpenFlame\\Framework\\Twig\\Helper\\URL\\Builder');
-		$this->setInjector('cookie', '\\OpenFlame\\Framework\\Cookie\\Manager');
-		$this->setInjector('seeder', '\\OpenFlame\\Framework\\Security\\Seeder');
-		$this->setInjector('timer', '\\OpenFlame\\Framework\\Twig\\Helper\\Timer\\Timer');
-		$this->setInjector('session_store_engine', '\\OpenFlame\\Framework\\Session\\Storage\\EngineFilesystem');
-		$this->setInjector('session_client_engine', '\\OpenFlame\\Framework\\Session\\Client\\EngineCookie');
-		$this->setInjector('header', '\\OpenFlame\\Framework\\Header\\Manager');
+		$this->setInjector('router', '\\emberlabs\\openflame\\Router\\Router');
+		$this->setInjector('alias_router', '\\emberlabs\\openflame\\Router\\AliasRouter');
+		$this->setInjector('input', '\\emberlabs\\openflame\\Input\\Handler');
+		$this->setInjector('template', '\\emberlabs\\openflame\\Twig\\Variables');
+		$this->setInjector('asset', '\\emberlabs\\openflame\\Twig\\Helper\\Asset\\Manager');
+		$this->setInjector('form', '\\emberlabs\\openflame\\Core\\Utility\\FormKey');
+		$this->setInjector('dispatcher', '\\emberlabs\\openflame\\Event\\Dispatcher');
+		$this->setInjector('language', '\\emberlabs\\openflame\\Language\\Handler');
+		$this->setInjector('url', '\\emberlabs\\openflame\\Twig\\Helper\\URL\\Builder');
+		$this->setInjector('cookie', '\\emberlabs\\openflame\\Cookie\\Manager');
+		$this->setInjector('seeder', '\\emberlabs\\openflame\\Security\\Seeder');
+		$this->setInjector('timer', '\\emberlabs\\openflame\\Twig\\Helper\\Timer\\Timer');
+		$this->setInjector('session_store_engine', '\\emberlabs\\openflame\\Session\\Storage\\EngineFilesystem');
+		$this->setInjector('session_client_engine', '\\emberlabs\\openflame\\Session\\Client\\EngineCookie');
+		$this->setInjector('header', '\\emberlabs\\openflame\\Header\\Manager');
 
 		$this->setInjector('asset_proxy', function() use($injector) {
-			return new \OpenFlame\Framework\Twig\Helper\Asset\Proxy($injector->get('asset'));
+			return new \emberlabs\openflame\Twig\Helper\Asset\Proxy($injector->get('asset'));
 		});
 
 		$this->setInjector('url_proxy', function() use($injector) {
-			return new \OpenFlame\Framework\Twig\Helper\URL\BuilderProxy($injector->get('url'));
+			return new \emberlabs\openflame\Twig\Helper\URL\BuilderProxy($injector->get('url'));
 		});
 
 		$this->setInjector('language_proxy', function() use($injector) {
-			return new \OpenFlame\Framework\Language\Proxy($injector->get('language'));
+			return new \emberlabs\openflame\Language\Proxy($injector->get('language'));
 		});
 
 		$this->setInjector('session', function() use($injector) {
-			$session = new \OpenFlame\Framework\Session\Driver();
+			$session = new \emberlabs\openflame\Session\Driver();
 			$session->setStorageEngine($injector->get('session_store_engine'));
 			$session->setClientEngine($injector->get('session_client_engine'));
 
@@ -84,27 +85,27 @@ class DependencyInjector implements \ArrayAccess
 		});
 
 		$this->setInjector('cache.engine.json', function() use($injector) {
-			$engine = new \OpenFlame\Framework\Cache\Engine\File\FileEngineJSON();
+			$engine = new \emberlabs\openflame\Cache\Engine\File\FileEngineJSON();
 			$engine->setCachePath(Core::getConfig('cache.path'));
 			return $engine;
 		});
 
 		$this->setInjector('cache.engine.serialize', function() use($injector) {
-			$engine = new \OpenFlame\Framework\Cache\Engine\File\FileEngineSerialize();
+			$engine = new \emberlabs\openflame\Cache\Engine\File\FileEngineSerialize();
 			$engine->setCachePath(Core::getConfig('cache.path'));
 			return $engine;
 		});
 
-		$this->setInjector('cache.engine.apc', '\\OpenFlame\\Framework\\Cache\\Engine\\APCEngine');
+		$this->setInjector('cache.engine.apc', '\\emberlabs\\openflame\\Cache\\Engine\\APCEngine');
 
 		$this->setInjector('cache', function() use($injector) {
-			$cache = new \OpenFlame\Framework\Cache\Driver();
+			$cache = new \emberlabs\openflame\Cache\Driver();
 			$cache->setEngine($injector->get('cache.engine'));
 			return $cache;
 		});
 
 		$this->setInjector('twig', function() {
-			$twig = new \OpenFlame\Framework\Twig\Wrapper();
+			$twig = new \emberlabs\openflame\Twig\Wrapper();
 			$twig->setTwigRootPath(Core::getConfig('twig.lib_path'))
 				->setTwigCachePath(Core::getConfig('twig.cache_path'))
 				->setTemplatePath(Core::getConfig('twig.template_path'))
@@ -117,7 +118,7 @@ class DependencyInjector implements \ArrayAccess
 
 	/**
 	 * Get the singleton instance of the dependency injector.
-	 * @return \OpenFlame\Framework\Core\DependencyInjector - Singleton instance of the dependency injector
+	 * @return \emberlabs\openflame\Core\DependencyInjector - Singleton instance of the dependency injector
 	 */
 	public static function getInstance()
 	{
@@ -165,7 +166,7 @@ class DependencyInjector implements \ArrayAccess
 	 * Register a new dependency injector closure.
 	 * @param string $name - The name of the dependency
 	 * @param mixed $injector - Either the closure or class to instantiate when injecting the dependency
-	 * @return \OpenFlame\Framework\Core\DependencyInjector - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Core\DependencyInjector - Provides a fluent interface.
 	 */
 	public function setInjector($name, $injector)
 	{
@@ -182,7 +183,7 @@ class DependencyInjector implements \ArrayAccess
 	/**
 	 * Removes the specified injector
 	 * @param string $name - The name of the dependency
-	 * @return \OpenFlame\Framework\Core\DependencyInjector - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Core\DependencyInjector - Provides a fluent interface.
 	 */
 	public function unsetInjector($name)
 	{

@@ -3,14 +3,14 @@
  *
  * @package     openflame-framework
  * @subpackage  language
- * @copyright   (c) 2010 - 2011 openflame-project.org
+ * @copyright   (c) 2010 - 2012 emberlabs.org
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
- * @link        https://github.com/OpenFlame/OpenFlame-Framework
+ * @link        https://github.com/emberlabs/openflame
  *
  * Minimum Requirement: PHP 5.3.0
  */
 
-namespace OpenFlame\Framework\Language;
+namespace emberlabs\openflame\Language;
 
 /**
  * OpenFlame Framework - Language entry handler
@@ -18,7 +18,7 @@ namespace OpenFlame\Framework\Language;
  *
  *
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
- * @link        https://github.com/OpenFlame/OpenFlame-Framework
+ * @link        https://github.com/emberlabs/openflame
  */
 class Handler
 {
@@ -36,7 +36,9 @@ class Handler
 	{
 		// @todo perhaps throw exception on undefined language entry?
 		if(!isset($this->entries[$entry_key]))
+		{
 			return $entry_key;
+		}
 		return $this->entries[$entry_key];
 	}
 
@@ -44,7 +46,7 @@ class Handler
 	 * Set a new language entry
 	 * @param string $entry_key - The language key to set the entry as.
 	 * @param string $value - The value of the language entry.
-	 * @return OpenFlame\Framework\Language\Handler - Provides a fluent interface.
+	 * @return emberlabs\openflame\Language\Handler - Provides a fluent interface.
 	 */
 	public function setEntry($entry_key, $value)
 	{
@@ -55,7 +57,7 @@ class Handler
 	/**
 	 * Load an array of language entries at once.
 	 * @param array $entries - Array of language entries to load.
-	 * @return OpenFlame\Framework\Language\Handler - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Language\Handler - Provides a fluent interface.
 	 */
 	public function loadEntries(array $entries)
 	{

@@ -3,15 +3,15 @@
  *
  * @package     openflame-framework
  * @subpackage  security
- * @copyright   (c) 2010 - 2011 openflame-project.org
+ * @copyright   (c) 2010 - 2012 emberlabs.org
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
- * @link        https://github.com/OpenFlame/OpenFlame-Framework
+ * @link        https://github.com/emberlabs/openflame
  *
  * Minimum Requirement: PHP 5.3.0
  */
 
-namespace OpenFlame\Framework\Core\Utility;
-use \OpenFlame\Framework\Core\Internal\RuntimeException;
+namespace emberlabs\openflame\Core\Utility;
+use \emberlabs\openflame\Core\Internal\RuntimeException;
 
 /**
  * OpenFlame Framework - Random string/seed generator
@@ -19,7 +19,7 @@ use \OpenFlame\Framework\Core\Internal\RuntimeException;
  *
  *
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
- * @link        https://github.com/OpenFlame/OpenFlame-Framework
+ * @link        https://github.com/emberlabs/openflame
  */
 class Seeder
 {
@@ -45,7 +45,7 @@ class Seeder
 	/**
 	 * Set the session seed string to use for generating random strings/seeds
 	 * @param string $seed - The session-specific seed to use for random string/seed generation.
-	 * @return \OpenFlame\Framework\Security\Seeder - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Security\Seeder - Provides a fluent interface.
 	 */
 	public function setSessionSeed($seed)
 	{
@@ -66,7 +66,7 @@ class Seeder
 	/**
 	 * Set the application seed string to use for generating random strings/seeds
 	 * @param string $seed - The application-specific seed to use for random string/seed generation.
-	 * @return \OpenFlame\Framework\Security\Seeder - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Security\Seeder - Provides a fluent interface.
 	 */
 	public function setApplicationSeed($seed)
 	{

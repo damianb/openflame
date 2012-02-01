@@ -3,16 +3,16 @@
  *
  * @package     openflame-framework
  * @subpackage  header
- * @copyright   (c) 2010 - 2011 openflame-project.org
+ * @copyright   (c) 2010 - 2012 emberlabs.org
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
- * @link        https://github.com/OpenFlame/OpenFlame-Framework
+ * @link        https://github.com/emberlabs/openflame
  *
  * Minimum Requirement: PHP 5.3.0
  */
 
-namespace OpenFlame\Framework\Header;
-use \OpenFlame\Framework\Core\DependencyInjector;
-use \OpenFlame\Framework\Core\Internal\LogicException;
+namespace emberlabs\openflame\Header;
+use \emberlabs\openflame\Core\DependencyInjector;
+use \emberlabs\openflame\Core\Internal\LogicException;
 
 /**
  * OpenFlame Framework - Header manager object
@@ -20,7 +20,7 @@ use \OpenFlame\Framework\Core\Internal\LogicException;
  *
  *
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
- * @link        https://github.com/OpenFlame/OpenFlame-Framework
+ * @link        https://github.com/emberlabs/openflame
  */
 class Manager
 {
@@ -94,7 +94,7 @@ class Manager
 	 * Set a header (or override its previous value)
 	 * @param string $header_name - The name of the header to set.
 	 * @param string $header_value - The value to set for the header.
-	 * @return \OpenFlame\Framework\Header\Manager - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Header\Manager - Provides a fluent interface.
 	 */
 	public function setHeader($header_name, $header_value)
 	{
@@ -111,7 +111,7 @@ class Manager
 	/**
 	 * Remove/unset a specific header
 	 * @param string $header_name - The name of the header to remove.
-	 * @return \OpenFlame\Framework\Header\Manager - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Header\Manager - Provides a fluent interface.
 	 */
 	public function removeHeader($header_name)
 	{
@@ -174,7 +174,7 @@ class Manager
 	/**
 	 * Set the current HTTP status code.
 	 * @param integer $http_status - Set the HTTP status code.
-	 * @return \OpenFlame\Framework\Header\Manager - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Header\Manager - Provides a fluent interface.
 	 */
 	public function setHTTPStatus($http_status)
 	{
@@ -211,7 +211,7 @@ class Manager
 
 	/**
 	 * Send all of the currently stored headers.
-	 * @return \OpenFlame\Framework\Header\Manager - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Header\Manager - Provides a fluent interface.
 	 */
 	public function sendHeaders()
 	{

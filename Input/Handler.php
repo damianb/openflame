@@ -3,14 +3,14 @@
  *
  * @package     openflame-framework
  * @subpackage  input
- * @copyright   (c) 2010 - 2011 openflame-project.org
+ * @copyright   (c) 2010 - 2012 emberlabs.org
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
- * @link        https://github.com/OpenFlame/OpenFlame-Framework
+ * @link        https://github.com/emberlabs/openflame
  *
  * Minimum Requirement: PHP 5.3.0
  */
 
-namespace OpenFlame\Framework\Input;
+namespace emberlabs\openflame\Input;
 
 /**
  * OpenFlame Framework - Input object handler
@@ -18,7 +18,7 @@ namespace OpenFlame\Framework\Input;
  *
  *
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
- * @link        https://github.com/OpenFlame/OpenFlame-Framework
+ * @link        https://github.com/emberlabs/openflame
  */
 class Handler
 {
@@ -27,7 +27,7 @@ class Handler
 	 * @param string $name - The name of the input to grab (and the type of input to get, type defaults to REQUEST)
 	 *                      Format must be "TYPE::NAME", examples: POST::username, GET::sid, COOKIE::cookiename, etc
 	 * @param mixed $default - The default value to set for this input, as a shortcut.
-	 * @return \OpenFlame\Framework\Input\Instance - An input instance to manipulate, set on fire, etc.
+	 * @return \emberlabs\openflame\Input\Instance - An input instance to manipulate, set on fire, etc.
 	 */
 	public function getInput($name, $default = NULL)
 	{

@@ -3,14 +3,14 @@
  *
  * @package     openflame-framework
  * @subpackage  cache
- * @copyright   (c) 2010 - 2011 openflame-project.org
+ * @copyright   (c) 2010 - 2012 emberlabs.org
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
- * @link        https://github.com/OpenFlame/OpenFlame-Framework
+ * @link        https://github.com/emberlabs/openflame
  *
  * Minimum Requirement: PHP 5.3.0
  */
 
-namespace OpenFlame\Framework\Cache\Engine\File;
+namespace emberlabs\openflame\Cache\Engine\File;
 
 /**
  * OpenFlame Framework - serialize() Cache engine,
@@ -18,9 +18,9 @@ namespace OpenFlame\Framework\Cache\Engine\File;
  *
  *
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
- * @link        https://github.com/OpenFlame/OpenFlame-Framework
+ * @link        https://github.com/emberlabs/openflame
  */
-class FileEngineSerialize extends FileEngineBase implements \OpenFlame\Framework\Cache\Engine\EngineInterface
+class FileEngineSerialize extends FileEngineBase implements \emberlabs\openflame\Cache\Engine\EngineInterface
 {
 	/**
 	 * @const - The algorithm to use for checksum of the cache file's cache contents

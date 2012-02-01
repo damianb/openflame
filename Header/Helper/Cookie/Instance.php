@@ -3,15 +3,15 @@
  *
  * @package     openflame-framework
  * @subpackage  cookie
- * @copyright   (c) 2010 - 2011 openflame-project.org
+ * @copyright   (c) 2010 - 2012 emberlabs.org
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
- * @link        https://github.com/OpenFlame/OpenFlame-Framework
+ * @link        https://github.com/emberlabs/openflame
  *
  * Minimum Requirement: PHP 5.3.0
  */
 
-namespace OpenFlame\Framework\Header\Helper\Cookie;
-use OpenFlame\Framework\Core\Internal\RuntimeException;
+namespace emberlabs\openflame\Header\Helper\Cookie;
+use \emberlabs\openflame\Core\Internal\RuntimeException;
 
 /**
  * OpenFlame Framework - Cookie instance object
@@ -19,7 +19,7 @@ use OpenFlame\Framework\Core\Internal\RuntimeException;
  *
  *
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
- * @link        https://github.com/OpenFlame/OpenFlame-Framework
+ * @link        https://github.com/emberlabs/openflame
  */
 class Instance
 {
@@ -39,7 +39,7 @@ class Instance
 	protected $expire_time = -1;
 
 	/**
-	 * @var \OpenFlame\Framework\Header\Helper\Cookie\Manager - The cookie manager submodule
+	 * @var \emberlabs\openflame\Header\Helper\Cookie\Manager - The cookie manager submodule
 	 */
 	protected $manager;
 
@@ -47,7 +47,7 @@ class Instance
 
 	/**
 	 * Constructor
-	 * @param \OpenFlame\Framework\Header\Helper\Cookie\Manager $manager - The cookie manager submodule.
+	 * @param \emberlabs\openflame\Header\Helper\Cookie\Manager $manager - The cookie manager submodule.
 	 * @return void
 	 */
 	final protected function __construct(Manager $manager)
@@ -58,8 +58,8 @@ class Instance
 
 	/**
 	 * Get a new instance of the cookie instance object
-	 * @param \OpenFlame\Framework\Header\Helper\Cookie\Manager $manager - The cookie manager submodule.
-	 * @return \OpenFlame\Framework\Header\Helper\Cookie\Instance - The newly created cookie instance
+	 * @param \emberlabs\openflame\Header\Helper\Cookie\Manager $manager - The cookie manager submodule.
+	 * @return \emberlabs\openflame\Header\Helper\Cookie\Instance - The newly created cookie instance
 	 */
 	final public static function newInstance(Manager $manager)
 	{
@@ -87,7 +87,7 @@ class Instance
 	/**
 	 * Set how many seconds into the future this cookie will expire.
 	 * @param integer $expire_time - The time, in seconds, of how far into the future this cookie will expire.
-	 * @return \OpenFlame\Framework\Header\Helper\Cookie\Instance - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Header\Helper\Cookie\Instance - Provides a fluent interface.
 	 */
 	public function setExpireTime($expire_time = 0)
 	{
@@ -108,7 +108,7 @@ class Instance
 	/**
 	 * Set the cookie name for this instance.
 	 * @param string $cookie_name - The name to set for this cookie instance.
-	 * @return \OpenFlame\Framework\Header\Helper\Cookie\Instance - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Header\Helper\Cookie\Instance - Provides a fluent interface.
 	 */
 	public function setCookieName($cookie_name)
 	{
@@ -134,7 +134,7 @@ class Instance
 	/**
 	 * Attach a value to this cookie instance.
 	 * @param string $cookie_value - The value to attach to this cookie instance.
-	 * @return \OpenFlame\Framework\Header\Helper\Cookie\Instance - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Header\Helper\Cookie\Instance - Provides a fluent interface.
 	 */
 	public function setCookieValue($cookie_value)
 	{

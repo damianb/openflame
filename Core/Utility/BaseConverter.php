@@ -3,15 +3,15 @@
  *
  * @package     openflame-framework
  * @subpackage  utility
- * @copyright   (c) 2010 - 2011 openflame-project.org
+ * @copyright   (c) 2010 - 2012 emberlabs.org
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
- * @link        https://github.com/OpenFlame/OpenFlame-Framework
+ * @link        https://github.com/emberlabs/openflame
  *
  * Minimum Requirement: PHP 5.3.0
  */
 
-namespace OpenFlame\Framework\Core\Utility;
-use OpenFlame\Framework\Core;
+namespace emberlabs\openflame\Core\Utility;
+use \emberlabs\openflame\Core\Internal\OutOfRangeException;
 
 /**
  * OpenFlame Framework - Base Convertor
@@ -19,7 +19,7 @@ use OpenFlame\Framework\Core;
  *
  *
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
- * @link        https://github.com/OpenFlame/OpenFlame-Framework
+ * @link        https://github.com/emberlabs/openflame
  *
  * @todo		Refactor class to remove the base 10 proxy of conversion
  */
@@ -45,7 +45,7 @@ class BaseConverter
 	/*
 	 * Get Instance
 	 *
-	 * @return \OpenFlame\Framework\Utility\BaseConverter - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Utility\BaseConverter - Provides a fluent interface.
 	 */
 	public static function newInstance()
 	{
@@ -56,7 +56,7 @@ class BaseConverter
 	 * Set Charset (coverting to)
 	 *
 	 * @var mixed $charset - String of characters for converting to
-	 * @return \OpenFlame\Framework\Utility\BaseConverter - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Utility\BaseConverter - Provides a fluent interface.
 	 */
 	public function setCharsetTo($charset)
 	{
@@ -68,7 +68,7 @@ class BaseConverter
 	 * Set Charset (coverting from)
 	 *
 	 * @var mixed $charset - String of characters for converting from.
-	 * @return \OpenFlame\Framework\Utility\BaseConverter - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Utility\BaseConverter - Provides a fluent interface.
 	 */
 	public function setCharsetFrom($charset)
 	{
@@ -98,7 +98,7 @@ class BaseConverter
 			// Throw an exception if we should encounter an illegal key
 			if(!array_key_exists($input[$i], $_charsetFrom))
 			{
-				throw new \OutOfRangeException("Input of base conversion is out of range from the specified charset");
+				throw new OutOfRangeException("Input of base conversion is out of range from the specified charset");
 			}
 
 			$output = bcadd($output, bcmul($_charsetFrom[$input[$i]], bcpow($base, $i)));

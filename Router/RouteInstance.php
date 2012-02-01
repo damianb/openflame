@@ -3,18 +3,18 @@
  *
  * @package     openflame-framework
  * @subpackage  router
- * @copyright   (c) 2010 - 2011 openflame-project.org
+ * @copyright   (c) 2010 - 2012 emberlabs.org
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
- * @link        https://github.com/OpenFlame/OpenFlame-Framework
+ * @link        https://github.com/emberlabs/openflame
  *
  * Minimum Requirement: PHP 5.3.0
  */
 
-namespace OpenFlame\Framework\Router;
-use \OpenFlame\Framework\Core\DependencyInjector;
-use \OpenFlame\Framework\Core\Internal\InvalidArgumentException;
-use \OpenFlame\Framework\Core\Internal\LogicException;
-use \OpenFlame\Framework\Core\Internal\RuntimeException;
+namespace emberlabs\openflame\Router;
+use \emberlabs\openflame\Core\DependencyInjector;
+use \emberlabs\openflame\Core\Internal\InvalidArgumentException;
+use \emberlabs\openflame\Core\Internal\LogicException;
+use \emberlabs\openflame\Core\Internal\RuntimeException;
 
 /**
  * OpenFlame Framework - Static URL router route instance,
@@ -22,7 +22,7 @@ use \OpenFlame\Framework\Core\Internal\RuntimeException;
  *
  *
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
- * @link        https://github.com/OpenFlame/OpenFlame-Framework
+ * @link        https://github.com/emberlabs/openflame
  */
 class RouteInstance
 {
@@ -69,7 +69,7 @@ class RouteInstance
 
 	/**
 	 * Create a new instance of this class.
-	 * @return \OpenFlame\Framework\Router\RouteInstance - The newly created instance.
+	 * @return \emberlabs\openflame\Router\RouteInstance - The newly created instance.
 	 */
 	public static function newInstance()
 	{
@@ -88,7 +88,7 @@ class RouteInstance
 	/**
 	 * Set the route base for this instance.
 	 * @param string $base - The route base string.
-	 * @return \OpenFlame\Framework\Router\RouteInstance - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Router\RouteInstance - Provides a fluent interface.
 	 */
 	protected function setRouteBase($base)
 	{
@@ -110,7 +110,7 @@ class RouteInstance
 	/**
 	 * Set the route component map for this instance.
 	 * @param array $map - An array containing the full route component map.
-	 * @return \OpenFlame\Framework\Router\RouteInstance - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Router\RouteInstance - Provides a fluent interface.
 	 */
 	protected function setRouteMap(array $map)
 	{
@@ -132,7 +132,7 @@ class RouteInstance
 	/**
 	 * Set the regular expression for this route instance.
 	 * @param string $regexp - The regular expression for this route instance.
-	 * @return \OpenFlame\Framework\Router\RouteInstance - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Router\RouteInstance - Provides a fluent interface.
 	 */
 	protected function setRouteRegexp($regexp)
 	{
@@ -154,7 +154,7 @@ class RouteInstance
 	/**
 	 * Assign a callback to this route instance.
 	 * @param string $callback - The injector to assign to this route instance.
-	 * @return \OpenFlame\Framework\Router\RouteInstance - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Router\RouteInstance - Provides a fluent interface.
 	 */
 	public function setRouteCallback($callback)
 	{
@@ -190,7 +190,7 @@ class RouteInstance
 	/**
 	 * Set the serialized representation of this route instance.
 	 * @param string $route_string - The serialized representation of the route instance.
-	 * @return \OpenFlame\Framework\Router\RouteInstance - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Router\RouteInstance - Provides a fluent interface.
 	 */
 	protected function setSerializedRoute($route_string)
 	{
@@ -211,7 +211,7 @@ class RouteInstance
 	/**
 	 * Load up the route data from the raw route path provided.
 	 * @param string $route - The raw route path string to interpret and parse.
-	 * @return \OpenFlame\Framework\Router\RouteInstance - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Router\RouteInstance - Provides a fluent interface.
 	 */
 	public function loadRawRoute($route)
 	{
@@ -227,7 +227,7 @@ class RouteInstance
 	/**
 	 * Load up a previously serialized (cached) route instance's data and restore it to like-new condition.
 	 * @param string $route_string - The serialized route instance data to restore.
-	 * @return \OpenFlame\Framework\Router\RouteInstance - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Router\RouteInstance - Provides a fluent interface.
 	 *
 	 * @throws RuntimeException
 	 */
@@ -309,7 +309,7 @@ class RouteInstance
 	 * Set a request URL variable extracted from the current request.
 	 * @param string $point - The name of the variable to store this as.
 	 * @param mixed $data - The data to store.
-	 * @return \OpenFlame\Framework\Router\RouteInstance - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Router\RouteInstance - Provides a fluent interface.
 	 */
 	public function set($point, $data)
 	{

@@ -3,15 +3,15 @@
  *
  * @package     openflame-framework
  * @subpackage  cookie
- * @copyright   (c) 2010 - 2011 openflame-project.org
+ * @copyright   (c) 2010 - 2012 emberlabs.org
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
- * @link        https://github.com/OpenFlame/OpenFlame-Framework
+ * @link        https://github.com/emberlabs/openflame
  *
  * Minimum Requirement: PHP 5.3.0
  */
 
-namespace OpenFlame\Framework\Header\Helper\Cookie;
-use \OpenFlame\Framework\Header\Helper\Cookie\Instance as CookieInstance;
+namespace emberlabs\openflame\Header\Helper\Cookie;
+use \emberlabs\openflame\Header\Helper\Cookie\Instance as CookieInstance;
 
 /**
  * OpenFlame Framework - Cookie manager object
@@ -19,7 +19,7 @@ use \OpenFlame\Framework\Header\Helper\Cookie\Instance as CookieInstance;
  *
  *
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
- * @link        https://github.com/OpenFlame/OpenFlame-Framework
+ * @link        https://github.com/emberlabs/openflame
  */
 class Manager
 {
@@ -78,7 +78,7 @@ class Manager
 
 	/**
 	 * Set the current UNIX timestamp (calls time() and stores the output, does not accept input)
-	 * @return \OpenFlame\Framework\Header\Helper\Cookie\Manager - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Header\Helper\Cookie\Manager - Provides a fluent interface.
 	 */
 	protected function setNowTime()
 	{
@@ -99,7 +99,7 @@ class Manager
 	/**
 	 * Set the cookie domain.
 	 * @param string $cookie_domain - The cookie domain to set.
-	 * @return \OpenFlame\Framework\Header\Helper\Cookie\Manager - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Header\Helper\Cookie\Manager - Provides a fluent interface.
 	 */
 	public function setCookieDomain($cookie_domain)
 	{
@@ -121,7 +121,7 @@ class Manager
 	/**
 	 * Set the cookie path.
 	 * @param string $cookie_path - The cookie path to set.
-	 * @return \OpenFlame\Framework\Header\Helper\Cookie\Manager - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Header\Helper\Cookie\Manager - Provides a fluent interface.
 	 */
 	public function setCookiePath($cookie_path)
 	{
@@ -143,7 +143,7 @@ class Manager
 	/**
 	 * Set the cookie prefix.
 	 * @param string $cookie_prefix - The cookie prefix to set.
-	 * @return \OpenFlame\Framework\Header\Helper\Cookie\Manager - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Header\Helper\Cookie\Manager - Provides a fluent interface.
 	 */
 	public function setCookiePrefix($cookie_prefix)
 	{
@@ -163,7 +163,7 @@ class Manager
 
 	/**
 	 * Set all cookies generated to be marked as "secure" (for use with HTTPS).
-	 * @return \OpenFlame\Framework\Header\Helper\Cookie\Manager - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Header\Helper\Cookie\Manager - Provides a fluent interface.
 	 */
 	public function enableSecureCookies()
 	{
@@ -174,7 +174,7 @@ class Manager
 
 	/**
 	 * Set all cookies generated to be not marked as "secure" (for use with HTTP).
-	 * @return \OpenFlame\Framework\Header\Helper\Cookie\Manager - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Header\Helper\Cookie\Manager - Provides a fluent interface.
 	 */
 	public function disableSecureCookies()
 	{
@@ -195,7 +195,7 @@ class Manager
 	/**
 	 * Set the default cookie expire time.
 	 * @param string $cookie_expire - The expire time to set.
-	 * @return \OpenFlame\Framework\Cookie\Manager - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Cookie\Manager - Provides a fluent interface.
 	 */
 	public function setDefaultCookieExpire($cookie_expire)
 	{
@@ -231,7 +231,7 @@ class Manager
 	/**
 	 * Create a new cookie instance
 	 * @param string $cookie_name - The name for this cookie instance to use.
-	 * @return \OpenFlame\Framework\Header\Helper\Cookie\Instance - The newly created cookie instance.
+	 * @return \emberlabs\openflame\Header\Helper\Cookie\Instance - The newly created cookie instance.
 	 */
 	public function setCookie($cookie_name)
 	{
@@ -246,7 +246,7 @@ class Manager
 	/**
 	 * Remove a cookie that was previously going to be sent.
 	 * @param string $cookie_name - The name of the cookie to trash.
-	 * @return \OpenFlame\Framework\Header\Helper\Cookie\Manager - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Header\Helper\Cookie\Manager - Provides a fluent interface.
 	 */
 	public function trashCookie($cookie_name)
 	{
@@ -258,7 +258,7 @@ class Manager
 	/**
 	 * Set a cookie as "expired".
 	 * @param string $cookie_name - The name of the cookie to expire.
-	 * @return \OpenFlame\Framework\Header\Helper\Cookie\Manager - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Header\Helper\Cookie\Manager - Provides a fluent interface.
 	 */
 	public function expireCookie($cookie_name)
 	{
