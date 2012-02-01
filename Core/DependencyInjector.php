@@ -170,7 +170,7 @@ class DependencyInjector implements \ArrayAccess
 	 */
 	public function setInjector($name, $injector)
 	{
-		if(($injector instanceof \Closure))
+		if(!($injector instanceof \Closure))
 		{
 			$injector = (string) $injector;
 		}
