@@ -95,3 +95,5 @@
 	 - Added class constants `YES`, `NO`, `NEVER` to `ACL\Translator`
 	 - Refactored `Header\Manager` component, removed submodules
 	 - Changed `Cookie\` namespace to a `Header\` component helper
+	 - Removed `Utility\Hasher` - use PHP's crypt() function instead
+	 - Removed `Utility\Config`
