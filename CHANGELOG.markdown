@@ -98,3 +98,4 @@
 	 - Removed `Utility\Hasher` - use PHP's crypt() function instead
 	 - Removed `Utility\Config`
 	 - Moved `Utility\*` namespace under `Core\` namespace
+	 - Updated copyrights, changed parent namespace to `emberlabs\openflame`
