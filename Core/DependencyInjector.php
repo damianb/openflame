@@ -203,18 +203,19 @@ class DependencyInjector implements ArrayAccess
 	}
 
 	/**
-	 * Get the injector closure.
+	 * Get the injector.
 	 * @param string $name - The name of the component to grab the injector for.
 	 * @return mixed - Returns the dependency injector to use.
 	 *
 	 * @throws LogicException
 	 */
-	protected function getInjector($name)
+	public function getInjector($name)
 	{
 		if(!isset($this->injectors[$name]))
 		{
 			throw new LogicException(sprintf('Cannot fetch dependency object "%s", no injector defined', $name));
 		}
+
 		return $this->injectors[$name];
 	}
 

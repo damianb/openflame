@@ -100,3 +100,4 @@
 	 - Moved `Utility\*` namespace under `Core\` namespace
 	 - Updated copyrights, changed parent namespace to `emberlabs\openflame`
 	 - Removed exception handler
+	 - Expose `Core\DependencyInjector->getInjector` as a public method
