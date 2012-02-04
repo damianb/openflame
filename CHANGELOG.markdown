@@ -99,3 +99,4 @@
 	 - Removed `Utility\Config`
 	 - Moved `Utility\*` namespace under `Core\` namespace
 	 - Updated copyrights, changed parent namespace to `emberlabs\openflame`
+	 - Removed exception handler
