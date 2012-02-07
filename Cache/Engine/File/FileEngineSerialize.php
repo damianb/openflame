@@ -101,7 +101,7 @@ class FileEngineSerialize extends FileEngineBase implements \emberlabs\openflame
 	 * @param integer $ttl - The lifespan of the cached data, in seconds.  Leave empty or set as 0 to disable cache timeout.
 	 * @return void
 	 */
-	public function store($key, $data)
+	public function store($key, $data, $ttl)
 	{
 		$this->writeFile("$key.srl.tmp", $this->build($data, $ttl));
 	}
