@@ -158,13 +158,13 @@ class Router
 	 * Get the currently defined "home" route.
 	 * @return \emberlabs\openflame\Router\RouteInstance $route - The currently defined "home" route.
 	 *
-	 * @throws \RuntimeException
+	 * @throws RuntimeException
 	 */
 	public function getHomeRoute()
 	{
 		if($this->home_route === NULL)
 		{
-			throw new RuntimeException('Failed to retrieve obtain "home" route; the route has not yet been defined');
+			throw new RuntimeException('Failed to retrieve "home" route; the route has not yet been defined');
 		}
 
 		return $this->home_route;
@@ -186,13 +186,13 @@ class Router
 	 * Get the currently defined "error" route.
 	 * @return \emberlabs\openflame\Router\RouteInstance $route - The currently defined "error" route.
 	 *
-	 * @throws \RuntimeException
+	 * @throws RuntimeException
 	 */
 	public function getErrorRoute()
 	{
 		if($this->error_route === NULL)
 		{
-			throw new RuntimeException('Failed to retrieve obtain "error" route; the route has not yet been defined');
+			throw new RuntimeException('Failed to retrieve "error" route; the route has not yet been defined');
 		}
 
 		return $this->error_route;
