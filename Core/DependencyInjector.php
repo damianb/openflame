@@ -81,7 +81,7 @@ class DependencyInjector implements ArrayAccess
 		});
 
 		$this->setInjector('cache.engine', function() use($injector) {
-			return $injector::grab('cache.engine.' . (Core::getConfig('cache.engine') ?: 'serialize'));
+			return $injector->get('cache.engine.' . (Core::getConfig('cache.engine') ?: 'serialize'));
 		});
 
 		$this->setInjector('cache.engine.json', function() use($injector) {
