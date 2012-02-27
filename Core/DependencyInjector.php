@@ -53,7 +53,7 @@ class DependencyInjector implements ArrayAccess
 		$this->setInjector('dispatcher', '\\emberlabs\\openflame\\Event\\Dispatcher');
 		$this->setInjector('language', '\\emberlabs\\openflame\\Language\\Handler');
 		$this->setInjector('url', '\\emberlabs\\openflame\\Twig\\Helper\\URL\\Builder');
-		$this->setInjector('cookie', '\\emberlabs\\openflame\\Cookie\\Manager');
+		$this->setInjector('cookie', '\\emberlabs\\openflame\\Header\\Helper\\Cookie\\Manager');
 		$this->setInjector('seeder', '\\emberlabs\\openflame\\Security\\Seeder');
 		$this->setInjector('timer', '\\emberlabs\\openflame\\Twig\\Helper\\Timer\\Timer');
 		$this->setInjector('session_store_engine', '\\emberlabs\\openflame\\Session\\Storage\\EngineFilesystem');
