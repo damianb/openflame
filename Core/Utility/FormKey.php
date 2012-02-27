@@ -21,7 +21,7 @@ use \emberlabs\openflame\Core\Internal\RuntimeException;
  * @license     http://opensource.org/licenses/mit-license.php The MIT License
  * @link        https://github.com/emberlabs/openflame
  */
-class Form
+class FormKey
 {
 	/**
 	 * @var integer - The time that the object was instantiated
