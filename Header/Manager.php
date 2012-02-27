@@ -40,11 +40,6 @@ class Manager
 	protected $headers_sent = false;
 
 	/**
-	 * @var array - Array of header management submodules, which provide extended functionality in managing specific subsets of headers (such as redirects, cookies)
-	 */
-	protected $submodules = array();
-
-	/**
 	 * Grab all the current headers defined, store them internally, and then trash them so that only the headers stored in the manager are the ones that will be sent.
 	 * @return void
 	 */
@@ -215,12 +210,6 @@ class Manager
 	 */
 	public function sendHeaders()
 	{
-		// Get the submodules to inject their headers
-		foreach($this->submodules as $submodule)
-		{
-			$submodule->injectHeaders();
-		}
-
 		header($this->getHTTPStatusHeader());
 		foreach($this->headers as $header_name => $header_array)
 		{
