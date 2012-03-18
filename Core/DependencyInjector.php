@@ -45,7 +45,6 @@ class DependencyInjector implements ArrayAccess
 
 		// Define a bunch of injectors
 		$this->setInjector('router', '\\emberlabs\\openflame\\Router\\Router');
-		$this->setInjector('alias_router', '\\emberlabs\\openflame\\Router\\AliasRouter');
 		$this->setInjector('input', '\\emberlabs\\openflame\\Input\\Handler');
 		$this->setInjector('template', '\\emberlabs\\openflame\\Twig\\Variables');
 		$this->setInjector('asset', '\\emberlabs\\openflame\\Twig\\Helper\\Asset\\Manager');
