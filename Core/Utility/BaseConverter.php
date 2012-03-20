@@ -83,6 +83,8 @@ class BaseConverter
 	 *
 	 * @param string - String to be decoded, must be within the charset of charsetTo.
 	 * @return string - Base 10 representation of the number
+	 *
+	 * @throws OutOfRangeException
 	 */
 	public function decode($input)
 	{
