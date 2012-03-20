@@ -45,7 +45,7 @@ class Seeder
 	/**
 	 * Set the session seed string to use for generating random strings/seeds
 	 * @param string $seed - The session-specific seed to use for random string/seed generation.
-	 * @return \emberlabs\openflame\Security\Seeder - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Core\Utility\Seeder - Provides a fluent interface.
 	 */
 	public function setSessionSeed($seed)
 	{
@@ -66,7 +66,7 @@ class Seeder
 	/**
 	 * Set the application seed string to use for generating random strings/seeds
 	 * @param string $seed - The application-specific seed to use for random string/seed generation.
-	 * @return \emberlabs\openflame\Security\Seeder - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Core\Utility\Seeder - Provides a fluent interface.
 	 */
 	public function setApplicationSeed($seed)
 	{
