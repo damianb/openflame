@@ -68,7 +68,7 @@ class FormKey
 	/**
 	 * Set the form seed to use for form key generation.
 	 * @param string $seed - The seed to generate.
-	 * @return \emberlabs\openflame\Security\Form - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Core\Utility\FormKey - Provides a fluent interface.
 	 * @note WARNING, it is not possible to alter the form seed once it has been set!
 	 *
 	 * @throws RuntimeException
