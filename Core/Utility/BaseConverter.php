@@ -61,6 +61,7 @@ class BaseConverter
 	public function setCharsetTo($charset)
 	{
 		$this->charsetTo = is_array($charset) ? $charset : str_split((string) $charset);
+
 		return $this;
 	}
 
@@ -73,6 +74,7 @@ class BaseConverter
 	public function setCharsetFrom($charset)
 	{
 		$this->charsetFrom = is_array($charset) ? $charset : str_split((string) $charset);
+
 		return $this;
 	}
 
