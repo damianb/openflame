@@ -113,6 +113,7 @@ class Seeder
 		{
 			$return .= substr($string, 0, $length - strlen($return));
 		}
+
 		return $return;
 	}
 
@@ -122,6 +123,7 @@ class Seeder
 	public function buildSeedString($algo = 'md5', $pad_length = 46, array $extra = array())
 	{
 		$hash = hash($algo, implode('', array_merge(array($this->getSessionSeed(), $this->getApplicationSeed()), $extra)));
+
 		return str_pad(implode('', array_map('hexdec', str_split($hash, 2))), (int) $pad_length, '0', STR_PAD_LEFT);
 	}
 }
