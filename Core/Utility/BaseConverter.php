@@ -56,7 +56,7 @@ class BaseConverter
 	 * Set Charset (coverting to)
 	 *
 	 * @var mixed $charset - String of characters for converting to
-	 * @return \emberlabs\openflame\Utility\BaseConverter - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Core\Utility\BaseConverter - Provides a fluent interface.
 	 */
 	public function setCharsetTo($charset)
 	{
@@ -68,7 +68,7 @@ class BaseConverter
 	 * Set Charset (coverting from)
 	 *
 	 * @var mixed $charset - String of characters for converting from.
-	 * @return \emberlabs\openflame\Utility\BaseConverter - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Core\Utility\BaseConverter - Provides a fluent interface.
 	 */
 	public function setCharsetFrom($charset)
 	{
