@@ -56,11 +56,12 @@ class BaseConverter
 	 * Set Charset (coverting to)
 	 *
 	 * @var mixed $charset - String of characters for converting to
-	 * @return \emberlabs\openflame\Utility\BaseConverter - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Core\Utility\BaseConverter - Provides a fluent interface.
 	 */
 	public function setCharsetTo($charset)
 	{
 		$this->charsetTo = is_array($charset) ? $charset : str_split((string) $charset);
+
 		return $this;
 	}
 
@@ -68,11 +69,12 @@ class BaseConverter
 	 * Set Charset (coverting from)
 	 *
 	 * @var mixed $charset - String of characters for converting from.
-	 * @return \emberlabs\openflame\Utility\BaseConverter - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Core\Utility\BaseConverter - Provides a fluent interface.
 	 */
 	public function setCharsetFrom($charset)
 	{
 		$this->charsetFrom = is_array($charset) ? $charset : str_split((string) $charset);
+
 		return $this;
 	}
 
@@ -81,6 +83,8 @@ class BaseConverter
 	 *
 	 * @param string - String to be decoded, must be within the charset of charsetTo.
 	 * @return string - Base 10 representation of the number
+	 *
+	 * @throws OutOfRangeException
 	 */
 	public function decode($input)
 	{
