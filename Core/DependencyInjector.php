@@ -137,6 +137,7 @@ class DependencyInjector implements ArrayAccess
 	public static function grab($name)
 	{
 		$self = self::getInstance();
+
 		return $self->get($name);
 	}
 
