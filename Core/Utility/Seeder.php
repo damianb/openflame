@@ -45,7 +45,7 @@ class Seeder
 	/**
 	 * Set the session seed string to use for generating random strings/seeds
 	 * @param string $seed - The session-specific seed to use for random string/seed generation.
-	 * @return \emberlabs\openflame\Security\Seeder - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Core\Utility\Seeder - Provides a fluent interface.
 	 */
 	public function setSessionSeed($seed)
 	{
@@ -66,7 +66,7 @@ class Seeder
 	/**
 	 * Set the application seed string to use for generating random strings/seeds
 	 * @param string $seed - The application-specific seed to use for random string/seed generation.
-	 * @return \emberlabs\openflame\Security\Seeder - Provides a fluent interface.
+	 * @return \emberlabs\openflame\Core\Utility\Seeder - Provides a fluent interface.
 	 */
 	public function setApplicationSeed($seed)
 	{
@@ -113,6 +113,7 @@ class Seeder
 		{
 			$return .= substr($string, 0, $length - strlen($return));
 		}
+
 		return $return;
 	}
 
@@ -122,6 +123,7 @@ class Seeder
 	public function buildSeedString($algo = 'md5', $pad_length = 46, array $extra = array())
 	{
 		$hash = hash($algo, implode('', array_merge(array($this->getSessionSeed(), $this->getApplicationSeed()), $extra)));
+
 		return str_pad(implode('', array_map('hexdec', str_split($hash, 2))), (int) $pad_length, '0', STR_PAD_LEFT);
 	}
 }
