@@ -81,7 +81,7 @@ abstract class JSON
 	 */
 	public static function decode($json)
 	{
-		if(is_file($json))
+		if(strlen($json) < 1024 && is_file($json))
 		{
 			$json = file_get_contents($json);
 		}
